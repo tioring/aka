@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Session Archive — 4 weeks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0b0b0e;
+    --bg-2:#15151a;
+    --bg-3:#1c1c24;
+    --fg:#ece9e2;
+    --fg-2:#a8a39a;
+    --fg-3:#6a665e;
+    --line:#2a2a33;
+    --line-2:#3a3a45;
+
+    --ai:#ff7a3a;
+    --build:#5ed4c4;
+    --infra:#7aa8ee;
+    --hw:#b58aff;
+    --biz:#ff79b0;
+    --life:#c8de7a;
+    --meta:#ffcf5c;
+  }
+  html,body{background:var(--bg);color:var(--fg)}
+  body{
+    font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;
+    font-size:13.5px;
+    line-height:1.55;
+    letter-spacing:-0.005em;
+    min-height:100vh;
+    padding:48px 56px 96px;
+    background:
+      radial-gradient(ellipse at top left,#1a1a26 0%,transparent 50%),
+      radial-gradient(ellipse at bottom right,#1a1622 0%,transparent 50%),
+      var(--bg);
+    background-attachment:fixed;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"calt" 0}
+  .serif{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto}
+
+  /* HEADER */
+  header{
+    border-bottom:1px solid var(--line);
+    padding-bottom:32px;
+    margin-bottom:48px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:24px;
+    align-items:end;
+  }
+  .title{font-family:'Fraunces',serif;font-weight:300;font-size:64px;line-height:0.95;letter-spacing:-0.025em}
+  .title em{font-style:italic;font-weight:400;color:var(--ai)}
+  .subtitle{
+    color:var(--fg-2);
+    font-size:13px;
+    margin-top:14px;
+    max-width:60ch;
+  }
+  .meta-grid{
+    display:flex;
+    gap:32px;
+    text-align:right;
+  }
+  .meta-grid .cell{display:flex;flex-direction:column;gap:4px}
+  .meta-grid .num{font-family:'Fraunces',serif;font-weight:300;font-size:32px;line-height:1}
+  .meta-grid .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--fg-3)}
+
+  /* DISTRIBUTION BAR */
+  .dist{
+    margin:32px 0 56px;
+    display:flex;
+    height:6px;
+    border-radius:3px;
+    overflow:hidden;
+    background:var(--bg-3);
+  }
+  .dist-seg{height:100%;transition:flex .3s}
+  .dist-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px 24px;
+    margin-top:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--fg-2);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  .dist-legend .item{display:flex;align-items:center;gap:8px;cursor:pointer;transition:color .2s}
+  .dist-legend .item:hover{color:var(--fg)}
+  .dist-legend .swatch{width:8px;height:8px;border-radius:1px}
+  .dist-legend .pct{color:var(--fg-3);margin-left:4px}
+
+  /* GROUP */
+  .group{margin-bottom:64px}
+  .group-head{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:24px;
+    align-items:baseline;
+    padding-bottom:14px;
+    margin-bottom:28px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .group-head::before{
+    content:'';
+    position:absolute;
+    bottom:-1px;
+    left:0;
+    width:80px;
+    height:2px;
+    background:var(--accent);
+  }
+  .group-idx{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--fg-3);
+    letter-spacing:0.12em;
+  }
+  .group-title{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-size:36px;
+    letter-spacing:-0.02em;
+    line-height:1;
+  }
+  .group-title em{font-style:italic;color:var(--accent);font-weight:300}
+  .group-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--fg-3);
+    text-align:right;
+    letter-spacing:0.05em;
+  }
+  .group-meta strong{color:var(--accent);font-weight:500}
+  .group-desc{
+    grid-column:2 / 3;
+    color:var(--fg-2);
+    font-size:13px;
+    margin-top:6px;
+    max-width:70ch;
+  }
+
+  /* SUBGROUPS */
+  .subgroups{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:24px;
+  }
+  .sub{
+    background:linear-gradient(180deg,var(--bg-2) 0%,rgba(21,21,26,0.5) 100%);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:20px 22px 22px;
+    transition:border-color .25s,transform .25s;
+    position:relative;
+    overflow:hidden;
+  }
+  .sub::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;
+    width:100%;
+    height:1px;
+    background:linear-gradient(90deg,var(--accent) 0%,transparent 70%);
+    opacity:0.6;
+  }
+  .sub:hover{
+    border-color:var(--line-2);
+    transform:translateY(-1px);
+  }
+  .sub-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .sub-title{
+    font-size:14.5px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:var(--fg);
+  }
+  .sub-count{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 12%,transparent);
+    padding:2px 7px;
+    border-radius:3px;
+    flex-shrink:0;
+  }
+  .sub-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .sub-list li{
+    font-size:12.5px;
+    color:var(--fg-2);
+    line-height:1.45;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:10px;
+    align-items:start;
+    padding-left:0;
+    transition:color .15s;
+  }
+  .sub-list li:hover{color:var(--fg)}
+  .sub-list .dot{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    color:var(--fg-3);
+    padding-top:3px;
+    letter-spacing:0;
+    min-width:30px;
+  }
+  .sub-list .name{
+    color:inherit;
+  }
+  .sub-list .name strong{
+    color:var(--fg);
+    font-weight:500;
+  }
+
+  /* HIGHLIGHTS */
+  .highlights{
+    margin:0 0 56px;
+    padding:24px 28px;
+    border:1px solid var(--line);
+    border-left:2px solid var(--ai);
+    background:linear-gradient(90deg,rgba(255,122,58,0.04),transparent 60%);
+    border-radius:4px;
+  }
+  .highlights .hd{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    color:var(--fg-3);
+    margin-bottom:14px;
+  }
+  .highlights p{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:18px;
+    line-height:1.5;
+    color:var(--fg);
+    letter-spacing:-0.01em;
+  }
+  .highlights p em{
+    font-style:italic;
+    color:var(--ai);
+  }
+
+  /* FOOTER */
+  footer{
+    margin-top:96px;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--fg-3);
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+  }
+
+  @media (max-width:768px){
+    body{padding:32px 20px 64px}
+    .title{font-size:42px}
+    header{grid-template-columns:1fr;gap:24px}
+    .meta-grid{justify-content:flex-start;text-align:left}
+    .group-title{font-size:26px}
+    .group-head{grid-template-columns:1fr;gap:8px}
+    .group-meta{text-align:left}
+    .group-desc{grid-column:1}
+    .subgroups{grid-template-columns:1fr;gap:16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1 class="title">Session <em>Archive</em></h1>
+    <p class="subtitle">최근 약 4주간의 대화 100여 개를 7개 메이저 그룹으로 분해. 카테고리는 <strong>표면 주제</strong>가 아니라 <strong>탐색의 결</strong>을 기준으로 묶었다.</p>
+  </div>
+  <div class="meta-grid">
+    <div class="cell"><span class="num">7</span><span class="lbl">groups</span></div>
+    <div class="cell"><span class="num">23</span><span class="lbl">subcat</span></div>
+    <div class="cell"><span class="num">~100</span><span class="lbl">sessions</span></div>
+    <div class="cell"><span class="num">28d</span><span class="lbl">window</span></div>
+  </div>
+</header>
+
+<div class="dist" id="distbar"></div>
+<div class="dist-legend" id="legend"></div>
+
+<div class="highlights">
+  <div class="hd">— observed pattern</div>
+  <p>네 흐름의 무게중심은 <em>AI 도구·메타</em>에 있고, 그 다음이 <em>빌드 프로젝트</em>다. 인프라·하드웨어는 빌드의 부속이 아니라 별개 트랙으로 굴러간다. 사업 아이디어 트랙은 빈도는 적지만 매번 큰 규모로 튀어오른다 — 그게 4월 27일 '두려움' 세션의 진원지였다.</p>
+</div>
+
+<main id="root"></main>
+
+<footer>
+  <span>compiled · 2026-04-28</span>
+  <span>scope · ~100 sessions / 4 weeks</span>
+</footer>
+
+<script>
+const data = [
+  {
+    id:'ai',
+    accent:'var(--ai)',
+    title:'AI · ML',
+    titleEm:'영역',
+    desc:'모델 아키텍처 이론, 도구 사용 패턴, 생태계 관찰까지. 가장 두꺼운 트랙이고 세션의 무게중심.',
+    subs:[
+      {
+        title:'코어 이론·아키텍처',
+        sessions:[
+          {d:'04-24',n:'GPT-5.5/DeepSeek V4 → <strong>지구 시뮬레이션 수렴</strong> / 이중슬릿 논증'},
+          {d:'04-06',n:'<strong>MoC + AGI/ASI 프레임워크</strong> 정리, 블루프린트 + SVG 다이어그램'},
+          {d:'04-19',n:'신경망 토폴로지·파라미터 / weight·bias 구조'},
+          {d:'04-24',n:'DreamOmni3 — 스크리블 기반 이미지 편집 모델'},
+          {d:'03-15',n:'Claude Opus 멀티모달, 비디오 분석 2-모델 파이프라인'},
+          {d:'03-15',n:'Opus 시스템 프롬프트의 한계 / soul.md / LoRA rank'},
+          {d:'04-23',n:'Post-training과 시스템 프롬프트의 계층 관계'},
+          {d:'03-16',n:'TRM Spatial Head 좌표 해석'},
+        ]
+      },
+      {
+        title:'도구·워크플로우 (Claude Code 중심)',
+        sessions:[
+          {d:'04-24',n:'GPT API 0→100 / Responses vs Chat Completions'},
+          {d:'04-18',n:'Claude Code 내부 메커니즘 / 캐싱·budget·Ralph Loop'},
+          {d:'04-21',n:'Maple2D 클론 <strong>역산 프롬프트</strong>'},
+          {d:'04-21',n:'3D 큐브 모바일 아티팩트 / 제스처 매핑'},
+          {d:'03-25',n:'봉인왁스 → 확장사고 / Thinking Viewer 아티팩트'},
+          {d:'03-25',n:'Ralph Loop 일일 스케줄링 / GitHub Actions'},
+          {d:'04-22',n:'PR 자동 생성/수정 토글 + CI 개념'},
+          {d:'04-21',n:'WebRTC P2P / signaling·STUN·ICE·TURN'},
+          {d:'04-21',n:'self-mirror <strong>페르소나 문서</strong> 검증'},
+          {d:'04-22',n:'프롬프트 인젝션 카탈로그 사진 분석'},
+          {d:'03-24',n:'Claude 모델 표 정보 검증'},
+          {d:'04-24',n:'Smart Composer 그래프 UI / d3-force'},
+          {d:'04-27',n:'트리거트리 / mid-point 진입 학습 청사진'},
+          {d:'04-17',n:'스킬 리뷰 / argument-hint 의미'},
+          {d:'04-17',n:'토큰 강제 지침의 효과 / 방향성 vs 길이'},
+          {d:'03-31',n:'<strong>듀얼 Opus 핑퐁</strong> / 24개 메모리·CLAUDE.md 패키징'},
+          {d:'03-26',n:'/usage 델타로 턴별 토큰 추정'},
+        ]
+      },
+      {
+        title:'생태계·메타·동향',
+        sessions:[
+          {d:'04-01',n:'Anthropic 데이터 유출 → IPO 마케팅 퍼널 가설'},
+          {d:'04-24',n:'GPT-5.5 출시 분석 / Codex+Computer Use 흡수'},
+          {d:'04-04',n:'Computer Use Windows 출시 / Blender 자동화 설계'},
+          {d:'04-26',n:'디시 특갤 분위기 / Bright Data 테스트'},
+          {d:'04-26',n:'AI 채팅 공유 커뮤니티 — ShareGPT 사후 빈자리'},
+          {d:'04-20',n:'검색 도구 시장 (Tavily/Linkup/Exa 4강)'},
+          {d:'04-18',n:'프리미엄 AI 사용 패턴 / capability overhang'},
+          {d:'04-27',n:'<strong>메모리 시스템 비판</strong> 5점'},
+          {d:'04-22',n:'노트북LM용 도메인 가이드 자료 큐레이션'},
+          {d:'04-03',n:'Anthropic 4월 업데이트 / BridgeMind / Cursor'},
+        ]
+      }
+    ]
+  },
+  {
+    id:'build',
+    accent:'var(--build)',
+    title:'Build',
+    titleEm:'프로젝트',
+    desc:'직접 만들고 있거나 만들고 싶은 것들. 한글·캘리그래피 트랙이 가장 오래 굴러가고 있고, 인터랙티브·시스템 트랙은 짧게 폭발한다.',
+    subs:[
+      {
+        title:'한글·캘리그래피',
+        sessions:[
+          {d:'04-04',n:'<strong>GBWtypewriter</strong> — 공병우 디지털 재현, Ralph Loop'},
+          {d:'04-03',n:'한글 SVG 빈 화면 / outline vs single-stroke'},
+          {d:'03-23',n:'한글 획순 데이터 리서치 / Make Me a Hanzi 구조'},
+          {d:'03-24',n:'캘리그래피 아티팩트 — Canvas brush + stroke anim'},
+        ]
+      },
+      {
+        title:'인터랙티브·게임·콘텐츠',
+        sessions:[
+          {d:'03-15',n:'리듬게임 / 매뉴얼 비트맵 에디터'},
+          {d:'04-21',n:'Maple2D 메이플 클론 — 역산 프롬프트 출력'},
+          {d:'04-24',n:'협업 드로잉 교육 / Excalidraw 비대칭 권한'},
+          {d:'04-02',n:'AGI 책 페이지 인터랙션 / scroll page-flip + 딥펜'},
+          {d:'04-01',n:'만우절 장난 페이지 / yt-dlp + LoL 패치노트'},
+          {d:'03-16',n:'Anthropic Office Simulator 리믹스'},
+        ]
+      },
+      {
+        title:'시스템·데스크톱·OS',
+        sessions:[
+          {d:'03-21',n:'<strong>WorkerW Desktop Web Shell</strong> 설계서'},
+          {d:'04-20',n:'ARM RISC 시대 개인 OS 프롬프트'},
+          {d:'04-23',n:'Win → Linux 이주 사유 리서치 (Win10 EOL)'},
+          {d:'04-19',n:'GitHub 오픈소스 동기 — 첫 빗방울 문제'},
+          {d:'03-14',n:'한글 벽화 3DGS + COLMAP + CLIP LoRA 파이프라인'},
+        ]
+      }
+    ]
+  },
+  {
+    id:'infra',
+    accent:'var(--infra)',
+    title:'Infra',
+    titleEm:'인프라',
+    desc:'도메인·DNS·배포 레이어. Cloudflare 생태계가 학습의 척추.',
+    subs:[
+      {
+        title:'도메인·DNS·Cloudflare',
+        sessions:[
+          {d:'03-21',n:'Cloudflare 도메인 등록 + Pages 배포'},
+          {d:'03-27',n:'<strong>도메인 4계층 + 해상도 확장판</strong> / Anycast'},
+          {d:'04-02',n:'개인용 도메인의 광고 가능 여부'},
+          {d:'04-22',n:'노트북LM 소스용 도메인 가이드 10선'},
+        ]
+      },
+      {
+        title:'배포·웹 렌더링',
+        sessions:[
+          {d:'03-23',n:'amugona.pages.dev / CSR vs SSR / hydration'},
+          {d:'03-21',n:'CodePen 레프타일 커서 IK 시스템 분석'},
+          {d:'03-22',n:'Chrome 풀페이지 캡처 단축키'},
+        ]
+      }
+    ]
+  },
+  {
+    id:'hw',
+    accent:'var(--hw)',
+    title:'Hardware',
+    titleEm:'장비',
+    desc:'마이크·디스플레이·태블릿 등 물리 도구 트랙. 매번 깊이 있게 들어가는 패턴.',
+    subs:[
+      {
+        title:'오디오·마이크',
+        sessions:[
+          {d:'04-23',n:'STT 입력 — raw waveform → log-Mel'},
+          {d:'04-27',n:'STT 마이크 매물 / 다이내믹 vs 샷건'},
+        ]
+      },
+      {
+        title:'디스플레이·태블릿',
+        sessions:[
+          {d:'04-27',n:'Boox Note Air 4C 중고 매물'},
+          {d:'04-20',n:'대형 e-ink Spectra 6 / Remarkable 비교'},
+        ]
+      },
+      {
+        title:'딥펜·잉크',
+        sessions:[
+          {d:'04-26',n:'딥펜 잉크 후처리·화합물 조율'},
+          {d:'03-23',n:'딥펜 잉크 추천 (블랙·셰이딩)'},
+          {d:'03-23',n:'딥펜 촉 코팅 제거 / 열처리 metallurgy'},
+        ]
+      }
+    ]
+  },
+  {
+    id:'biz',
+    accent:'var(--biz)',
+    title:'Ideas',
+    titleEm:'사업·플랫폼',
+    desc:'한 세션에서 큰 구도를 그리는 패턴. 발산은 강하나 수렴 부족이라는 본인 인지가 이 트랙의 그림자다.',
+    subs:[
+      {
+        title:'플랫폼 구상',
+        sessions:[
+          {d:'04-27',n:'<strong>데이터풀 익명 자기노출</strong> + 이중 세션'},
+          {d:'04-27',n:'두려움 세션 — 대형 3개 프로젝트 묶기 부담'},
+          {d:'04-01',n:'개인 AI 오케스트레이션 하네스 (Daniel Miessler PAI)'},
+          {d:'04-26',n:'AI 채팅 공유 커뮤니티 (ShareGPT 빈자리)'},
+        ]
+      },
+      {
+        title:'리서치성 탐색',
+        sessions:[
+          {d:'04-18',n:'식물 합성생물학 / molecular farming 1년전 프롬프트'},
+          {d:'04-24',n:'AI 모델 찾기 — DreamOmni3 발견'},
+        ]
+      }
+    ]
+  },
+  {
+    id:'life',
+    accent:'var(--life)',
+    title:'Life',
+    titleEm:'생활·잡무',
+    desc:'짧고 실용적인 트랙. 이 영역에서도 항상 한 단계 더 깊이 들어간다.',
+    subs:[
+      {
+        title:'쇼핑·여행·잡무',
+        sessions:[
+          {d:'04-23',n:'방콕 크루즈 — 램차방 항·플라이앤크루즈'},
+          {d:'04-20',n:'지출 정리 (택시·숙·식·광주행·서울행)'},
+        ]
+      }
+    ]
+  },
+  {
+    id:'meta',
+    accent:'var(--meta)',
+    title:'Meta',
+    titleEm:'자기성찰·문화',
+    desc:'본인 사고 패턴·AI와의 관계·문화 관찰. 다른 트랙과 항상 얽혀 있고, 가끔 단독으로 폭발한다.',
+    subs:[
+      {
+        title:'사고·학습 패턴',
+        sessions:[
+          {d:'04-19',n:'<strong>GitHub 오픈소스 동기</strong> 미해결 / 첫 빗방울'},
+          {d:'04-27',n:'AI 시대 두려움·실행 부담'},
+          {d:'04-21',n:'self-mirror 페르소나 — Mode A vs Mode B'},
+          {d:'04-23',n:'소넷으로 학습 / desirable difficulty 트랩 모드'},
+          {d:'04-27',n:'트리거트리 — 진입점 위상 인식 청사진'},
+          {d:'04-18',n:'프리미엄 AI 사용 패턴 / 본인 garbage in 자가진단'},
+        ]
+      },
+      {
+        title:'문화·생태 관찰',
+        sessions:[
+          {d:'04-26',n:'디시 특갤 — AGI 카운트다운·역류기 테러'},
+          {d:'04-23',n:'Win→Linux 이주 동기 글로벌 수집 (시각화용)'},
+          {d:'03-27',n:'Gemini 한계 vs Claude / nominalization overload'},
+        ]
+      }
+    ]
+  }
+];
+
+// COUNT TOTAL
+let totalCount = 0;
+data.forEach(g=>{
+  g.count = g.subs.reduce((a,s)=>a+s.sessions.length,0);
+  totalCount += g.count;
+});
+
+// DISTRIBUTION BAR
+const distbar = document.getElementById('distbar');
+const legend = document.getElementById('legend');
+data.forEach(g=>{
+  const seg = document.createElement('div');
+  seg.className = 'dist-seg';
+  seg.style.flex = g.count;
+  seg.style.background = g.accent;
+  seg.title = `${g.title} — ${g.count} sessions`;
+  distbar.appendChild(seg);
+
+  const item = document.createElement('div');
+  item.className = 'item';
+  const pct = ((g.count/totalCount)*100).toFixed(0);
+  item.innerHTML = `<span class="swatch" style="background:${g.accent}"></span>${g.title} <span class="pct">${g.count} · ${pct}%</span>`;
+  legend.appendChild(item);
+});
+
+// RENDER GROUPS
+const root = document.getElementById('root');
+data.forEach((g,gi)=>{
+  const section = document.createElement('section');
+  section.className = 'group';
+  section.style.setProperty('--accent', g.accent);
+
+  const head = document.createElement('div');
+  head.className = 'group-head';
+  head.innerHTML = `
+    <span class="group-idx">G.${String(gi+1).padStart(2,'0')}</span>
+    <h2 class="group-title">${g.title} <em>${g.titleEm}</em></h2>
+    <span class="group-meta"><strong>${g.count}</strong> sessions · ${g.subs.length} subcat</span>
+    <p class="group-desc">${g.desc}</p>
+  `;
+
+  const subgroups = document.createElement('div');
+  subgroups.className = 'subgroups';
+
+  g.subs.forEach(sub=>{
+    const subEl = document.createElement('div');
+    subEl.className = 'sub';
+    const items = sub.sessions.map(s=>`
+      <li><span class="dot mono">${s.d}</span><span class="name">${s.n}</span></li>
+    `).join('');
+    subEl.innerHTML = `
+      <div class="sub-head">
+        <h3 class="sub-title">${sub.title}</h3>
+        <span class="sub-count mono">${sub.sessions.length}</span>
+      </div>
+      <ul class="sub-list">${items}</ul>
+    `;
+    subgroups.appendChild(subEl);
+  });
+
+  section.appendChild(head);
+  section.appendChild(subgroups);
+  root.appendChild(section);
+});
+</script>
+</body>
+</html>
