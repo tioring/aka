@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ralph — Run AI agents on a daily loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#ffffff;
+    --surface:#f7f7f8;
+    --surface-2:#efeff2;
+    --ink:#09090b;
+    --ink-2:#27272a;
+    --muted:#71717a;
+    --muted-2:#a1a1aa;
+    --line:#e4e4e7;
+    --line-2:#d4d4d8;
+    --accent:#5b3df5;
+    --accent-2:#4528d4;
+    --accent-soft:#ede9fe;
+    --green:#10b981;
+  }
+  html,body{background:var(--bg);color:var(--ink)}
+  body{
+    font-family:'Inter','Pretendard Variable',system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.55;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-style:italic}
+
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer;border:none;background:none}
+
+  .container{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* NAV */
+  nav.top{
+    position:sticky;top:0;z-index:30;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:saturate(180%) blur(12px);
+    -webkit-backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.top .row{
+    display:flex;align-items:center;justify-content:space-between;
+    height:60px;
+  }
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-0.02em;font-size:17px}
+  .logo .mark{
+    width:24px;height:24px;border-radius:7px;
+    background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);
+    display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:13px;
+    box-shadow:0 1px 2px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.3);
+  }
+  nav.top .links{display:flex;gap:28px;font-size:14px;color:var(--ink-2)}
+  nav.top .links a{transition:color .15s}
+  nav.top .links a:hover{color:var(--ink)}
+  nav.top .actions{display:flex;gap:10px;align-items:center}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 16px;
+    border-radius:8px;
+    font-size:14px;font-weight:500;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:var(--ink);color:#fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.12);
+  }
+  .btn-primary:hover{background:var(--ink-2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .btn-accent{
+    background:var(--accent);color:#fff;
+    box-shadow:0 1px 2px rgba(91,61,245,.2),inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .btn-accent:hover{background:var(--accent-2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(91,61,245,.32)}
+  .btn-ghost{color:var(--ink-2);background:transparent}
+  .btn-ghost:hover{background:var(--surface)}
+  .btn-outline{
+    background:#fff;color:var(--ink);
+    border:1px solid var(--line-2);
+  }
+  .btn-outline:hover{border-color:var(--ink);background:var(--surface)}
+  .btn-lg{padding:13px 22px;font-size:15px;border-radius:10px}
+
+  /* HERO */
+  .hero{padding:88px 0 96px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{
+    content:'';position:absolute;inset:-100px 0 auto 0;height:600px;
+    background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(91,61,245,0.10) 0%,transparent 70%);
+    pointer-events:none;
+    z-index:-1;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:5px 12px 5px 6px;
+    border:1px solid var(--line);
+    border-radius:99px;
+    font-size:12.5px;color:var(--ink-2);
+    background:#fff;
+    margin-bottom:28px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  .badge .tag{
+    background:var(--accent-soft);color:var(--accent-2);
+    font-weight:600;font-size:10.5px;letter-spacing:0.04em;
+    padding:2px 8px;border-radius:99px;
+    text-transform:uppercase;
+  }
+  .badge a{color:var(--ink-2);display:flex;align-items:center;gap:4px}
+  .badge a::after{content:'→';color:var(--muted-2);font-size:13px;transition:transform .15s}
+  .badge:hover a::after{transform:translateX(2px);color:var(--ink)}
+
+  h1.hero-title{
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:clamp(40px,6.4vw,72px);
+    line-height:1.02;
+    letter-spacing:-0.035em;
+    color:var(--ink);
+    max-width:18ch;
+    margin:0 auto 24px;
+  }
+  h1.hero-title .em{
+    font-family:'Instrument Serif',serif;
+    font-style:italic;
+    font-weight:400;
+    color:var(--accent);
+    letter-spacing:-0.02em;
+  }
+  .hero-sub{
+    font-size:19px;line-height:1.55;color:var(--muted);
+    max-width:54ch;margin:0 auto 36px;
+    letter-spacing:-0.005em;
+  }
+  .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+  .trust-line{
+    font-size:13px;color:var(--muted);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .avatars{display:flex;align-items:center}
+  .avatars span{
+    width:22px;height:22px;border-radius:50%;
+    border:2px solid #fff;margin-left:-6px;
+    background:linear-gradient(135deg,#a78bfa,#5b3df5);
+    display:grid;place-items:center;
+    color:#fff;font-size:9px;font-weight:700;
+  }
+  .avatars span:first-child{margin-left:0}
+  .avatars span:nth-child(2){background:linear-gradient(135deg,#34d399,#10b981)}
+  .avatars span:nth-child(3){background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+  .avatars span:nth-child(4){background:linear-gradient(135deg,#f472b6,#db2777)}
+  .avatars span:nth-child(5){background:linear-gradient(135deg,#60a5fa,#2563eb);font-size:8.5px}
+  .stars{color:#f59e0b;letter-spacing:0.5px;font-size:13px}
+
+  /* PRODUCT MOCK */
+  .mock{
+    margin:56px auto 0;
+    max-width:960px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.6) inset,
+      0 24px 48px -16px rgba(91,61,245,.18),
+      0 8px 24px -8px rgba(0,0,0,.08);
+    overflow:hidden;
+    background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+  }
+  .mock-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 14px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+  }
+  .mock-bar .dot{width:11px;height:11px;border-radius:50%;background:var(--line-2)}
+  .mock-bar .dot:nth-child(1){background:#ef4444}
+  .mock-bar .dot:nth-child(2){background:#f59e0b}
+  .mock-bar .dot:nth-child(3){background:#10b981}
+  .mock-bar .url{
+    margin-left:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);
+    background:#fff;padding:4px 12px;border-radius:6px;border:1px solid var(--line);
+    flex:1;max-width:340px;
+  }
+  .mock-body{padding:20px 24px;display:grid;grid-template-columns:1fr 1.2fr;gap:24px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:12.5px;min-height:300px}
+  .mock-side{display:flex;flex-direction:column;gap:8px}
+  .mock-side .item{
+    padding:8px 12px;border-radius:6px;color:var(--ink-2);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .mock-side .item.active{background:var(--accent-soft);color:var(--accent-2);font-weight:600}
+  .mock-side .item .pulse{
+    width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(16,185,129,0.5);
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(16,185,129,0.5)}
+    70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}
+    100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}
+  }
+  .mock-main{display:flex;flex-direction:column;gap:8px}
+  .mock-main .log{padding:5px 0;color:var(--ink-2);border-bottom:1px dashed var(--line)}
+  .mock-main .log .t{color:var(--muted-2);margin-right:10px}
+  .mock-main .log .ok{color:var(--green);font-weight:600}
+  .mock-main .log .acc{color:var(--accent);font-weight:600}
+
+  /* LOGO STRIP */
+  .strip{
+    padding:48px 0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    margin-top:24px;
+  }
+  .strip .label{
+    text-align:center;
+    font-size:12px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:0.18em;
+    margin-bottom:24px;
+    font-weight:500;
+  }
+  .strip .logos{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:32px;flex-wrap:wrap;
+    color:var(--muted);
+    font-weight:600;font-size:18px;letter-spacing:-0.02em;
+    opacity:0.85;
+  }
+  .strip .logos span{display:flex;align-items:center;gap:7px}
+  .strip .logos .ic{
+    width:18px;height:18px;border-radius:4px;
+    background:currentColor;opacity:0.7;
+  }
+
+  /* SECTION */
+  section{padding:96px 0}
+  .eyebrow{
+    text-align:center;
+    font-size:12px;text-transform:uppercase;letter-spacing:0.18em;
+    color:var(--accent);font-weight:600;
+    margin-bottom:14px;
+  }
+  h2.section-title{
+    font-weight:700;font-size:clamp(32px,4.6vw,52px);
+    line-height:1.05;letter-spacing:-0.03em;
+    text-align:center;max-width:22ch;margin:0 auto 16px;
+  }
+  h2 .em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--accent)}
+  .section-sub{
+    text-align:center;color:var(--muted);font-size:17px;
+    max-width:54ch;margin:0 auto 56px;
+  }
+
+  /* FEATURES */
+  .features{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  }
+  .feat{
+    padding:28px;border-radius:14px;
+    border:1px solid var(--line);background:#fff;
+    transition:transform .2s,border-color .2s,box-shadow .2s;
+  }
+  .feat:hover{transform:translateY(-3px);border-color:var(--line-2);box-shadow:0 8px 24px -8px rgba(0,0,0,.08)}
+  .feat .ic{
+    width:40px;height:40px;border-radius:10px;
+    background:var(--accent-soft);color:var(--accent);
+    display:grid;place-items:center;
+    font-weight:800;font-size:18px;
+    margin-bottom:18px;
+  }
+  .feat h3{font-size:18px;font-weight:600;letter-spacing:-0.015em;margin-bottom:8px}
+  .feat p{color:var(--muted);font-size:14.5px;line-height:1.55}
+
+  /* HOW IT WORKS */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    background:var(--surface);border-radius:18px;
+    padding:8px;border:1px solid var(--line);
+  }
+  .step{
+    padding:32px 28px;
+    border-radius:14px;
+    background:#fff;
+    margin:0 4px;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .step:not(:last-child)::after{
+    content:'→';
+    position:absolute;
+    right:-22px;top:36px;
+    color:var(--muted-2);
+    font-size:24px;
+    z-index:2;
+  }
+  .step .num{
+    font-family:'Instrument Serif',serif;
+    font-style:italic;font-size:36px;font-weight:400;
+    color:var(--accent);line-height:1;margin-bottom:14px;
+  }
+  .step h3{font-size:17px;font-weight:600;letter-spacing:-0.01em;margin-bottom:6px}
+  .step p{color:var(--muted);font-size:14px;line-height:1.55}
+
+  /* TESTIMONIALS */
+  .testimonials{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  }
+  .quote{
+    padding:28px;border-radius:14px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .quote .stars{font-size:14px;letter-spacing:1px}
+  .quote p{font-size:15.5px;line-height:1.55;color:var(--ink-2);letter-spacing:-0.005em}
+  .quote .who{display:flex;gap:12px;align-items:center;margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+  .quote .av{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg,#a78bfa,#5b3df5);
+    color:#fff;display:grid;place-items:center;
+    font-weight:700;font-size:13px;
+  }
+  .quote .meta{display:flex;flex-direction:column}
+  .quote .meta .n{font-weight:600;font-size:14px}
+  .quote .meta .r{color:var(--muted);font-size:12.5px}
+
+  /* PRICING */
+  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  .price{
+    border:1px solid var(--line);
+    border-radius:18px;padding:32px;
+    background:#fff;
+    display:flex;flex-direction:column;gap:18px;
+    position:relative;
+  }
+  .price.featured{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-soft);
+  }
+  .price.featured::before{
+    content:'Most popular';
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    background:var(--accent);color:#fff;
+    font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+    padding:4px 12px;border-radius:99px;
+  }
+  .price h3{font-size:16px;font-weight:600}
+  .price .amount{font-size:44px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+  .price .amount span{font-size:15px;font-weight:500;color:var(--muted);margin-left:4px;letter-spacing:0}
+  .price .desc{color:var(--muted);font-size:14px}
+  .price ul{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
+  .price li{font-size:14px;color:var(--ink-2);display:flex;gap:10px;align-items:flex-start}
+  .price li::before{
+    content:'✓';color:var(--accent);font-weight:700;flex-shrink:0;
+  }
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto}
+  .faq details{
+    border-bottom:1px solid var(--line);
+    padding:18px 0;
+  }
+  .faq summary{
+    list-style:none;cursor:pointer;
+    font-size:17px;font-weight:500;letter-spacing:-0.01em;
+    display:flex;justify-content:space-between;align-items:center;
+    color:var(--ink);
+  }
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{
+    content:'+';
+    color:var(--muted);font-size:22px;font-weight:300;
+    transition:transform .2s;line-height:1;
+  }
+  .faq details[open] summary::after{transform:rotate(45deg)}
+  .faq details p{
+    margin-top:12px;color:var(--muted);font-size:15px;line-height:1.6;
+    max-width:62ch;
+  }
+
+  /* FINAL CTA */
+  .final{
+    background:linear-gradient(135deg,#1a1230 0%,#0c0820 100%);
+    color:#fff;border-radius:24px;
+    padding:64px 48px;text-align:center;
+    margin:0 24px 96px;
+    max-width:1072px;
+    margin:0 auto 96px;
+    position:relative;overflow:hidden;
+  }
+  .final::before{
+    content:'';position:absolute;inset:-50% -10% auto auto;width:480px;height:480px;
+    background:radial-gradient(circle,rgba(167,139,250,0.32) 0%,transparent 60%);
+    pointer-events:none;
+  }
+  .final h2{
+    font-size:clamp(32px,4.4vw,48px);
+    font-weight:700;letter-spacing:-0.03em;line-height:1.05;
+    max-width:18ch;margin:0 auto 16px;
+  }
+  .final h2 .em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:#c4b5fd}
+  .final p{color:rgba(255,255,255,0.7);font-size:17px;max-width:48ch;margin:0 auto 28px}
+  .final .btn-accent{box-shadow:0 8px 24px rgba(91,61,245,.4)}
+
+  /* FOOTER */
+  footer.bottom{
+    border-top:1px solid var(--line);
+    padding:48px 0 32px;
+    color:var(--muted);font-size:13.5px;
+  }
+  footer.bottom .row{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:32px;
+    flex-wrap:wrap;
+  }
+  footer.bottom .col{display:flex;flex-direction:column;gap:8px;min-width:140px}
+  footer.bottom .col h4{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-2);font-weight:600;margin-bottom:6px}
+  footer.bottom .col a{color:var(--muted);transition:color .15s}
+  footer.bottom .col a:hover{color:var(--ink)}
+  footer.bottom .copy{
+    margin-top:32px;padding-top:24px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted-2);
+    flex-wrap:wrap;gap:16px;
+  }
+
+  @media (max-width:880px){
+    .features,.steps,.testimonials,.pricing{grid-template-columns:1fr;gap:14px}
+    .step:not(:last-child)::after{display:none}
+    .steps{padding:14px;gap:8px}
+    .step{margin:0}
+    nav.top .links{display:none}
+    .mock-body{grid-template-columns:1fr;font-size:11.5px}
+    section{padding:64px 0}
+    .hero{padding:56px 0 64px}
+    .final{margin:0 16px 64px;padding:48px 28px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="container row">
+    <div class="logo">
+      <span class="mark">R</span>
+      <span>Ralph</span>
+    </div>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#docs">Docs</a>
+    </div>
+    <div class="actions">
+      <a class="btn btn-ghost" href="#login">Log in</a>
+      <a class="btn btn-primary" href="#start">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <a href="#changelog" class="badge">
+      <span class="tag">New</span>
+      <a>Ralph 2.0 — Webhooks &amp; team workflows</a>
+    </a>
+    <h1 class="hero-title">Run AI agents on a <span class="em">daily loop</span>.</h1>
+    <p class="hero-sub">Ralph가 매일 정해진 시간에 당신의 에이전트를 깨워, 코드 한 줄을 더하고, PR을 띄우고, 다시 잠재웁니다. 어제의 진전이 오늘 아침 메일함에 도착해 있게.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-accent btn-lg" href="#start">Start free <span style="font-weight:300">→</span></a>
+      <a class="btn btn-outline btn-lg" href="#demo">▷ &nbsp;Watch 90s demo</a>
+    </div>
+    <div class="trust-line">
+      <span class="avatars">
+        <span>RY</span><span>JM</span><span>SK</span><span>HL</span><span>+1k</span>
+      </span>
+      <span><span class="stars">★★★★★</span> &nbsp;1,200+ developers shipping daily</span>
+    </div>
+
+    <!-- PRODUCT MOCK -->
+    <div class="mock">
+      <div class="mock-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="url">ralph.dev / runs / agent-09 — live</span>
+      </div>
+      <div class="mock-body">
+        <div class="mock-side">
+          <div class="item active"><span>● refactor-bot</span><span class="pulse"></span></div>
+          <div class="item"><span>○ test-fixer</span><span style="color:var(--muted-2);font-size:11px">2m ago</span></div>
+          <div class="item"><span>○ docs-writer</span><span style="color:var(--muted-2);font-size:11px">9m ago</span></div>
+          <div class="item"><span>○ pr-reviewer</span><span style="color:var(--muted-2);font-size:11px">14m ago</span></div>
+          <div class="item"><span>○ release-bot</span><span style="color:var(--muted-2);font-size:11px">1h ago</span></div>
+        </div>
+        <div class="mock-main">
+          <div class="log"><span class="t">07:00</span><span class="ok">▶</span> &nbsp;Starting refactor-bot · daily loop #214</div>
+          <div class="log"><span class="t">07:01</span>Cloning <span class="acc">tioring/aka</span> · branch <span class="acc">main</span></div>
+          <div class="log"><span class="t">07:03</span>Found 7 functions exceeding 60 lines</div>
+          <div class="log"><span class="t">07:08</span>Refactored 5 of 7 · 2 deferred (tests missing)</div>
+          <div class="log"><span class="t">07:09</span>Running test suite · <span class="ok">142 / 142 passed</span></div>
+          <div class="log"><span class="t">07:10</span><span class="ok">✓</span> &nbsp;PR opened · <span class="acc">#1842</span> ready for review</div>
+          <div class="log"><span class="t">07:10</span>Notifying #engineering · sleeping until tomorrow</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGO STRIP -->
+<div class="strip">
+  <div class="container">
+    <div class="label">Trusted by teams shipping every day</div>
+    <div class="logos">
+      <span><span class="ic"></span>Northwind</span>
+      <span><span class="ic"></span>Quanta&nbsp;Labs</span>
+      <span><span class="ic"></span>Helio</span>
+      <span><span class="ic"></span>Stratos</span>
+      <span><span class="ic"></span>Numen</span>
+      <span><span class="ic"></span>Folio</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="eyebrow">Features</div>
+    <h2 class="section-title">매일 작은 진전, <span class="em">자동으로</span>.</h2>
+    <p class="section-sub">사람의 개입 없이 굴러가는 워크플로. 그러나 사람이 원하는 순간엔 언제든 끼어들 수 있게.</p>
+    <div class="features">
+      <div class="feat">
+        <div class="ic">⟳</div>
+        <h3>Daily loop scheduler</h3>
+        <p>cron보다 영리한 스케줄러. 어제 끝낸 지점에서 오늘을 시작하고, 실패 시 자동 재시도와 알림.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">◇</div>
+        <h3>PR-first 결과물</h3>
+        <p>모든 변경은 PR로 도달합니다. CI 통과·리뷰 코멘트 응대까지 봇이 처리, 머지 권한은 사람이.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">⌥</div>
+        <h3>Hookable everywhere</h3>
+        <p>Slack·Linear·GitHub·Webhook 어디든 트리거. 팀의 기존 흐름을 깨지 않고 그 위에 얹습니다.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">◐</div>
+        <h3>Sandbox-first 안전</h3>
+        <p>모든 실행은 격리된 컨테이너에서. 시크릿 누수 없이 GitHub·DB에만 정확한 권한으로 접근.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">⊞</div>
+        <h3>모델 자유 선택</h3>
+        <p>Claude·GPT·Gemini 어떤 모델이든. 작업 종류별로 다른 모델을 라우팅해 비용을 최적화.</p>
+      </div>
+      <div class="feat">
+        <div class="ic">∿</div>
+        <h3>Observability 내장</h3>
+        <p>턴별 토큰·비용·실패 로그가 하나의 대시보드에. SLO 알림과 주간 리포트는 기본 제공.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:var(--surface);">
+  <div class="container">
+    <div class="eyebrow">How it works</div>
+    <h2 class="section-title">3단계, <span class="em">10분</span>이면 굴러갑니다.</h2>
+    <p class="section-sub">YAML 한 장으로 정의하고, 깃허브에 올리고, 첫 루프가 도는 걸 지켜보세요.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="num">i.</div>
+        <h3>레포 연결</h3>
+        <p>GitHub 앱 한 번 설치, 권한 범위 선택. 끝. 토큰 관리 없음.</p>
+      </div>
+      <div class="step">
+        <div class="num">ii.</div>
+        <h3>에이전트 정의</h3>
+        <p><span class="mono">.ralph/agents/*.yaml</span> 한 장으로 트리거·모델·도구를 명세.</p>
+      </div>
+      <div class="step">
+        <div class="num">iii.</div>
+        <h3>매일 받기</h3>
+        <p>아침 7시에 PR이 떠 있고, 9시 미팅 전에 리뷰만 하면 됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Loved by builders</div>
+    <h2 class="section-title">"커밋이 <span class="em">자고 일어나도</span> 늘어요."</h2>
+    <p class="section-sub">스타트업부터 인프라 팀까지, Ralph로 매일의 작은 부채를 해소하고 있습니다.</p>
+    <div class="testimonials">
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <p>"매일 Ralph가 lint 부채를 한 줌씩 갚아둡니다. 6주 만에 1,200건 위반이 0이 됐어요. 사람이 손도 안 댔습니다."</p>
+        <div class="who">
+          <div class="av">JM</div>
+          <div class="meta"><span class="n">Jihye Min</span><span class="r">Staff Engineer · Quanta Labs</span></div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <p>"테스트가 깨질 때마다 새벽에 Slack 멘션을 받던 시절이 있습니다. Ralph 도입 이후엔 출근하면 PR이 와있어요."</p>
+        <div class="who">
+          <div class="av" style="background:linear-gradient(135deg,#34d399,#059669)">RY</div>
+          <div class="meta"><span class="n">Ryu Yoonseo</span><span class="r">DevOps Lead · Helio</span></div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="stars">★★★★★</div>
+        <p>"YAML 한 장으로 끝났습니다. 그 다음 주에 5명이 서로 자기 봇을 만들고 있더군요. 팀 문화가 바뀌었어요."</p>
+        <div class="who">
+          <div class="av" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">SK</div>
+          <div class="meta"><span class="n">Soomin Kang</span><span class="r">CTO · Northwind</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--surface)">
+  <div class="container">
+    <div class="eyebrow">Pricing</div>
+    <h2 class="section-title">간단합니다. <span class="em">사용한 만큼만.</span></h2>
+    <p class="section-sub">14일 무료, 신용카드 없이 시작. 언제든 다운그레이드 가능.</p>
+    <div class="pricing">
+      <div class="price">
+        <h3>Solo</h3>
+        <div class="amount">$0<span>/ month</span></div>
+        <p class="desc">개인 프로젝트와 사이드 빌드용.</p>
+        <ul>
+          <li>1 active agent</li>
+          <li>일 50 runs</li>
+          <li>퍼블릭 레포 한정</li>
+          <li>커뮤니티 디스코드 지원</li>
+        </ul>
+        <a class="btn btn-outline" href="#start">Start free</a>
+      </div>
+      <div class="price featured">
+        <h3>Pro</h3>
+        <div class="amount">$29<span>/ month</span></div>
+        <p class="desc">진지하게 매일 굴리는 빌더용.</p>
+        <ul>
+          <li>10 active agents</li>
+          <li>일 1,000 runs</li>
+          <li>프라이빗 레포</li>
+          <li>모델 선택 · 비용 라우팅</li>
+          <li>Slack·Linear 통합</li>
+          <li>이메일 지원 (24h)</li>
+        </ul>
+        <a class="btn btn-accent" href="#start">Start 14-day trial</a>
+      </div>
+      <div class="price">
+        <h3>Team</h3>
+        <div class="amount">$129<span>/ seat / mo</span></div>
+        <p class="desc">팀의 일상 워크플로에 박을 때.</p>
+        <ul>
+          <li>무제한 agents · runs</li>
+          <li>SAML SSO · Audit log</li>
+          <li>전용 sandbox 풀</li>
+          <li>주간 리포트 · SLO 알림</li>
+          <li>Solution engineer 1명</li>
+        </ul>
+        <a class="btn btn-outline" href="#contact">Talk to sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="eyebrow">FAQ</div>
+    <h2 class="section-title">알고 싶은 것들.</h2>
+    <p class="section-sub">못 찾는 답이 있다면 <a href="#contact" style="color:var(--accent);font-weight:500">support@ralph.dev</a>로.</p>
+    <div class="faq">
+      <details open>
+        <summary>이미 GitHub Actions가 있는데, Ralph가 다른가요?</summary>
+        <p>Actions가 워크플로 실행기라면 Ralph는 <em>에이전트의 일정과 상태</em>를 책임지는 레이어입니다. Ralph는 Actions를 대체하지 않고, 그 위에서 에이전트의 컨텍스트·세션·재시도·관찰성을 관리합니다. 같이 씁니다.</p>
+      </details>
+      <details>
+        <summary>코드를 외부 서버로 보내는 건가요?</summary>
+        <p>실행은 격리된 단기 컨테이너에서 일어나며, 코드는 디스크에 영구 저장되지 않습니다. SOC 2 Type II·GDPR 준수, 시크릿은 KMS 암호화. 자세한 사항은 보안 백서에 있습니다.</p>
+      </details>
+      <details>
+        <summary>모델은 무엇을 쓸 수 있나요?</summary>
+        <p>Claude (Anthropic), GPT (OpenAI), Gemini (Google) — 작업 종류별로 다른 모델을 라우팅하도록 설정할 수 있습니다. 본인 API 키 BYOK 모드도 지원.</p>
+      </details>
+      <details>
+        <summary>실패하면 어떻게 되나요?</summary>
+        <p>지수 백오프 재시도, 3회 실패 시 워크플로 알림. 모든 실행 로그·토큰·중간 산출물이 보존되어 사후 디버깅이 가능합니다.</p>
+      </details>
+      <details>
+        <summary>Pro에서 Solo로 다운그레이드 가능한가요?</summary>
+        <p>네. 다음 빌링 사이클부터 적용되며, 잔여 일수만큼 비례 환불됩니다. 잠금 효과 없음.</p>
+      </details>
+      <details>
+        <summary>오픈소스인가요?</summary>
+        <p>코어 에이전트 SDK는 Apache 2.0 오픈소스, 매니지드 오케스트레이션이 유료 제품입니다. 셀프호스팅 옵션은 Team 플랜 이상.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final">
+  <h2>매일 아침의 PR을 <span class="em">습관처럼</span>.</h2>
+  <p>14일 무료 체험. 카드 등록 없이 지금 바로 시작하세요.</p>
+  <a class="btn btn-accent btn-lg" href="#start">Start free →</a>
+  <p style="margin-top:18px;font-size:13px;opacity:0.5">No card required · 2-minute setup</p>
+</div>
+
+<!-- FOOTER -->
+<footer class="bottom">
+  <div class="container">
+    <div class="row">
+      <div class="col" style="max-width:240px">
+        <div class="logo" style="margin-bottom:6px">
+          <span class="mark">R</span>
+          <span>Ralph</span>
+        </div>
+        <p style="font-size:13px;line-height:1.5">매일 굴러가는 AI 에이전트를 위한 가장 단순한 오케스트레이션 레이어.</p>
+      </div>
+      <div class="col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#changelog">Changelog</a>
+        <a href="#docs">Docs</a>
+      </div>
+      <div class="col">
+        <h4>Company</h4>
+        <a href="#about">About</a>
+        <a href="#blog">Blog</a>
+        <a href="#careers">Careers</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="col">
+        <h4>Legal</h4>
+        <a href="#terms">Terms</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#security">Security</a>
+        <a href="#dpa">DPA</a>
+      </div>
+    </div>
+    <div class="copy">
+      <span>© 2026 Ralph Labs, Inc. All rights reserved.</span>
+      <span>Built with care · SOC 2 · GDPR</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

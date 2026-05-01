@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seven Power Moves — Claude Code, Once and Remembered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --cream:#f4ead5;
+    --cream-2:#ebdfc1;
+    --ink:#0e0d0b;
+    --ink-2:#2a2722;
+    --muted:#6b6253;
+    --rule:#1b1916;
+
+    --c1:#ff5b2e;     /* fire */
+    --c2:#1b6cff;     /* electric */
+    --c3:#ffc83d;     /* sun */
+    --c4:#0fa47a;     /* moss */
+    --c5:#c84ad6;     /* magenta */
+    --c6:#1a1a1a;     /* slate */
+    --c7:#e6e0d0;     /* paper */
+  }
+  html,body{background:var(--cream);color:var(--ink)}
+  body{
+    font-family:'Bricolage Grotesque','Pretendard Variable',system-ui,sans-serif;
+    font-feature-settings:"ss01","ss02";
+    -webkit-font-smoothing:antialiased;
+    line-height:1.3;
+    letter-spacing:-0.01em;
+    overflow-x:hidden;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"calt" 0;letter-spacing:-0.01em}
+
+  /* HEADER */
+  header{
+    padding:64px 56px 48px;
+    border-bottom:2px solid var(--ink);
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:32px;
+    align-items:end;
+  }
+  .deck-line{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:18px;
+    display:flex;
+    gap:16px;
+    align-items:center;
+  }
+  .deck-line .pill{
+    background:var(--ink);
+    color:var(--cream);
+    padding:4px 9px;
+    border-radius:99px;
+    font-weight:700;
+    letter-spacing:0.2em;
+  }
+  h1{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;
+    font-size:clamp(56px,9vw,128px);
+    line-height:0.86;
+    letter-spacing:-0.04em;
+    color:var(--ink);
+  }
+  h1 .stroked{
+    -webkit-text-stroke:2px var(--ink);
+    color:transparent;
+    font-style:italic;
+    font-weight:300;
+  }
+  .sub{
+    font-size:17px;
+    line-height:1.45;
+    color:var(--ink-2);
+    max-width:42ch;
+    margin-top:24px;
+    font-weight:400;
+  }
+  .sub b{font-weight:700}
+
+  .stats{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    text-align:right;
+    align-items:flex-end;
+  }
+  .stat{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .stat .num{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:300;
+    font-size:42px;
+    line-height:0.9;
+    letter-spacing:-0.04em;
+  }
+  .stat .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* HOW TO USE */
+  .howto{
+    padding:24px 56px;
+    border-bottom:1px solid var(--ink);
+    background:var(--cream-2);
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:28px;
+    align-items:center;
+  }
+  .howto .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+    border-right:1px solid var(--ink);
+    padding-right:28px;
+    white-space:nowrap;
+  }
+  .howto .recipe{
+    display:flex;
+    gap:18px 28px;
+    flex-wrap:wrap;
+    font-size:13.5px;
+    color:var(--ink-2);
+  }
+  .howto .recipe span{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .howto .recipe b{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    background:var(--ink);
+    color:var(--cream);
+    padding:2px 7px;
+    border-radius:99px;
+    letter-spacing:0.1em;
+  }
+
+  /* CARDS */
+  .deck{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .card{
+    border-bottom:1px solid var(--ink);
+    padding:64px 56px 72px;
+    display:grid;
+    grid-template-columns:200px 1fr 280px;
+    gap:48px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::after{
+    content:'';
+    position:absolute;
+    top:0;left:0;
+    width:6px;
+    height:100%;
+    background:var(--card-color);
+  }
+
+  /* per-card backgrounds */
+  .card[data-i="01"]{background:var(--cream)}
+  .card[data-i="02"]{background:var(--cream-2)}
+  .card[data-i="03"]{background:var(--c3);color:var(--ink)}
+  .card[data-i="04"]{background:var(--cream)}
+  .card[data-i="05"]{background:var(--c6);color:var(--cream)}
+  .card[data-i="06"]{background:var(--cream-2)}
+  .card[data-i="07"]{background:var(--c1);color:var(--ink)}
+
+  .card[data-i="03"] .meta-row b,
+  .card[data-i="05"] .meta-row b,
+  .card[data-i="07"] .meta-row b{background:var(--ink);color:var(--cream)}
+  .card[data-i="05"] .what,
+  .card[data-i="05"] .hook strong{color:var(--cream)}
+  .card[data-i="05"] .num{color:var(--cream)}
+  .card[data-i="05"] code,
+  .card[data-i="05"] .snippet{background:#000;color:var(--cream);border-color:#3a3a3a}
+
+  .num-col{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:14px;
+  }
+  .num{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:300;
+    font-size:160px;
+    line-height:0.78;
+    letter-spacing:-0.06em;
+    color:var(--card-color);
+  }
+  .glyph{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;
+    font-size:36px;
+    line-height:1;
+    color:var(--card-color);
+    letter-spacing:-0.04em;
+    border:2px solid var(--card-color);
+    border-radius:8px;
+    padding:6px 12px;
+    display:inline-block;
+  }
+
+  .body-col{display:flex;flex-direction:column;gap:18px;min-width:0}
+  .keyword{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.05em;
+    color:var(--card-color);
+    text-transform:uppercase;
+  }
+  .what{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700;
+    font-size:42px;
+    line-height:1.02;
+    letter-spacing:-0.03em;
+    color:var(--ink);
+  }
+  .what em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--card-color);
+  }
+  .why{
+    font-size:16px;
+    line-height:1.5;
+    color:inherit;
+    opacity:0.82;
+    max-width:48ch;
+    font-weight:400;
+  }
+  .snippet{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    background:var(--ink);
+    color:var(--cream);
+    padding:14px 18px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    overflow-x:auto;
+    white-space:pre;
+    margin-top:6px;
+  }
+  .snippet .cmt{color:var(--muted)}
+  .snippet .acc{color:var(--card-color);font-weight:700}
+
+  .hook-col{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    border-left:1px dashed currentColor;
+    padding-left:24px;
+    align-self:start;
+  }
+  .hook-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    opacity:0.65;
+  }
+  .hook{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:300;
+    font-style:italic;
+    font-size:22px;
+    line-height:1.25;
+    letter-spacing:-0.015em;
+  }
+  .hook strong{
+    font-style:normal;
+    font-weight:700;
+    background:var(--card-color);
+    color:var(--ink);
+    padding:0 6px;
+    border-radius:3px;
+    box-decoration-break:clone;
+    -webkit-box-decoration-break:clone;
+  }
+
+  /* FOOTER */
+  footer{
+    padding:80px 56px 56px;
+    background:var(--ink);
+    color:var(--cream);
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:24px;
+    align-items:end;
+  }
+  footer h2{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:300;
+    font-size:48px;
+    line-height:1;
+    letter-spacing:-0.03em;
+  }
+  footer h2 strong{font-weight:800;font-style:italic}
+  footer .recap{
+    margin-top:24px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    max-width:60ch;
+  }
+  footer .recap span{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    border:1px solid var(--cream);
+    padding:5px 10px;
+    border-radius:99px;
+    color:var(--cream);
+  }
+  footer .sig{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    text-align:right;
+    color:var(--cream-2);
+    line-height:1.6;
+  }
+
+  @media (max-width:900px){
+    header{grid-template-columns:1fr;padding:40px 24px 32px}
+    .stats{flex-direction:row;flex-wrap:wrap;text-align:left;align-items:flex-start;gap:24px}
+    .stat{align-items:flex-start}
+    .howto{padding:20px 24px;grid-template-columns:1fr;gap:14px}
+    .howto .label{border-right:none;padding-right:0;border-bottom:1px solid var(--ink);padding-bottom:10px}
+    .card{grid-template-columns:1fr;padding:40px 24px 48px;gap:24px}
+    .num{font-size:104px}
+    .what{font-size:32px}
+    .hook-col{border-left:none;border-top:1px dashed currentColor;padding-left:0;padding-top:18px}
+    .hook{font-size:19px}
+    footer{grid-template-columns:1fr;padding:48px 24px 40px}
+    footer h2{font-size:32px}
+    footer .sig{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="deck-line">
+      <span class="pill">Mnemonic Deck</span>
+      <span>Seven cards · one read · all stick</span>
+    </div>
+    <h1>
+      Claude <span class="stroked">Code</span><br>
+      Power <span class="stroked">Moves</span>.
+    </h1>
+    <p class="sub">한 번 보고 안 잊을 <b>일곱 개</b>. 각 카드는 <b>키워드 → 한 문장 → 기억 갈고리</b>로 짠다. 갈고리가 있어야 다음 주에도 떠오른다.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="num">07</span><span class="lbl">moves</span></div>
+    <div class="stat"><span class="num">3min</span><span class="lbl">read</span></div>
+    <div class="stat"><span class="num">∞</span><span class="lbl">retrieval</span></div>
+  </div>
+</header>
+
+<div class="howto">
+  <span class="label">How to remember</span>
+  <div class="recipe">
+    <span><b>1</b> 카드의 키워드만 본다</span>
+    <span><b>2</b> 갈고리 한 줄을 소리내 읽는다</span>
+    <span><b>3</b> 24시간 뒤 키워드만 보고 기억을 끄집어낸다</span>
+    <span><b>4</b> 안 떠오르면 그 카드만 다시 본다</span>
+  </div>
+</div>
+
+<div class="deck">
+
+  <!-- 01 -->
+  <article class="card" data-i="01" style="--card-color:var(--c1)">
+    <div class="num-col">
+      <span class="num">01</span>
+      <span class="glyph">↻</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">--resume / --continue</span>
+      <h2 class="what">대화는 <em>죽지 않는다</em>.</h2>
+      <p class="why">터미널을 닫아도, 노트북을 끄고 카페를 옮겨도, 어제의 컨텍스트는 디스크에 남아 있다. 새 세션을 열기 전에 항상 먼저 묻기 — <em>이미 절반쯤 한 일이 있지 않은가</em>?</p>
+      <pre class="snippet"><span class="cmt"># 마지막 세션 그대로 이어가기</span>
+claude <span class="acc">--continue</span>
+
+<span class="cmt"># 과거 세션 골라서 부활</span>
+claude <span class="acc">--resume</span></pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"세션은 <strong>북마크</strong>다. 책을 닫아도 끼워둔 자리가 있다."</p>
+    </div>
+  </article>
+
+  <!-- 02 -->
+  <article class="card" data-i="02" style="--card-color:var(--c2)">
+    <div class="num-col">
+      <span class="num">02</span>
+      <span class="glyph">⌘</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">.claude/skills/</span>
+      <h2 class="what">스킬은 <em>호출하지 않아도 온다</em>.</h2>
+      <p class="why">슬래시 명령은 사용자가 부른다. 스킬은 작업의 냄새만 맡으면 알아서 발동된다. 디렉터리에 마크다운 한 장만 두면 끝 — 트리거 조건만 잘 적으면 모델이 스스로 켠다.</p>
+      <pre class="snippet"><span class="cmt"># 디렉터리만 만들면 된다</span>
+.claude/skills/<span class="acc">refactor-react</span>/
+  └─ <span class="acc">SKILL.md</span>   <span class="cmt"># 트리거·절차·예시</span></pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"슬래시는 <strong>벨</strong>, 스킬은 <strong>센서</strong>."</p>
+    </div>
+  </article>
+
+  <!-- 03 -->
+  <article class="card" data-i="03" style="--card-color:var(--ink)">
+    <div class="num-col">
+      <span class="num">03</span>
+      <span class="glyph">⚙</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">settings.json · hooks</span>
+      <h2 class="what">사람 없이 <em>자동으로 켜져라</em>.</h2>
+      <p class="why">PreToolUse, PostToolUse, Stop, SessionStart — 이벤트마다 셸 명령을 꽂을 수 있다. 매번 "테스트 돌려줘"라고 말하지 말고, Stop 훅에 박아두고 잊어라. 시스템이 너 대신 기억한다.</p>
+      <pre class="snippet"><span class="cmt"># settings.json 일부</span>
+"hooks": {
+  "<span class="acc">PostToolUse</span>": [{
+    "matcher": "Edit|Write",
+    "command": "npm run lint --silent"
+  }]
+}</pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"훅은 <strong>심장박동</strong>. 매 행동마다 자동으로 뛴다."</p>
+    </div>
+  </article>
+
+  <!-- 04 -->
+  <article class="card" data-i="04" style="--card-color:var(--c4)">
+    <div class="num-col">
+      <span class="num">04</span>
+      <span class="glyph">⫶</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">subagent · Task tool</span>
+      <h2 class="what">병렬은 <em>3배 빠르다</em>.</h2>
+      <p class="why">독립적인 탐색·검증을 메인 컨텍스트에 욱여넣지 마라. Explore·Plan·general-purpose 같은 서브에이전트에게 던지면 동시에 굴러간다. 메인 창의 토큰 예산을 보호하면서 결과만 받는다.</p>
+      <pre class="snippet"><span class="cmt"># 한 메시지에 여러 Agent 호출 = 병렬</span>
+Agent(<span class="acc">Explore</span>)  → 검색
+Agent(<span class="acc">Plan</span>)     → 설계
+Agent(<span class="acc">Explore</span>)  → 패턴 비교
+                <span class="cmt"># 동시 실행</span></pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"메인은 <strong>지휘자</strong>, 서브에이전트는 <strong>섹션</strong>. 같이 연주한다."</p>
+    </div>
+  </article>
+
+  <!-- 05 -->
+  <article class="card" data-i="05" style="--card-color:var(--c3)">
+    <div class="num-col">
+      <span class="num">05</span>
+      <span class="glyph">⌬</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">MCP servers</span>
+      <h2 class="what">도구는 <em>외부에서 끌어온다</em>.</h2>
+      <p class="why">GitHub, Cloudflare, Figma, 데이터베이스 — 다 MCP 서버다. 한 번 등록하면 슬래시 없이도 모델이 알아서 부른다. 코드를 바꾸지 말고 <em>능력의 표면적</em>만 바꿔라.</p>
+      <pre class="snippet"><span class="cmt"># 한 줄로 서버 추가</span>
+claude mcp add <span class="acc">github</span> \
+  --command "npx @modelcontextprotocol/server-github"</pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"MCP는 <strong>USB-C</strong>. 꽂으면 능력이 늘어난다."</p>
+    </div>
+  </article>
+
+  <!-- 06 -->
+  <article class="card" data-i="06" style="--card-color:var(--c5)">
+    <div class="num-col">
+      <span class="num">06</span>
+      <span class="glyph">/</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">.claude/commands/</span>
+      <h2 class="what">반복은 <em>한 번만 적는다</em>.</h2>
+      <p class="why">매일 치는 프롬프트가 있다면 그건 이미 슬래시 명령이다. 마크다운 파일 하나로 박제하면, 다음부터는 `/이름`만 친다. 머리 속 단축어를 디스크 단축어로 옮기는 작업.</p>
+      <pre class="snippet"><span class="cmt"># 새 명령 만들기</span>
+.claude/commands/<span class="acc">review.md</span>
+
+<span class="cmt"># 그 안에:</span>
+지금 브랜치의 변경을
+보안·성능·가독성 순으로 점검해줘.</pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"슬래시는 <strong>매크로</strong>. 한 번 잘 짜면 영원히 쓴다."</p>
+    </div>
+  </article>
+
+  <!-- 07 -->
+  <article class="card" data-i="07" style="--card-color:var(--ink)">
+    <div class="num-col">
+      <span class="num">07</span>
+      <span class="glyph">↔</span>
+    </div>
+    <div class="body-col">
+      <span class="keyword">--remote / --teleport</span>
+      <h2 class="what">웹과 터미널은 <em>같은 작업이다</em>.</h2>
+      <p class="why">집에서 터미널로 시작해, 출근길 모바일로 진행 상황을 보고, 회사에서 웹으로 마무리. 같은 세션이 클라우드와 로컬을 오간다. 컴퓨터를 옮긴 게 아니라 작업이 따라온다.</p>
+      <pre class="snippet"><span class="cmt"># 로컬 → 웹 클라우드로 이주</span>
+claude <span class="acc">--remote</span>
+
+<span class="cmt"># 웹 세션 → 로컬 터미널로 회수</span>
+claude <span class="acc">--teleport</span></pre>
+    </div>
+    <div class="hook-col">
+      <span class="hook-label">갈고리</span>
+      <p class="hook">"세션은 <strong>여행 가방</strong>이다. 어디든 들고 간다."</p>
+    </div>
+  </article>
+
+</div>
+
+<footer>
+  <div>
+    <h2>일곱 개. <strong>외울 만큼만.</strong></h2>
+    <div class="recap">
+      <span>01 · resume</span>
+      <span>02 · skills</span>
+      <span>03 · hooks</span>
+      <span>04 · subagent</span>
+      <span>05 · mcp</span>
+      <span>06 · /commands</span>
+      <span>07 · remote</span>
+    </div>
+  </div>
+  <div class="sig">
+    Filed under · power moves<br>
+    Memorize · 2026
+  </div>
+</footer>
+
+</body>
+</html>
