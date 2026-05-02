@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Design Preview — Three Themes</title>
+<title>Design Preview — Four Themes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
     --c-mnemonic:#ff5b2e;
     --c-conversion:#5b3df5;
     --c-reading:#b13a1f;
+    --c-atelier:#c5a572;
   }
   html,body{height:100%;background:var(--bg);color:var(--fg)}
   body{
@@ -58,7 +59,7 @@
   }
   .brand .mark{
     width:22px;height:22px;border-radius:6px;
-    background:linear-gradient(135deg,var(--c-mnemonic) 0%,var(--c-conversion) 50%,var(--c-reading) 100%);
+    background:linear-gradient(135deg,var(--c-mnemonic) 0%,var(--c-conversion) 33%,var(--c-reading) 66%,var(--c-atelier) 100%);
     display:grid;place-items:center;
     color:#fff;font-weight:700;font-size:11px;
     letter-spacing:-0.01em;
@@ -275,6 +276,9 @@
       <button role="tab" data-theme="reading" style="--seg-color:var(--c-reading)">
         Reading <span class="key">3</span>
       </button>
+      <button role="tab" data-theme="atelier" style="--seg-color:var(--c-atelier)">
+        Atelier <span class="key">4</span>
+      </button>
     </div>
     <div class="right">
       <span class="info"><b id="info-name">—</b> · <span id="info-file">—</span></span>
@@ -292,7 +296,7 @@
   <div class="loader" id="loader"><span class="dot"></span><span>Loading</span></div>
   <iframe class="frame" id="frame" title="Theme preview" loading="lazy"></iframe>
   <div class="hint" id="hint">
-    <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> 키로 빠른 전환</span>
+    <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> 키로 빠른 전환</span>
     <span class="x" onclick="document.getElementById('hint').classList.add('faded')">×</span>
   </div>
 </div>
@@ -320,9 +324,16 @@
       desc:    'The Map of AI in 2026 — 학계 6명의 시선을 모은 장문 에세이. Newsreader serif, drop cap, pull quotes.',
       meta:    '11 min read · 6 voices',
     },
+    atelier: {
+      file:    'themes/atelier.html',
+      name:    'Atelier',
+      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-atelier').trim(),
+      desc:    '공방 — 종이와 잉크의 하루. 따뜻한 다크 톤, Cormorant serif + 모노 자간, 빨간 낙관, 체본·단상·작업·일지.',
+      meta:    'warm dark · 4 sections',
+    },
   };
 
-  const order = ['mnemonic','conversion','reading'];
+  const order = ['mnemonic','conversion','reading','atelier'];
   const buttons = document.querySelectorAll('.seg button');
   const frame = document.getElementById('frame');
   const loader = document.getElementById('loader');
@@ -375,7 +386,7 @@
   document.addEventListener('keydown', (e) => {
     if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     if(e.metaKey || e.ctrlKey || e.altKey) return;
-    const idx = ['1','2','3'].indexOf(e.key);
+    const idx = ['1','2','3','4'].indexOf(e.key);
     if(idx >= 0){ setTheme(order[idx], true); e.preventDefault(); }
   });
 
