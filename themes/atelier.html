@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atelier — 종이와 잉크의 하루</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#14110d;
+    --bg-2:#1f1a14;
+    --bg-3:#2a221a;
+    --paper:#f5efe0;
+    --paper-2:#ebe4d2;
+    --ink:#f0e8d8;
+    --ink-2:#c4b9a5;
+    --muted:#857c6c;
+    --muted-2:#4a4338;
+    --rule:#332a22;
+    --gold:#c5a572;
+    --gold-2:#a88858;
+    --vermilion:#c0382e;
+    --vermilion-2:#a02b22;
+  }
+  html,body{background:var(--bg);color:var(--ink)}
+  body{
+    font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;
+    font-size:14.5px;
+    line-height:1.65;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 1100px 700px at 18% -10%,rgba(192,56,46,0.06) 0%,transparent 60%),
+      radial-gradient(ellipse 800px 600px at 105% 20%,rgba(197,165,114,0.05) 0%,transparent 60%),
+      var(--bg);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"calt" 0}
+  .serif{font-family:'Cormorant Infant','Newsreader',Georgia,serif}
+  .display{font-family:'Cormorant Infant','Newsreader',Georgia,serif;font-weight:300;letter-spacing:-0.02em}
+
+  a{color:inherit;text-decoration:none}
+
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:64px 32px 120px;
+    position:relative;
+  }
+
+  /* TOP-RIGHT THEME ICON (decorative, mirrors rlawlsxo) */
+  .toggle{
+    position:absolute;top:32px;right:32px;
+    width:24px;height:24px;
+    color:var(--muted);
+    display:grid;place-items:center;
+    cursor:pointer;
+    transition:color .2s,transform .3s;
+  }
+  .toggle:hover{color:var(--ink-2);transform:rotate(15deg)}
+
+  /* HERO */
+  .hero{
+    text-align:center;
+    padding:96px 0 80px;
+  }
+  h1.title{
+    font-family:'Cormorant Infant',serif;
+    font-weight:300;
+    font-size:84px;
+    line-height:1;
+    letter-spacing:-0.025em;
+    color:var(--ink);
+    margin-bottom:22px;
+  }
+  h1.title em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--ink-2);
+  }
+  .subtitle{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--muted);
+    line-height:2.1;
+    letter-spacing:0.04em;
+  }
+  .subtitle .line{display:block}
+  .subtitle .spaced{letter-spacing:0.6em}
+
+  /* SECTION */
+  section{margin:80px 0}
+  .sec-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-bottom:28px;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:12px;
+  }
+  .sec-head .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:500;
+  }
+  .sec-head .meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted-2);
+    letter-spacing:0.18em;
+  }
+
+  /* CHEBON — 체본 specimen */
+  .chebon{
+    background:var(--paper);
+    border-radius:6px;
+    padding:64px 48px 56px;
+    position:relative;
+    margin:24px 0 40px;
+    box-shadow:
+      0 24px 48px -16px rgba(0,0,0,0.4),
+      0 0 0 1px rgba(255,255,255,0.04);
+    background-image:
+      linear-gradient(var(--paper-2) 1px,transparent 1px),
+      linear-gradient(90deg,var(--paper-2) 1px,transparent 1px);
+    background-size:24px 24px;
+    background-position:center center;
+    overflow:hidden;
+  }
+  .chebon::before{
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,var(--paper) 0%,transparent 30%,transparent 70%,var(--paper-2) 100%);
+    pointer-events:none;
+  }
+  .chebon-meta{
+    position:relative;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    color:#a89880;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .chebon-character{
+    position:relative;
+    text-align:center;
+    font-family:'Cormorant Infant',serif;
+    font-weight:300;
+    font-style:italic;
+    font-size:140px;
+    line-height:1;
+    color:#1a1a1a;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+  }
+  .chebon-romaja{
+    position:relative;
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:#5a4a3a;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+  }
+
+  /* RED SEAL (낙관) */
+  .seal{
+    position:absolute;
+    bottom:22px;right:24px;
+    width:56px;height:56px;
+    border:2px solid var(--vermilion);
+    border-radius:4px;
+    display:grid;place-items:center;
+    color:var(--vermilion);
+    font-family:'Cormorant Infant',serif;
+    font-weight:500;
+    font-size:34px;
+    line-height:1;
+    letter-spacing:-0.05em;
+    background:rgba(245,239,224,0.6);
+    transform:rotate(-3deg);
+    box-shadow:0 1px 0 rgba(192,56,46,0.2);
+  }
+  .seal::after{
+    content:'';
+    position:absolute;inset:3px;
+    border:1px solid rgba(192,56,46,0.25);
+    border-radius:2px;
+    pointer-events:none;
+  }
+
+  /* ESSAY (단상) */
+  .essay{
+    margin:48px 0 64px;
+    padding:0 4px;
+  }
+  .essay .lead{
+    font-family:'Cormorant Infant',serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:22px;
+    line-height:1.55;
+    color:var(--ink);
+    margin-bottom:24px;
+    letter-spacing:-0.005em;
+  }
+  .essay p{
+    color:var(--ink-2);
+    margin-bottom:18px;
+    font-size:14.5px;
+    line-height:1.78;
+    letter-spacing:-0.003em;
+  }
+  .essay p:last-child{margin-bottom:0}
+  .essay em{font-style:italic;color:var(--gold)}
+  .essay strong{font-weight:500;color:var(--ink)}
+  .essay .signature{
+    margin-top:28px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    letter-spacing:0.18em;
+    text-align:right;
+  }
+
+  /* WORKS */
+  .works{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+  .work{
+    background:var(--bg-2);
+    border:1px solid var(--rule);
+    border-radius:10px;
+    padding:22px 22px 24px;
+    min-height:140px;
+    display:flex;flex-direction:column;
+    justify-content:space-between;
+    transition:background .2s,border-color .2s,transform .2s;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+  }
+  .work::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent 0%,var(--gold) 50%,transparent 100%);
+    opacity:0;
+    transition:opacity .25s;
+  }
+  .work:hover{
+    background:var(--bg-3);
+    border-color:var(--muted-2);
+    transform:translateY(-1px);
+  }
+  .work:hover::before{opacity:0.6}
+  .work .name{
+    font-family:'Cormorant Infant',serif;
+    font-weight:400;
+    font-size:21px;
+    line-height:1.15;
+    letter-spacing:-0.015em;
+    color:var(--ink);
+  }
+  .work .ko{
+    font-size:11.5px;
+    color:var(--ink-2);
+    margin-top:4px;
+    letter-spacing:0.02em;
+  }
+  .work .status{
+    display:flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:18px;
+  }
+  .work .status .dot{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--muted-2);
+  }
+  .work[data-status="active"] .status{color:var(--gold)}
+  .work[data-status="active"] .status .dot{
+    background:var(--gold);
+    box-shadow:0 0 6px rgba(197,165,114,0.6);
+  }
+  .work[data-status="wip"] .status{color:var(--vermilion)}
+  .work[data-status="wip"] .status .dot{background:var(--vermilion)}
+
+  /* JOURNAL */
+  .journal{margin-top:8px}
+  .filters{
+    display:flex;gap:18px;align-items:center;
+    margin-bottom:22px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+  }
+  .filter{
+    display:inline-flex;align-items:center;gap:7px;
+    color:var(--muted);
+    cursor:pointer;
+    transition:color .15s;
+  }
+  .filter::before{
+    content:'';
+    width:9px;height:9px;
+    border:1px solid var(--muted-2);
+    border-radius:2px;
+    background:transparent;
+    transition:background .15s,border-color .15s;
+  }
+  .filter[data-on="1"]{color:var(--ink-2)}
+  .filter[data-on="1"]::before{background:var(--gold);border-color:var(--gold)}
+  .filter[data-cat="practice"][data-on="1"]::before{background:var(--gold);border-color:var(--gold)}
+  .filter[data-cat="tool"][data-on="1"]::before{background:var(--ink-2);border-color:var(--ink-2)}
+  .filter[data-cat="prompt"][data-on="1"]::before{background:var(--vermilion);border-color:var(--vermilion)}
+  .filter[data-cat="reflection"][data-on="1"]::before{background:var(--muted);border-color:var(--muted)}
+  .filter:hover{color:var(--ink)}
+
+  .entry{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:18px;
+    align-items:start;
+    padding:18px 0;
+    border-bottom:1px solid var(--rule);
+  }
+  .entry:last-child{border-bottom:none}
+  .entry .body{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .entry .cat{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .entry[data-cat="practice"] .cat{color:var(--gold)}
+  .entry[data-cat="tool"] .cat{color:var(--ink-2)}
+  .entry[data-cat="prompt"] .cat{color:var(--vermilion)}
+  .entry[data-cat="reflection"] .cat{color:var(--muted)}
+
+  .entry .text{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--ink-2);
+    line-height:1.6;
+    letter-spacing:-0.005em;
+  }
+  .entry .text strong{color:var(--ink);font-weight:500}
+  .entry .date{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted-2);
+    letter-spacing:0.12em;
+    white-space:nowrap;
+    padding-top:2px;
+  }
+
+  /* PAGINATION */
+  .page-nav{
+    display:flex;justify-content:center;align-items:center;
+    gap:14px;
+    margin-top:36px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:0.12em;
+  }
+  .page-nav .arrow{
+    cursor:pointer;
+    color:var(--muted-2);
+    padding:4px 8px;
+    transition:color .15s;
+  }
+  .page-nav .arrow:hover{color:var(--ink-2)}
+
+  /* FOOTER */
+  footer{
+    margin-top:120px;
+    padding-top:36px;
+    border-top:1px solid var(--rule);
+    text-align:center;
+  }
+  footer .signoff{
+    font-family:'Cormorant Infant',serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:14px;
+    color:var(--muted);
+    letter-spacing:0.04em;
+    margin-bottom:14px;
+  }
+  footer .mail{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted-2);
+    letter-spacing:0.18em;
+    transition:color .2s;
+    cursor:pointer;
+  }
+  footer .mail:hover{color:var(--ink-2)}
+
+  @media (max-width:640px){
+    .wrap{padding:48px 22px 80px}
+    .toggle{top:22px;right:22px}
+    .hero{padding:64px 0 56px}
+    h1.title{font-size:56px}
+    .chebon{padding:44px 28px 40px}
+    .chebon-character{font-size:88px}
+    .seal{width:44px;height:44px;font-size:24px;bottom:14px;right:14px}
+    .works{grid-template-columns:1fr}
+    .filters{gap:14px;flex-wrap:wrap}
+    .entry{grid-template-columns:1fr;gap:6px}
+    .entry .date{padding-top:0}
+    .essay .lead{font-size:19px}
+    section{margin:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- DECORATIVE THEME ICON -->
+  <div class="toggle" title="이 페이지는 데모입니다" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v3M12 19v3M22 12h-3M5 12H2M19.07 4.93l-2.12 2.12M7.05 16.95l-2.12 2.12M19.07 19.07l-2.12-2.12M7.05 7.05L4.93 4.93"/>
+    </svg>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1 class="title">A<em>te</em>lier</h1>
+    <div class="subtitle">
+      <span class="line"><span class="spaced">종 이 와</span> &nbsp; <span class="spaced">잉 크 의</span> &nbsp; <span class="spaced">하 루</span></span>
+      <span class="line">paper · ink · breath</span>
+    </div>
+  </div>
+
+  <!-- CHEBON 체본 specimen -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Specimen · 체본</span>
+      <span class="meta">No.014 — 2026.05</span>
+    </div>
+    <div class="chebon">
+      <div class="chebon-meta">handlettered &nbsp;·&nbsp; spring 2026</div>
+      <div class="chebon-character">handwriting</div>
+      <div class="chebon-romaja">son · gleul · ssi</div>
+      <div class="seal" aria-label="낙관 — 진">진</div>
+    </div>
+  </section>
+
+  <!-- ESSAY 단상 -->
+  <section class="essay">
+    <div class="sec-head">
+      <span class="label">Note · 단상</span>
+      <span class="meta">5 min</span>
+    </div>
+    <p class="lead">잉크는 종이를 알아본다. 매번 같은 펜이라도, 종이가 다르면 글자의 결이 달라진다.</p>
+    <p>요즘은 한지(韓紙) 한 장을 며칠씩 바라보다 쓰기 시작한다. 펜촉이 종이에 닿는 그 1초가 사실 그 페이지 전체를 결정한다는 걸, 도구를 바꿔보고 나서야 알았다. 처음 한 획에서 종이의 <em>결</em>이 잉크를 끌어당기면, 그 다음 획부터는 손이 그 흐름에 따른다. 도구의 미덕은 <strong>지시하지 않는 것</strong>이다.</p>
+    <p>디지털 글쓰기에서도 같은 일이 벌어진다. 에디터가 자기 주장을 너무 많이 가지면, 머릿속의 결이 도구의 결에 졌다. 좋은 도구는 <em>마찰 없이</em> 사라진다. 그래서 요즘은 화면을 어둡게, 글씨를 따뜻하게 둔다. 빛은 종이에서 오는 것이 아니라 <strong>잉크에서</strong> 와야 한다.</p>
+    <p>오늘은 한 시간만 쓰기로 한다. 다 쓰지 못해도 좋다. 한 글자만 잘 그어도 그 페이지는 끝난 페이지가 된다.</p>
+    <div class="signature">— 진, 5월의 어느 비 오는 오후</div>
+  </section>
+
+  <!-- WORKS -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Works · 작업</span>
+      <span class="meta">04</span>
+    </div>
+    <div class="works">
+      <div class="work" data-status="active">
+        <div>
+          <div class="name">Hanji <em>Sheets</em></div>
+          <div class="ko">한지 시트 컬렉션 · 12종</div>
+        </div>
+        <div class="status"><span class="dot"></span><span>in progress</span></div>
+      </div>
+      <div class="work" data-status="active">
+        <div>
+          <div class="name">Ink <em>Recipes</em></div>
+          <div class="ko">딥펜 잉크 배합 노트</div>
+        </div>
+        <div class="status"><span class="dot"></span><span>journaling</span></div>
+      </div>
+      <div class="work" data-status="wip">
+        <div>
+          <div class="name">Hangeul <em>Mono</em></div>
+          <div class="ko">한글 단조 폰트 — 첫 자모</div>
+        </div>
+        <div class="status"><span class="dot"></span><span>WIP</span></div>
+      </div>
+      <div class="work">
+        <div>
+          <div class="name">Calligraphy <em>Club</em></div>
+          <div class="ko">월간 모임 · 매달 마지막 목요일</div>
+        </div>
+        <div class="status"><span class="dot"></span><span>open</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOURNAL -->
+  <section>
+    <div class="sec-head">
+      <span class="label">Journal · 일지</span>
+      <span class="meta">12 entries · 4 weeks</span>
+    </div>
+    <div class="filters">
+      <span class="filter" data-cat="practice" data-on="1">practice · 연습</span>
+      <span class="filter" data-cat="tool" data-on="1">tool · 도구</span>
+      <span class="filter" data-cat="prompt" data-on="1">prompt · 글감</span>
+      <span class="filter" data-cat="reflection" data-on="1">reflection · 회고</span>
+    </div>
+
+    <div class="journal">
+      <div class="entry" data-cat="practice">
+        <div class="body">
+          <span class="cat">Practice · 연습</span>
+          <div class="text"><strong>아침 30분 — 한글 자음 14개 반복.</strong> ㅂ과 ㅅ의 시작점이 늘 흔들린다.</div>
+        </div>
+        <span class="date">2026.05.02</span>
+      </div>
+      <div class="entry" data-cat="tool">
+        <div class="body">
+          <span class="cat">Tool · 도구</span>
+          <div class="text"><strong>Brause No.66 EF</strong> 코팅 제거 후 시필 — 잉크 흡수가 1.5배. 다음엔 No.361도 같이.</div>
+        </div>
+        <span class="date">2026.05.01</span>
+      </div>
+      <div class="entry" data-cat="prompt">
+        <div class="body">
+          <span class="cat">Prompt · 글감</span>
+          <div class="text">"비 온 날의 잉크." — 농도 65%, 호분 약간. <strong>건조 후 톤이 더 깊어짐</strong>.</div>
+        </div>
+        <span class="date">2026.04.30</span>
+      </div>
+      <div class="entry" data-cat="reflection">
+        <div class="body">
+          <span class="cat">Reflection · 회고</span>
+          <div class="text">속도를 늦추니 손목 각도가 자리를 잡는다. <strong>빠른 손은 자기 자세를 고치지 못한다.</strong></div>
+        </div>
+        <span class="date">2026.04.29</span>
+      </div>
+      <div class="entry" data-cat="practice">
+        <div class="body">
+          <span class="cat">Practice · 연습</span>
+          <div class="text">한지 위에 영문 — Italic minuscule 26자. e의 닫힘이 가장 까다롭다.</div>
+        </div>
+        <span class="date">2026.04.28</span>
+      </div>
+      <div class="entry" data-cat="tool">
+        <div class="body">
+          <span class="cat">Tool · 도구</span>
+          <div class="text"><strong>Iroshizuku take-sumi</strong> 후속작 — 검정에 푸른 기, 마르면 거의 흑갈. 한지에서 특히 좋다.</div>
+        </div>
+        <span class="date">2026.04.27</span>
+      </div>
+      <div class="entry" data-cat="prompt">
+        <div class="body">
+          <span class="cat">Prompt · 글감</span>
+          <div class="text">"체본(體本)" — 체(體)가 본(本)을 만든다. 한 글자만 정성껏.</div>
+        </div>
+        <span class="date">2026.04.26</span>
+      </div>
+      <div class="entry" data-cat="reflection">
+        <div class="body">
+          <span class="cat">Reflection · 회고</span>
+          <div class="text">도구가 사라지는 순간이 있다. 그땐 글씨가 아니라 <strong>몸이 쓴다</strong>. 매일 그 순간을 기다린다.</div>
+        </div>
+        <span class="date">2026.04.25</span>
+      </div>
+      <div class="entry" data-cat="tool">
+        <div class="body">
+          <span class="cat">Tool · 도구</span>
+          <div class="text">새 한지 — 전주 8호. 표면이 약간 거칠어 펜이 미끄러지지 않는다. <strong>3주 적응 필요</strong>.</div>
+        </div>
+        <span class="date">2026.04.23</span>
+      </div>
+      <div class="entry" data-cat="practice">
+        <div class="body">
+          <span class="cat">Practice · 연습</span>
+          <div class="text">획순 데이터 — Make Me a Hanzi 구조 차용해 한글 단음절 240자 정리 시작.</div>
+        </div>
+        <span class="date">2026.04.22</span>
+      </div>
+      <div class="entry" data-cat="prompt">
+        <div class="body">
+          <span class="cat">Prompt · 글감</span>
+          <div class="text">"잉크는 종이를 알아본다." — 오늘의 단상 첫 줄로 발전.</div>
+        </div>
+        <span class="date">2026.04.21</span>
+      </div>
+      <div class="entry" data-cat="reflection">
+        <div class="body">
+          <span class="cat">Reflection · 회고</span>
+          <div class="text">한 달 — 매일은 못 썼지만 <strong>매일 보았다</strong>. 그것도 연습의 일부였다고 적어둔다.</div>
+        </div>
+        <span class="date">2026.04.20</span>
+      </div>
+    </div>
+
+    <div class="page-nav">
+      <span class="arrow">‹</span>
+      <span>1 / 3</span>
+      <span class="arrow">›</span>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="signoff">in ink we trust</div>
+    <div class="mail">caasboudaabitabe @ gmail.com</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
