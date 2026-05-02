@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class of 1998 — Atrium High School Yearbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Caveat:wght@400;500;600;700&family=Bree+Serif&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --paper:#f0e6cc;
+    --paper-2:#e3d6b3;
+    --paper-3:#d6c690;
+    --ink:#1a1812;
+    --ink-2:#332e22;
+    --muted:#75694e;
+    --rule:#a89a78;
+    --red:#a82822;
+    --blue:#1b4480;
+    --gold:#a78124;
+    --green:#3a6b29;
+  }
+  html,body{background:#2a241a;color:var(--ink)}
+  body{
+    font-family:'Bree Serif','Times New Roman',serif;
+    font-size:14px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding:20px 12px;
+    background:
+      radial-gradient(ellipse at top,#3a3024 0%,#1a140e 100%);
+  }
+  .typewriter{font-family:'Special Elite','Courier New',monospace;letter-spacing:0.02em}
+  .hand{font-family:'Caveat',cursive}
+  .ui{font-family:'Inter',sans-serif}
+
+  .book{
+    max-width:1080px;
+    margin:0 auto;
+    background:var(--paper);
+    color:var(--ink);
+    box-shadow:0 24px 72px -16px rgba(0,0,0,0.6),inset 0 0 80px rgba(168,154,120,0.2);
+    background-image:
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence baseFrequency="0.85" numOctaves="2"/><feColorMatrix values="0 0 0 0 0.10 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.06 0"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>'),
+      var(--paper);
+    border:1px solid var(--rule);
+  }
+
+  /* COVER */
+  .cover{
+    text-align:center;
+    padding:64px 32px 40px;
+    border-bottom:6px double var(--ink);
+    position:relative;
+    background:
+      radial-gradient(ellipse 700px 300px at 50% 50%,#fcf5dc 0%,transparent 70%);
+  }
+  .cover .school{
+    font-family:'Bree Serif',serif;
+    font-size:14px;letter-spacing:0.32em;
+    text-transform:uppercase;color:var(--muted);
+    border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
+    padding:8px 0;margin-bottom:24px;
+    font-weight:400;
+  }
+  .cover h1{
+    font-family:'Bree Serif',serif;
+    font-size:clamp(64px,9vw,140px);
+    line-height:0.92;
+    color:var(--ink);
+    letter-spacing:-0.025em;
+    margin-bottom:14px;
+  }
+  .cover h1 em{font-style:italic;color:var(--red)}
+  .cover .year-block{
+    display:inline-block;
+    margin:10px 0;
+    padding:14px 36px;
+    border:6px solid var(--ink);
+    border-radius:6px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Bree Serif',serif;
+    font-size:64px;line-height:1;font-weight:400;letter-spacing:-0.02em;
+    transform:rotate(-2deg);
+  }
+  .cover .motto{
+    margin-top:28px;
+    font-family:'Caveat',cursive;font-size:30px;
+    color:var(--ink-2);
+    transform:rotate(-1deg);
+  }
+  .cover .motto::before{content:'—  '}
+  .cover .motto::after{content:'  —'}
+  .cover .corner{
+    position:absolute;top:14px;right:18px;
+    font-family:'Special Elite',monospace;font-size:11px;
+    color:var(--muted);letter-spacing:0.06em;
+    line-height:1.5;text-align:right;
+  }
+  .cover .corner b{color:var(--red);font-weight:400}
+
+  /* SUPERLATIVES STRIP */
+  .super{
+    border-bottom:2px solid var(--ink);
+    padding:24px 32px;
+    display:flex;justify-content:space-around;
+    flex-wrap:wrap;gap:14px;
+    background:var(--paper-2);
+  }
+  .super .item{text-align:center}
+  .super .item .lbl{
+    font-family:'Special Elite',monospace;
+    font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--muted);font-weight:400;
+    margin-bottom:6px;
+  }
+  .super .item .nm{
+    font-family:'Bree Serif',serif;
+    font-size:18px;font-style:italic;
+    color:var(--red);letter-spacing:-0.005em;
+  }
+  .super .item .desc{
+    font-family:'Caveat',cursive;font-size:16px;
+    color:var(--ink-2);margin-top:2px;
+    transform:rotate(-1deg);display:inline-block;
+  }
+
+  /* SECTION HEADERS */
+  .sec{padding:48px 32px;border-bottom:2px dashed var(--ink)}
+  .sec-head{
+    text-align:center;
+    margin-bottom:28px;
+    position:relative;
+  }
+  .sec-head::before,.sec-head::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    width:30%;height:1px;background:var(--ink);
+  }
+  .sec-head::before{left:0}
+  .sec-head::after{right:0}
+  .sec-head h2{
+    display:inline-block;
+    font-family:'Bree Serif',serif;
+    font-size:30px;color:var(--ink);
+    background:var(--paper);
+    padding:0 18px;letter-spacing:-0.01em;
+    position:relative;
+  }
+  .sec-head h2 em{font-style:italic;color:var(--red);font-weight:400}
+
+  /* PORTRAIT GRID */
+  .portraits{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px 18px;
+  }
+  @media (max-width:880px){.portraits{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:480px){.portraits{grid-template-columns:1fr}}
+
+  .student{
+    text-align:center;
+    background:var(--paper-2);
+    border:1.5px solid var(--ink);
+    padding:8px;
+    transition:transform .2s;
+    position:relative;
+    cursor:pointer;
+  }
+  .student:nth-child(2n){transform:rotate(0.5deg)}
+  .student:nth-child(3n){transform:rotate(-0.4deg)}
+  .student:nth-child(5n){transform:rotate(0.7deg)}
+  .student:hover{transform:translateY(-2px) rotate(0deg);box-shadow:0 8px 16px rgba(0,0,0,0.18)}
+
+  .student .photo{
+    aspect-ratio:5/6;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 35%,#d8c8a4 0%,#9a8964 70%),
+      linear-gradient(180deg,#cdb98c 0%,#75683f 100%);
+    margin-bottom:8px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--ink);
+    background-image:
+      radial-gradient(circle at 1px 1px,rgba(0,0,0,0.3) 0.5px,transparent 1px);
+    background-size:3px 3px;
+  }
+  /* portrait silhouette via radial gradient */
+  .student .photo::before{
+    content:'';
+    position:absolute;
+    top:18%;left:50%;transform:translateX(-50%);
+    width:32%;aspect-ratio:1;
+    border-radius:50%;
+    background:
+      radial-gradient(ellipse 70% 80% at 50% 30%,rgba(80,60,30,0.3) 0%,rgba(50,40,20,0.5) 100%);
+  }
+  .student .photo::after{
+    content:'';
+    position:absolute;
+    bottom:0;left:50%;transform:translateX(-50%);
+    width:80%;height:42%;
+    background:
+      radial-gradient(ellipse 65% 100% at 50% 100%,rgba(40,30,15,0.6) 0%,rgba(20,15,8,0.4) 60%,transparent 80%);
+    border-radius:50% 50% 0 0;
+  }
+
+  /* alt photo styles */
+  .student.t2 .photo{background:radial-gradient(ellipse 60% 50% at 50% 35%,#a89678 0%,#5d5036 70%),linear-gradient(180deg,#9c8a64,#3d3424)}
+  .student.t3 .photo{background:radial-gradient(ellipse 60% 50% at 50% 40%,#bca884 0%,#6c5a38 70%),linear-gradient(180deg,#aa9670,#4d4128)}
+  .student.t4 .photo{background:radial-gradient(ellipse 60% 50% at 50% 35%,#c4b292 0%,#80684a 70%),linear-gradient(180deg,#a89572,#3a3018)}
+
+  .student .name{
+    font-family:'Bree Serif',serif;
+    font-size:14.5px;
+    line-height:1.15;
+    color:var(--ink);
+    margin-bottom:2px;
+    font-style:italic;
+    letter-spacing:-0.005em;
+  }
+  .student .nick{
+    font-family:'Caveat',cursive;
+    font-size:14px;color:var(--red);
+    margin-bottom:4px;line-height:1;
+  }
+  .student .quote{
+    font-family:'Special Elite',monospace;
+    font-size:9.5px;
+    color:var(--muted);line-height:1.4;
+    border-top:1px dashed var(--ink);
+    padding-top:5px;
+    text-align:left;
+    min-height:36px;
+  }
+  .student .activities{
+    font-family:'Inter',sans-serif;
+    font-size:9.5px;
+    color:var(--muted);
+    margin-top:5px;
+    line-height:1.3;letter-spacing:0.04em;
+    border-top:1px solid var(--rule);
+    padding-top:4px;
+  }
+  .student .activities b{color:var(--ink-2);font-weight:600}
+
+  /* SIGNATURES */
+  .signatures{
+    background:var(--paper-2);
+    padding:32px 28px;
+    border:1.5px solid var(--ink);
+    margin-top:8px;
+  }
+  .signatures .head{
+    font-family:'Bree Serif',serif;
+    font-size:22px;text-align:center;margin-bottom:18px;
+    border-bottom:2px solid var(--ink);padding-bottom:8px;
+    color:var(--ink);
+  }
+  .signatures .head em{font-style:italic;color:var(--red)}
+  .signatures .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px 32px;
+  }
+  @media (max-width:600px){.signatures .grid{grid-template-columns:1fr}}
+  .sig{
+    border-bottom:1px dashed var(--ink);
+    padding-bottom:14px;
+    font-family:'Caveat',cursive;
+    font-size:18px;
+    line-height:1.4;
+    color:var(--ink-2);
+    transform:rotate(var(--r,-0.3deg));
+  }
+  .sig:nth-child(2n){--r:0.4deg}
+  .sig:nth-child(3n){--r:-0.5deg}
+  .sig:nth-child(5n){--r:0.6deg}
+  .sig .from{
+    display:block;font-family:'Caveat',cursive;
+    font-size:21px;color:var(--red);font-weight:600;
+    margin-top:6px;text-align:right;
+  }
+  .sig em{color:var(--blue);font-weight:600}
+  .sig .doodle{
+    color:var(--gold);font-size:14px;
+    display:inline-block;margin-right:4px;
+  }
+
+  /* CLUB COLLAGE */
+  .clubs{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:14px;
+  }
+  @media (max-width:760px){.clubs{grid-template-columns:1fr}}
+  .club{
+    background:var(--paper-2);
+    border:1.5px solid var(--ink);
+    padding:14px 16px 14px;
+    transform:rotate(var(--r));
+  }
+  .club:nth-child(1){--r:-0.6deg}
+  .club:nth-child(2){--r:0.4deg}
+  .club:nth-child(3){--r:-0.3deg}
+  .club .label{
+    font-family:'Special Elite',monospace;
+    font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:6px;
+  }
+  .club .name{
+    font-family:'Bree Serif',serif;
+    font-size:18px;color:var(--ink);
+    margin-bottom:8px;
+    border-bottom:1px solid var(--ink);padding-bottom:4px;
+  }
+  .club .photo{
+    aspect-ratio:5/3;margin-bottom:8px;
+    background:
+      linear-gradient(180deg,#9a8964 0%,#5d5036 100%);
+    background-image:
+      radial-gradient(circle at 1px 1px,rgba(0,0,0,0.4) 0.5px,transparent 1px);
+    background-size:3px 3px;
+    border:1px solid var(--ink);
+    position:relative;overflow:hidden;
+  }
+  .club .photo::before{
+    content:'';position:absolute;
+    bottom:0;left:0;right:0;height:60%;
+    background:
+      radial-gradient(ellipse 18% 55% at 18% 100%,rgba(40,30,15,0.7) 0%,transparent 60%),
+      radial-gradient(ellipse 16% 50% at 38% 100%,rgba(40,30,15,0.65) 0%,transparent 60%),
+      radial-gradient(ellipse 18% 60% at 58% 100%,rgba(40,30,15,0.7) 0%,transparent 60%),
+      radial-gradient(ellipse 16% 50% at 78% 100%,rgba(40,30,15,0.65) 0%,transparent 60%);
+  }
+  .club .cap{
+    font-family:'Special Elite',monospace;
+    font-size:10.5px;color:var(--ink-2);line-height:1.5;
+  }
+  .club .cap b{color:var(--red);font-weight:400}
+
+  /* MEMORIES TIMELINE */
+  .memories{padding:14px 0 4px}
+  .memory{
+    display:grid;
+    grid-template-columns:80px 1fr;
+    gap:18px;align-items:start;
+    padding:12px 0;
+    border-bottom:1px dashed var(--rule);
+  }
+  .memory:last-child{border-bottom:none}
+  .memory .date{
+    font-family:'Special Elite',monospace;
+    font-size:11px;color:var(--red);
+    letter-spacing:0.04em;text-align:right;line-height:1.4;
+  }
+  .memory .text{
+    font-family:'Bree Serif',serif;
+    font-size:14.5px;color:var(--ink);line-height:1.55;
+  }
+  .memory .text em{font-style:italic;color:var(--blue)}
+  .memory .text strong{font-weight:400;background:#fffbe5;padding:0 3px}
+
+  /* FACULTY */
+  .faculty{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+    margin-top:14px;
+  }
+  @media (max-width:760px){.faculty{grid-template-columns:repeat(2,1fr)}}
+  .fac{
+    text-align:center;
+    background:var(--paper-2);
+    padding:10px 8px;
+    border:1px solid var(--ink);
+  }
+  .fac .ph{
+    aspect-ratio:1;margin-bottom:6px;
+    background:radial-gradient(ellipse 60% 50% at 50% 35%,#a89678 0%,#5d5036 70%),linear-gradient(180deg,#9c8a64,#3d3424);
+    border:1px solid var(--ink);
+    background-image:radial-gradient(circle at 1px 1px,rgba(0,0,0,0.3) 0.5px,transparent 1px);
+    background-size:3px 3px;
+  }
+  .fac .nm{font-family:'Bree Serif',serif;font-size:13px;font-style:italic}
+  .fac .role{font-family:'Special Elite',monospace;font-size:9px;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;margin-top:2px}
+
+  /* COLOPHON */
+  footer.bottom{
+    padding:32px 32px;
+    text-align:center;
+    background:var(--paper-2);
+    border-top:6px double var(--ink);
+    font-family:'Special Elite',monospace;
+    font-size:11px;color:var(--muted);
+    letter-spacing:0.06em;line-height:1.7;
+  }
+  footer.bottom b{color:var(--ink);font-weight:400}
+  footer.bottom .stamp{
+    display:inline-block;
+    margin-top:10px;
+    border:2px solid var(--red);
+    color:var(--red);
+    padding:6px 16px;letter-spacing:0.18em;
+    transform:rotate(-3deg);
+    font-family:'Bree Serif',serif;font-size:14px;font-style:italic;
+  }
+
+  @media (max-width:640px){
+    body{padding:8px 0}
+    .book{box-shadow:none}
+    .cover{padding:36px 16px 24px}
+    .cover h1{font-size:48px}
+    .cover .year-block{font-size:42px;padding:10px 22px}
+    .super{padding:16px 14px}
+    .sec{padding:28px 16px}
+    .signatures{padding:18px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="book">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="corner">YEAR <b>1998</b><br>VOL. 76<br>—<br>PRINT RUN<br>540 COPIES</div>
+    <div class="school">Atrium · Senior · High · School</div>
+    <h1>The <em>Memory</em><br>Book</h1>
+    <div class="year-block">1998</div>
+    <div class="motto">we made it. somehow.</div>
+  </div>
+
+  <!-- SUPERLATIVES -->
+  <div class="super">
+    <div class="item">
+      <div class="lbl">most likely to succeed</div>
+      <div class="nm">Soomin Yang</div>
+      <div class="desc">obviously</div>
+    </div>
+    <div class="item">
+      <div class="lbl">class clown</div>
+      <div class="nm">Jin Lee</div>
+      <div class="desc">we're sorry mr. park</div>
+    </div>
+    <div class="item">
+      <div class="lbl">best dressed</div>
+      <div class="nm">Hyewon Park</div>
+      <div class="desc">always</div>
+    </div>
+    <div class="item">
+      <div class="lbl">most likely to be on TV</div>
+      <div class="nm">Jaewoo Lee</div>
+      <div class="desc">good luck</div>
+    </div>
+  </div>
+
+  <!-- CLASS PORTRAITS -->
+  <section class="sec">
+    <div class="sec-head"><h2>The <em>Class</em> of '98</h2></div>
+    <div class="portraits">
+
+      <div class="student">
+        <div class="photo"></div>
+        <div class="name">Soomin Yang</div>
+        <div class="nick">"the curator"</div>
+        <div class="quote">"All my heroes wore glasses, so naturally..."</div>
+        <div class="activities"><b>President</b> · debate · art club · NYT pen-pal</div>
+      </div>
+
+      <div class="student t2">
+        <div class="photo"></div>
+        <div class="name">Jin Lee</div>
+        <div class="nick">"jinjin"</div>
+        <div class="quote">"my hobby is making mr. park slightly upset."</div>
+        <div class="activities"><b>VP</b> · band (drums) · school paper</div>
+      </div>
+
+      <div class="student t3">
+        <div class="photo"></div>
+        <div class="name">Hyewon Park</div>
+        <div class="nick">"hye!"</div>
+        <div class="quote">"I will be the editor of vogue korea."</div>
+        <div class="activities">art club · model UN · soccer (left wing)</div>
+      </div>
+
+      <div class="student t4">
+        <div class="photo"></div>
+        <div class="name">Jaewoo Lee</div>
+        <div class="nick">"woo woo"</div>
+        <div class="quote">"see you at the variety show."</div>
+        <div class="activities">drama (lead, 2y) · school paper · radio</div>
+      </div>
+
+      <div class="student">
+        <div class="photo"></div>
+        <div class="name">Minji Kim</div>
+        <div class="nick">"minmin"</div>
+        <div class="quote">"if you have my walkman, please return it."</div>
+        <div class="activities">orchestra (cello) · math club</div>
+      </div>
+
+      <div class="student t2">
+        <div class="photo"></div>
+        <div class="name">Hyunjin Park</div>
+        <div class="nick">"jin-park"</div>
+        <div class="quote">"whoever stole my lunch — i forgive you."</div>
+        <div class="activities">soccer (captain) · physics olympiad</div>
+      </div>
+
+      <div class="student t3">
+        <div class="photo"></div>
+        <div class="name">Yeji Choi</div>
+        <div class="nick">"yejij"</div>
+        <div class="quote">"i'm going to be a poet. don't tell my mom."</div>
+        <div class="activities">school paper (lit. ed) · book club · chess</div>
+      </div>
+
+      <div class="student t4">
+        <div class="photo"></div>
+        <div class="name">Sungho Im</div>
+        <div class="nick">"sungs"</div>
+        <div class="quote">"see you on the volleyball court of life."</div>
+        <div class="activities"><b>Capt.</b> volleyball · class treasurer · debate</div>
+      </div>
+
+      <div class="student">
+        <div class="photo"></div>
+        <div class="name">Areum Han</div>
+        <div class="nick">"areumdaum"</div>
+        <div class="quote">"do your homework. seriously."</div>
+        <div class="activities">student council · choir · model UN</div>
+      </div>
+
+      <div class="student t2">
+        <div class="photo"></div>
+        <div class="name">Daewon Kim</div>
+        <div class="nick">"k-dawg"</div>
+        <div class="quote">"meet you at the noodle shop. you know which one."</div>
+        <div class="activities">basketball · radio · cooking club</div>
+      </div>
+
+      <div class="student t3">
+        <div class="photo"></div>
+        <div class="name">Eunji Shin</div>
+        <div class="nick">"eunji-yah"</div>
+        <div class="quote">"i'm going to switzerland. don't ask me why."</div>
+        <div class="activities">german club · choir · skiing</div>
+      </div>
+
+      <div class="student t4">
+        <div class="photo"></div>
+        <div class="name">Taeho Yoon</div>
+        <div class="nick">"taenghi"</div>
+        <div class="quote">"i'll be the first person on this list to fly a plane."</div>
+        <div class="activities">science club · aviation society · math</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLUBS -->
+  <section class="sec">
+    <div class="sec-head"><h2>The <em>Clubs</em></h2></div>
+    <div class="clubs">
+      <div class="club">
+        <div class="label">— club —</div>
+        <div class="name">School Newspaper</div>
+        <div class="photo"></div>
+        <div class="cap"><b>The Atrium Argus</b> · 12 weekly issues. Editor-in-chief Soomin Yang got us banned from the cafeteria for one week after the meatloaf review.</div>
+      </div>
+      <div class="club">
+        <div class="label">— club —</div>
+        <div class="name">Photography Club</div>
+        <div class="photo"></div>
+        <div class="cap"><b>Darkroom · room 2-3</b> · we developed every yearbook photo in this room. half of them were of pigeons. sorry.</div>
+      </div>
+      <div class="club">
+        <div class="label">— club —</div>
+        <div class="name">Robotics Society</div>
+        <div class="photo"></div>
+        <div class="cap"><b>Inter-school cup '97 · 3rd</b> · the robot was named Boba and broke its left arm in week 2.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMORIES -->
+  <section class="sec">
+    <div class="sec-head"><h2>This year, <em>we</em>...</h2></div>
+    <div class="memories">
+      <div class="memory">
+        <div class="date">1997.09.01</div>
+        <div class="text">Started senior year. Mr. Park gave a speech that lasted <strong>47 minutes</strong>. We timed it.</div>
+      </div>
+      <div class="memory">
+        <div class="date">1997.10.18</div>
+        <div class="text">Field trip to <em>Gyeongju</em>. Three students fell asleep at the Bulguksa pagoda. (No names.)</div>
+      </div>
+      <div class="memory">
+        <div class="date">1997.12.24</div>
+        <div class="text">School concert — orchestra played <em>Pachelbel's Canon</em> for the 11th year in a row. We're sorry. Pachelbel is sorry.</div>
+      </div>
+      <div class="memory">
+        <div class="date">1998.03.14</div>
+        <div class="text">Sport's day. Hyewon ran the 200m faster than the math teacher. <strong>Photo evidence on page 38.</strong></div>
+      </div>
+      <div class="memory">
+        <div class="date">1998.04.22</div>
+        <div class="text">Talent show — Jin played <em>Eric Clapton's Tears in Heaven</em> on three drums. It worked, somehow.</div>
+      </div>
+      <div class="memory">
+        <div class="date">1998.06.18</div>
+        <div class="text"><em>Prom</em>. Three couples danced the cha-cha incorrectly but with conviction. Mr. Park danced better than expected.</div>
+      </div>
+      <div class="memory">
+        <div class="date">1998.07.12</div>
+        <div class="text">Last day. <strong>Graduation</strong>. We threw our hats. Two were never recovered.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGNATURES -->
+  <section class="sec">
+    <div class="sec-head"><h2>Sign <em>my</em> book</h2></div>
+    <div class="signatures">
+      <div class="head">— please be <em>nice</em> —</div>
+      <div class="grid">
+
+        <div class="sig">
+          <span class="doodle">★彡</span> jin!! you are the funniest person i know don't change ever ok?? except maybe the drum solo at lunch. that one. <em>change that one.</em> see u at jaehwa next semester ★
+          <span class="from">— soomin (your editor)</span>
+        </div>
+
+        <div class="sig">
+          dude. <em>du-de.</em> we made it. four years of mr. park's economics. four. years. anyway you owe me one (1) bowl of jjajangmyeon. with extra danmuji. don't forget. <span class="doodle">♪</span>
+          <span class="from">— hyewon ♥</span>
+        </div>
+
+        <div class="sig">
+          to the boy who sat behind me for three years and never once let me copy his english homework: <em>fine.</em> you were probably right. have a good life. don't be a lawyer. ♢
+          <span class="from">— minji</span>
+        </div>
+
+        <div class="sig">
+          <span class="doodle">✦</span> jaewoo, when you are famous on TV remember the time we got stuck in the elevator with mr. lee for 20 minutes. <em>specifically</em> remember the part where you cried.
+          <span class="from">— hyunjin</span>
+        </div>
+
+        <div class="sig">
+          stay sweet stay weird stay you. don't ever cut your bangs. they're working. <span class="doodle">☘</span>
+          <span class="from">— yeji</span>
+        </div>
+
+        <div class="sig">
+          h.a.g.s. !!!! (have a great summer!!!!) and a great life and a great whatever else you want to be great. <em>see you at the reunion.</em> i'm bringing the music. <span class="doodle">♬</span>
+          <span class="from">— daewon (the dj)</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FACULTY -->
+  <section class="sec">
+    <div class="sec-head"><h2>The <em>Faculty</em></h2></div>
+    <div class="faculty">
+      <div class="fac">
+        <div class="ph"></div>
+        <div class="nm">Mr. Park</div>
+        <div class="role">economics · 28 years</div>
+      </div>
+      <div class="fac">
+        <div class="ph"></div>
+        <div class="nm">Ms. Kim</div>
+        <div class="role">korean lit · 14 years</div>
+      </div>
+      <div class="fac">
+        <div class="ph"></div>
+        <div class="nm">Mr. Lee</div>
+        <div class="role">physics · 22 years</div>
+      </div>
+      <div class="fac">
+        <div class="ph"></div>
+        <div class="nm">Ms. Choi</div>
+        <div class="role">english · 9 years</div>
+      </div>
+      <div class="fac">
+        <div class="ph"></div>
+        <div class="nm">Mr. Han</div>
+        <div class="role">PE / soccer · 18 years</div>
+      </div>
+      <div class="fac">
+        <div class="ph"></div>
+        <div class="nm">Ms. Yoon</div>
+        <div class="role">art · 11 years</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bottom">
+    <b>The Atrium Senior High School Memory Book · Volume 76 · 1998</b><br>
+    Printed by the school press · Edited by the class of '98 · Photographs by the photo club<br>
+    For our teachers, our parents, and our future selves who will be embarrassed by all of this.
+    <div class="stamp">— don't ever <em>change</em> —</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

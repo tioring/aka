@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RIFT CHAMPIONS · Spring Split 2026 · Standings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#040217;
+    --bg-2:#0a0828;
+    --bg-3:#11103e;
+    --bg-4:#1a1855;
+    --line:#241f64;
+    --line-2:#3a2f9c;
+    --fg:#e6e8ff;
+    --fg-2:#9aa0d8;
+    --fg-3:#5d65a8;
+    --fg-4:#363f7c;
+    --neon:#00ffd1;
+    --neon-2:#00b8ff;
+    --magenta:#ff2bb5;
+    --purple:#a855f7;
+    --yellow:#ffe33d;
+    --red:#ff3b6b;
+    --green:#22ff88;
+  }
+  html,body{background:var(--bg);color:var(--fg)}
+  body{
+    font-family:'Inter','Orbitron',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 1200px 600px at 20% 0%,rgba(168,85,247,0.18) 0%,transparent 50%),
+      radial-gradient(ellipse 1000px 500px at 100% 30%,rgba(0,184,255,0.15) 0%,transparent 50%),
+      radial-gradient(ellipse 800px 400px at 50% 100%,rgba(255,43,181,0.12) 0%,transparent 50%),
+      var(--bg);
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  body::before{
+    content:'';
+    position:fixed;inset:0;
+    background:
+      repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,184,255,0.02) 3px,rgba(0,184,255,0.02) 4px);
+    pointer-events:none;
+    z-index:0;
+  }
+  .display{font-family:'Orbitron',sans-serif;font-feature-settings:normal}
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:24px 22px 80px;position:relative;z-index:1}
+
+  /* TOP BAR */
+  .topbar{
+    display:grid;grid-template-columns:auto 1fr auto;
+    gap:18px;align-items:center;
+    padding:10px 0;
+    margin-bottom:32px;
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;
+    letter-spacing:0.18em;color:var(--neon);
+    text-shadow:0 0 12px rgba(0,255,209,0.5);
+  }
+  .logo .mark{
+    width:28px;height:28px;
+    background:linear-gradient(135deg,var(--neon) 0%,var(--magenta) 100%);
+    transform:rotate(45deg);
+    box-shadow:0 0 16px rgba(0,255,209,0.5);
+  }
+  .live-indic{
+    justify-self:center;
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,43,181,0.1);
+    border:1px solid var(--magenta);
+    color:var(--magenta);
+    padding:5px 14px;border-radius:99px;
+    font-family:'Orbitron',sans-serif;font-weight:700;
+    font-size:11px;letter-spacing:0.22em;
+    text-transform:uppercase;
+    box-shadow:0 0 16px rgba(255,43,181,0.3);
+  }
+  .live-indic .led{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--magenta);
+    box-shadow:0 0 10px var(--magenta);
+    animation:pulse 1.4s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .topbar .meta{
+    text-align:right;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--fg-3);letter-spacing:0.04em;
+  }
+  .topbar .meta b{color:var(--neon-2)}
+
+  /* HERO */
+  .hero{
+    text-align:center;
+    margin-bottom:48px;
+    position:relative;
+  }
+  .hero .split{
+    font-family:'Orbitron',sans-serif;
+    font-size:11px;letter-spacing:0.42em;
+    color:var(--neon-2);
+    margin-bottom:12px;font-weight:600;
+    text-shadow:0 0 8px rgba(0,184,255,0.5);
+  }
+  .hero h1{
+    font-family:'Orbitron',sans-serif;
+    font-weight:900;
+    font-size:clamp(48px,8vw,108px);
+    line-height:1;letter-spacing:0.04em;
+    background:linear-gradient(180deg,var(--neon) 0%,var(--neon-2) 50%,var(--purple) 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:6px;
+  }
+  .hero h1 .em{
+    -webkit-text-fill-color:var(--magenta);
+    text-shadow:0 0 24px rgba(255,43,181,0.4);
+  }
+  .hero .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--fg-2);
+    margin-top:8px;
+  }
+  .hero .tag .sep{color:var(--fg-4);margin:0 10px}
+  .hero .tag b{color:var(--yellow)}
+
+  /* PRIZE STRIP */
+  .prize-strip{
+    margin-bottom:32px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+  }
+  @media (max-width:760px){.prize-strip{grid-template-columns:repeat(2,1fr)}}
+  .ps-card{
+    background:linear-gradient(160deg,var(--bg-2) 0%,var(--bg-3) 100%);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 18px;
+    position:relative;overflow:hidden;
+  }
+  .ps-card::before{
+    content:'';position:absolute;
+    top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent 0%,var(--c) 50%,transparent 100%);
+  }
+  .ps-card .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--fg-3);font-weight:600;margin-bottom:8px;
+  }
+  .ps-card .val{
+    font-family:'Orbitron',sans-serif;
+    font-weight:900;font-size:28px;
+    color:var(--c);line-height:1;
+    text-shadow:0 0 12px var(--cglow);letter-spacing:-0.005em;
+  }
+  .ps-card .val .un{
+    font-size:13px;font-weight:500;color:var(--fg-2);
+    margin-left:4px;text-shadow:none;letter-spacing:0;
+  }
+  .ps-card .sub{
+    margin-top:6px;font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;color:var(--fg-3);letter-spacing:0.04em;
+  }
+
+  /* SECTION */
+  .grid{
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:24px;
+    margin-bottom:24px;
+  }
+  @media (max-width:980px){.grid{grid-template-columns:1fr}}
+
+  .panel{
+    background:linear-gradient(180deg,var(--bg-2) 0%,rgba(10,8,40,0.6) 100%);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+  }
+  .panel::before{
+    content:'';position:absolute;
+    top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent 0%,var(--neon) 50%,transparent 100%);
+    opacity:0.5;
+  }
+  .ph{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 18px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(90deg,var(--bg-3) 0%,transparent 100%);
+  }
+  .ph h2{
+    font-family:'Orbitron',sans-serif;
+    font-weight:700;font-size:13px;
+    letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--fg);
+  }
+  .ph h2::before{content:'▸ ';color:var(--neon)}
+  .ph .right{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--fg-3);letter-spacing:0.06em;
+  }
+
+  /* STANDINGS TABLE */
+  .stand{padding:0}
+  .stand .row{
+    display:grid;
+    grid-template-columns:30px 36px 1fr auto auto auto;
+    gap:14px;align-items:center;
+    padding:11px 18px;
+    border-bottom:1px solid var(--line);
+    transition:background .15s;
+  }
+  .stand .row:hover{background:rgba(168,85,247,0.08)}
+  .stand .row .rk{
+    font-family:'Orbitron',sans-serif;font-weight:900;font-size:18px;
+    color:var(--fg-2);letter-spacing:-0.02em;text-align:center;
+  }
+  .stand .row.gold .rk{color:var(--yellow);text-shadow:0 0 10px var(--yellow)}
+  .stand .row.silver .rk{color:#c0c8de}
+  .stand .row.bronze .rk{color:#d4894a}
+  .stand .row .lg{
+    width:32px;height:32px;border-radius:6px;
+    display:grid;place-items:center;
+    color:#fff;font-weight:700;font-size:13px;
+    font-family:'Orbitron',sans-serif;letter-spacing:-0.01em;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset;
+  }
+  .stand .row .nm{
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:14px;
+    color:var(--fg);letter-spacing:0.04em;
+  }
+  .stand .row .nm .nick{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;color:var(--fg-3);
+    letter-spacing:0.04em;font-weight:400;text-transform:uppercase;
+    margin-top:2px;
+  }
+  .stand .row .wl{
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+    color:var(--fg);font-weight:600;
+  }
+  .stand .row .wl .w{color:var(--green)}
+  .stand .row .wl .l{color:var(--red)}
+  .stand .row .wr{
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+    color:var(--neon);font-weight:600;letter-spacing:0.04em;
+    width:60px;text-align:right;
+  }
+  .stand .row .form{display:flex;gap:3px}
+  .stand .row .form .b{
+    width:14px;height:14px;border-radius:3px;
+    font-size:9px;font-weight:700;
+    display:grid;place-items:center;color:#000;
+    font-family:'Orbitron',sans-serif;
+  }
+  .stand .row .form .b.w{background:var(--green);box-shadow:0 0 6px rgba(34,255,136,0.5)}
+  .stand .row .form .b.l{background:var(--red);box-shadow:0 0 6px rgba(255,59,107,0.5);color:#fff}
+
+  /* PLAYERS PANEL */
+  .players{padding:0}
+  .player{
+    display:grid;grid-template-columns:36px 1fr auto;
+    gap:12px;align-items:center;
+    padding:11px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .player:last-child{border-bottom:none}
+  .player .av{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,var(--c) 0%,#000 100%);
+    color:#fff;font-weight:700;font-size:14px;
+    display:grid;place-items:center;
+    font-family:'Orbitron',sans-serif;
+    box-shadow:0 0 8px var(--cglow);
+    border:1px solid var(--c);
+  }
+  .player .info{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .player .info .ign{
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:14px;
+    color:var(--fg);letter-spacing:0.04em;
+  }
+  .player .info .meta-line{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--fg-3);letter-spacing:0.04em;
+  }
+  .player .info .meta-line b{color:var(--neon-2);font-weight:600}
+  .player .stats{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    text-align:right;color:var(--fg-2);letter-spacing:0.04em;
+    line-height:1.3;
+  }
+  .player .stats .kda{font-size:14px;color:var(--magenta);font-weight:700;display:block}
+
+  /* BRACKET */
+  .bracket{
+    padding:24px 22px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;align-items:center;
+    overflow-x:auto;
+    min-height:420px;
+  }
+  .br-col{display:flex;flex-direction:column;gap:14px;justify-content:space-around}
+  .br-col h4{
+    font-family:'Orbitron',sans-serif;
+    font-size:10px;letter-spacing:0.32em;text-transform:uppercase;
+    color:var(--fg-3);text-align:center;font-weight:600;margin-bottom:4px;
+  }
+  .br-match{
+    background:linear-gradient(160deg,var(--bg-3) 0%,var(--bg-2) 100%);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+  }
+  .br-match::before{
+    content:'';position:absolute;
+    top:0;left:0;width:3px;height:100%;
+    background:var(--neon);
+    box-shadow:0 0 6px var(--neon);
+  }
+  .br-match.final::before{background:var(--magenta);box-shadow:0 0 8px var(--magenta)}
+  .br-match.locked::before{background:var(--fg-4);box-shadow:none}
+  .br-team{
+    display:grid;grid-template-columns:24px 1fr auto;
+    gap:8px;align-items:center;
+    padding:8px 10px;
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:12px;
+    letter-spacing:0.04em;
+  }
+  .br-team:first-child{border-bottom:1px solid var(--line)}
+  .br-team .lg{
+    width:18px;height:18px;border-radius:3px;color:#fff;font-size:9px;
+    display:grid;place-items:center;letter-spacing:0;
+  }
+  .br-team .nm{color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .br-team .sc{
+    color:var(--fg-2);font-family:'JetBrains Mono',monospace;font-size:13px;
+  }
+  .br-team.win .nm{color:var(--neon)}
+  .br-team.win .sc{color:var(--neon);font-weight:700}
+  .br-team.lose{opacity:0.5}
+  .br-team.tba .nm{color:var(--fg-4);font-style:italic;font-weight:400;letter-spacing:0.06em}
+  .br-time{
+    text-align:center;
+    padding:5px 10px;
+    background:rgba(0,184,255,0.06);
+    border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;letter-spacing:0.16em;
+    color:var(--fg-3);text-transform:uppercase;
+  }
+  .br-time.live{color:var(--magenta)}
+  .br-time.live::before{content:'● ';animation:pulse 1.4s infinite}
+
+  /* MATCH HISTORY */
+  .match-hist{padding:0}
+  .match-hist .game{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:12px;align-items:center;
+    padding:10px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .match-hist .game:last-child{border-bottom:none}
+  .match-hist .game .tm{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--fg-3);letter-spacing:0.04em;
+    text-align:center;line-height:1.3;
+  }
+  .match-hist .game .tm b{
+    display:block;color:var(--neon-2);font-weight:600;font-size:12px;
+  }
+  .match-hist .game .matchup{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:14px;align-items:center;
+    font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.04em;
+  }
+  .match-hist .game .matchup .t-a{text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+  .match-hist .game .matchup .t-b{display:flex;align-items:center;gap:8px}
+  .match-hist .game .matchup .t-a .lg,
+  .match-hist .game .matchup .t-b .lg{width:18px;height:18px;border-radius:3px;font-size:9px;display:grid;place-items:center;letter-spacing:0;color:#fff}
+  .match-hist .game .matchup .vs{color:var(--fg-3);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em}
+  .match-hist .game .matchup .sc{
+    color:var(--fg);font-family:'JetBrains Mono',monospace;font-size:14px;
+    margin:0 4px;
+  }
+  .match-hist .game .matchup .sc.w{color:var(--neon)}
+  .match-hist .game .stat{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--fg-3);text-align:right;letter-spacing:0.04em;
+  }
+  .match-hist .game .stat b{color:var(--yellow)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- TOP -->
+  <div class="topbar">
+    <div class="logo"><span class="mark"></span><span>RIFT · CHAMPIONS · LEAGUE</span></div>
+    <span class="live-indic"><span class="led"></span>SPRING SPLIT · WEEK 6</span>
+    <div class="meta">2026.05.02 · KST <b>· 18:00</b></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="split">— spring split · 2026 ·</div>
+    <h1>STAN<span class="em">DINGS</span></h1>
+    <div class="tag">10 teams<span class="sep">·</span><b>56</b> matches played<span class="sep">·</span>4 weeks remaining</div>
+  </div>
+
+  <!-- PRIZE STRIP -->
+  <div class="prize-strip">
+    <div class="ps-card" style="--c:var(--neon);--cglow:rgba(0,255,209,0.5)">
+      <div class="lbl">— prize pool</div>
+      <div class="val">$2.4<span class="un">M</span></div>
+      <div class="sub">+ playoff bonus</div>
+    </div>
+    <div class="ps-card" style="--c:var(--magenta);--cglow:rgba(255,43,181,0.5)">
+      <div class="lbl">— viewership</div>
+      <div class="val">428<span class="un">K peak</span></div>
+      <div class="sub">last week's grand final</div>
+    </div>
+    <div class="ps-card" style="--c:var(--purple);--cglow:rgba(168,85,247,0.5)">
+      <div class="lbl">— win streak</div>
+      <div class="val">12<span class="un">games</span></div>
+      <div class="sub">VOLT · undefeated wk 4-6</div>
+    </div>
+    <div class="ps-card" style="--c:var(--yellow);--cglow:rgba(255,227,61,0.5)">
+      <div class="lbl">— mvp lead</div>
+      <div class="val">9.2<span class="un">/100</span></div>
+      <div class="sub">VLT · Sungho "drift" Im</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- STANDINGS -->
+    <div class="panel">
+      <div class="ph">
+        <h2>League Standings</h2>
+        <div class="right">w6 · 56 matches · ↻ live</div>
+      </div>
+      <div class="stand">
+        <div class="row gold">
+          <span class="rk">01</span>
+          <span class="lg" style="background:linear-gradient(135deg,#00ffd1,#00b8ff)">VLT</span>
+          <span class="nm">VOLT GAMING<span class="nick">VLT · Seoul · 2019</span></span>
+          <span class="wl"><span class="w">10</span>–<span class="l">2</span></span>
+          <span class="wr">+18</span>
+          <span class="form">
+            <span class="b w">W</span><span class="b w">W</span><span class="b w">W</span><span class="b w">W</span><span class="b l">L</span>
+          </span>
+        </div>
+        <div class="row silver">
+          <span class="rk">02</span>
+          <span class="lg" style="background:linear-gradient(135deg,#ff2bb5,#a855f7)">NX</span>
+          <span class="nm">NEXUS PRIME<span class="nick">NX · Busan · 2017</span></span>
+          <span class="wl"><span class="w">9</span>–<span class="l">3</span></span>
+          <span class="wr">+12</span>
+          <span class="form">
+            <span class="b w">W</span><span class="b w">W</span><span class="b l">L</span><span class="b w">W</span><span class="b w">W</span>
+          </span>
+        </div>
+        <div class="row bronze">
+          <span class="rk">03</span>
+          <span class="lg" style="background:linear-gradient(135deg,#ffe33d,#ff8c1c)">SG</span>
+          <span class="nm">SOLAR GANG<span class="nick">SG · Daegu · 2020</span></span>
+          <span class="wl"><span class="w">8</span>–<span class="l">4</span></span>
+          <span class="wr">+8</span>
+          <span class="form">
+            <span class="b w">W</span><span class="b l">L</span><span class="b w">W</span><span class="b w">W</span><span class="b l">L</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">04</span>
+          <span class="lg" style="background:linear-gradient(135deg,#22ff88,#0d9d68)">FRX</span>
+          <span class="nm">FORTRIX<span class="nick">FRX · Incheon · 2021</span></span>
+          <span class="wl"><span class="w">7</span>–<span class="l">5</span></span>
+          <span class="wr">+3</span>
+          <span class="form">
+            <span class="b l">L</span><span class="b w">W</span><span class="b w">W</span><span class="b l">L</span><span class="b w">W</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">05</span>
+          <span class="lg" style="background:linear-gradient(135deg,#a855f7,#3b1d8c)">KZN</span>
+          <span class="nm">KOZN ESPORTS<span class="nick">KZN · Gwangju · 2022</span></span>
+          <span class="wl"><span class="w">6</span>–<span class="l">6</span></span>
+          <span class="wr">−1</span>
+          <span class="form">
+            <span class="b w">W</span><span class="b w">W</span><span class="b l">L</span><span class="b l">L</span><span class="b w">W</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">06</span>
+          <span class="lg" style="background:linear-gradient(135deg,#ff3b6b,#a82240)">RG</span>
+          <span class="nm">REDLINE<span class="nick">RG · Daejeon · 2018</span></span>
+          <span class="wl"><span class="w">6</span>–<span class="l">6</span></span>
+          <span class="wr">−2</span>
+          <span class="form">
+            <span class="b l">L</span><span class="b w">W</span><span class="b l">L</span><span class="b w">W</span><span class="b w">W</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">07</span>
+          <span class="lg" style="background:linear-gradient(135deg,#0ea5e9,#1e3a8a)">AQ</span>
+          <span class="nm">AQUA RIFT<span class="nick">AQ · Suwon · 2023</span></span>
+          <span class="wl"><span class="w">5</span>–<span class="l">7</span></span>
+          <span class="wr">−6</span>
+          <span class="form">
+            <span class="b l">L</span><span class="b l">L</span><span class="b w">W</span><span class="b l">L</span><span class="b w">W</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">08</span>
+          <span class="lg" style="background:linear-gradient(135deg,#737373,#262626)">BLK</span>
+          <span class="nm">BLACKBOX<span class="nick">BLK · Ulsan · 2018</span></span>
+          <span class="wl"><span class="w">4</span>–<span class="l">8</span></span>
+          <span class="wr">−10</span>
+          <span class="form">
+            <span class="b l">L</span><span class="b l">L</span><span class="b l">L</span><span class="b w">W</span><span class="b l">L</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">09</span>
+          <span class="lg" style="background:linear-gradient(135deg,#fbbf24,#7c2d12)">SK</span>
+          <span class="nm">SAKURA WAVE<span class="nick">SK · Seongnam · 2024</span></span>
+          <span class="wl"><span class="w">3</span>–<span class="l">9</span></span>
+          <span class="wr">−14</span>
+          <span class="form">
+            <span class="b l">L</span><span class="b w">W</span><span class="b l">L</span><span class="b l">L</span><span class="b l">L</span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="rk">10</span>
+          <span class="lg" style="background:linear-gradient(135deg,#f97316,#7c2d12)">PHX</span>
+          <span class="nm">PHOENIX<span class="nick">PHX · Jeju · 2024</span></span>
+          <span class="wl"><span class="w">2</span>–<span class="l">10</span></span>
+          <span class="wr">−18</span>
+          <span class="form">
+            <span class="b l">L</span><span class="b l">L</span><span class="b l">L</span><span class="b w">W</span><span class="b l">L</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP PLAYERS -->
+    <div class="panel">
+      <div class="ph">
+        <h2>Top Players · MVP Race</h2>
+        <div class="right">stats · last 14 days</div>
+      </div>
+      <div class="players">
+        <div class="player">
+          <span class="av" style="--c:var(--neon-2);--cglow:rgba(0,184,255,0.5)">SI</span>
+          <div class="info">
+            <span class="ign">DRIFT</span>
+            <span class="meta-line">Sungho Im · <b>VLT</b> · mid · 24</span>
+          </div>
+          <div class="stats">
+            <span class="kda">9.2/2.4/8.1</span>
+            <span>vision 38 · cs/m 9.4</span>
+          </div>
+        </div>
+        <div class="player">
+          <span class="av" style="--c:var(--magenta);--cglow:rgba(255,43,181,0.5)">JL</span>
+          <div class="info">
+            <span class="ign">VOIDLINE</span>
+            <span class="meta-line">Jin Lee · <b>NX</b> · adc · 22</span>
+          </div>
+          <div class="stats">
+            <span class="kda">8.4/2.8/6.9</span>
+            <span>dmg 38.2k · cs/m 9.8</span>
+          </div>
+        </div>
+        <div class="player">
+          <span class="av" style="--c:var(--yellow);--cglow:rgba(255,227,61,0.5)">SY</span>
+          <div class="info">
+            <span class="ign">SAGE</span>
+            <span class="meta-line">Soomin Yang · <b>SG</b> · jungle · 26</span>
+          </div>
+          <div class="stats">
+            <span class="kda">5.8/3.1/12.4</span>
+            <span>vision 64 · KP 78%</span>
+          </div>
+        </div>
+        <div class="player">
+          <span class="av" style="--c:var(--green);--cglow:rgba(34,255,136,0.5)">HP</span>
+          <div class="info">
+            <span class="ign">HALCYON</span>
+            <span class="meta-line">Hyewon Park · <b>FRX</b> · top · 23</span>
+          </div>
+          <div class="stats">
+            <span class="kda">6.2/3.4/5.8</span>
+            <span>solo k 18 · cs/m 8.9</span>
+          </div>
+        </div>
+        <div class="player">
+          <span class="av" style="--c:var(--purple);--cglow:rgba(168,85,247,0.5)">JW</span>
+          <div class="info">
+            <span class="ign">RAVEN</span>
+            <span class="meta-line">Jaewoo Lee · <b>KZN</b> · sup · 25</span>
+          </div>
+          <div class="stats">
+            <span class="kda">2.1/3.8/14.2</span>
+            <span>vision 92 · roams 38</span>
+          </div>
+        </div>
+        <div class="player">
+          <span class="av" style="--c:var(--red);--cglow:rgba(255,59,107,0.5)">MJ</span>
+          <div class="info">
+            <span class="ign">CINDER</span>
+            <span class="meta-line">Minji Kim · <b>RG</b> · mid · 21</span>
+          </div>
+          <div class="stats">
+            <span class="kda">7.8/3.2/5.4</span>
+            <span>dmg 32.4k · solo k 14</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BRACKET -->
+  <div class="panel" style="margin-bottom:24px">
+    <div class="ph">
+      <h2>Playoff Bracket · Projection</h2>
+      <div class="right">based on current standings · top 6</div>
+    </div>
+    <div class="bracket">
+
+      <div class="br-col">
+        <h4>— Quarterfinals</h4>
+        <div class="br-match">
+          <div class="br-team win"><span class="lg" style="background:linear-gradient(135deg,#22ff88,#0d9d68)">FRX</span><span class="nm">Fortrix</span><span class="sc">3</span></div>
+          <div class="br-team lose"><span class="lg" style="background:linear-gradient(135deg,#a855f7,#3b1d8c)">KZN</span><span class="nm">Kozn</span><span class="sc">1</span></div>
+          <div class="br-time">may 12 · 19:00</div>
+        </div>
+        <div class="br-match">
+          <div class="br-team"><span class="lg" style="background:linear-gradient(135deg,#ffe33d,#ff8c1c)">SG</span><span class="nm">Solar Gang</span><span class="sc">—</span></div>
+          <div class="br-team"><span class="lg" style="background:linear-gradient(135deg,#ff3b6b,#a82240)">RG</span><span class="nm">Redline</span><span class="sc">—</span></div>
+          <div class="br-time live">live · game 3 · 21:18</div>
+        </div>
+      </div>
+
+      <div class="br-col">
+        <h4>— Semifinals</h4>
+        <div class="br-match">
+          <div class="br-team"><span class="lg" style="background:linear-gradient(135deg,#00ffd1,#00b8ff)">VLT</span><span class="nm">Volt Gaming</span><span class="sc">—</span></div>
+          <div class="br-team"><span class="lg" style="background:linear-gradient(135deg,#22ff88,#0d9d68)">FRX</span><span class="nm">Fortrix</span><span class="sc">—</span></div>
+          <div class="br-time">may 18 · 17:00</div>
+        </div>
+        <div class="br-match locked">
+          <div class="br-team tba"><span class="lg" style="background:#363f7c">?</span><span class="nm">winner of QF2</span><span class="sc">—</span></div>
+          <div class="br-team"><span class="lg" style="background:linear-gradient(135deg,#ff2bb5,#a855f7)">NX</span><span class="nm">Nexus Prime</span><span class="sc">—</span></div>
+          <div class="br-time">may 18 · 21:00</div>
+        </div>
+      </div>
+
+      <div class="br-col" style="justify-content:center">
+        <h4>— Grand Final</h4>
+        <div class="br-match final">
+          <div class="br-team tba"><span class="lg" style="background:#363f7c">?</span><span class="nm">SF1 winner</span><span class="sc">—</span></div>
+          <div class="br-team tba"><span class="lg" style="background:#363f7c">?</span><span class="nm">SF2 winner</span><span class="sc">—</span></div>
+          <div class="br-time">may 25 · 19:00 · BO5</div>
+        </div>
+      </div>
+
+      <div class="br-col" style="justify-content:center">
+        <h4>— Champion</h4>
+        <div style="text-align:center;padding:32px 14px;border:1.5px dashed var(--line-2);border-radius:8px;background:rgba(255,43,181,0.04)">
+          <div style="font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;color:var(--fg-3);margin-bottom:14px;font-weight:600">— TBD —</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;background:linear-gradient(180deg,var(--yellow),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:8px">TROPHY</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fg-3);letter-spacing:0.18em">$1.2M · qualifier slot</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RECENT MATCHES -->
+  <div class="panel">
+    <div class="ph">
+      <h2>Recent Matches</h2>
+      <div class="right">last 8 · all leagues</div>
+    </div>
+    <div class="match-hist">
+
+      <div class="game">
+        <span class="tm"><b>FINAL</b>05.01 · 22:14</span>
+        <div class="matchup">
+          <span class="t-a"><span class="nm" style="color:var(--neon)">VOLT</span><span class="lg" style="background:linear-gradient(135deg,#00ffd1,#00b8ff)">VLT</span></span>
+          <span><span class="sc w">3</span><span class="vs">vs</span><span class="sc">1</span></span>
+          <span class="t-b"><span class="lg" style="background:linear-gradient(135deg,#737373,#262626)">BLK</span><span class="nm" style="opacity:0.6">BLACKBOX</span></span>
+        </div>
+        <div class="stat">42 min<br><b>MVP · DRIFT</b></div>
+      </div>
+
+      <div class="game">
+        <span class="tm"><b>FINAL</b>05.01 · 19:48</span>
+        <div class="matchup">
+          <span class="t-a"><span class="nm" style="color:var(--neon)">NEXUS</span><span class="lg" style="background:linear-gradient(135deg,#ff2bb5,#a855f7)">NX</span></span>
+          <span><span class="sc w">3</span><span class="vs">vs</span><span class="sc">2</span></span>
+          <span class="t-b"><span class="lg" style="background:linear-gradient(135deg,#22ff88,#0d9d68)">FRX</span><span class="nm" style="opacity:0.6">FORTRIX</span></span>
+        </div>
+        <div class="stat">52 min<br><b>MVP · VOIDLINE</b></div>
+      </div>
+
+      <div class="game">
+        <span class="tm"><b>FINAL</b>04.30 · 21:40</span>
+        <div class="matchup">
+          <span class="t-a"><span class="nm" style="opacity:0.6">REDLINE</span><span class="lg" style="background:linear-gradient(135deg,#ff3b6b,#a82240)">RG</span></span>
+          <span><span class="sc">1</span><span class="vs">vs</span><span class="sc w">3</span></span>
+          <span class="t-b"><span class="lg" style="background:linear-gradient(135deg,#ffe33d,#ff8c1c)">SG</span><span class="nm" style="color:var(--neon)">SOLAR</span></span>
+        </div>
+        <div class="stat">38 min<br><b>MVP · SAGE</b></div>
+      </div>
+
+      <div class="game">
+        <span class="tm"><b>FINAL</b>04.30 · 18:22</span>
+        <div class="matchup">
+          <span class="t-a"><span class="nm" style="color:var(--neon)">VOLT</span><span class="lg" style="background:linear-gradient(135deg,#00ffd1,#00b8ff)">VLT</span></span>
+          <span><span class="sc w">3</span><span class="vs">vs</span><span class="sc">0</span></span>
+          <span class="t-b"><span class="lg" style="background:linear-gradient(135deg,#a855f7,#3b1d8c)">KZN</span><span class="nm" style="opacity:0.6">KOZN</span></span>
+        </div>
+        <div class="stat">28 min<br><b>MVP · DRIFT</b></div>
+      </div>
+
+      <div class="game">
+        <span class="tm"><b>FINAL</b>04.29 · 21:08</span>
+        <div class="matchup">
+          <span class="t-a"><span class="nm" style="color:var(--neon)">FORTRIX</span><span class="lg" style="background:linear-gradient(135deg,#22ff88,#0d9d68)">FRX</span></span>
+          <span><span class="sc w">3</span><span class="vs">vs</span><span class="sc">2</span></span>
+          <span class="t-b"><span class="lg" style="background:linear-gradient(135deg,#fbbf24,#7c2d12)">SK</span><span class="nm" style="opacity:0.6">SAKURA</span></span>
+        </div>
+        <div class="stat">45 min<br><b>MVP · HALCYON</b></div>
+      </div>
+
+      <div class="game">
+        <span class="tm"><b>FINAL</b>04.29 · 18:00</span>
+        <div class="matchup">
+          <span class="t-a"><span class="nm" style="opacity:0.6">PHOENIX</span><span class="lg" style="background:linear-gradient(135deg,#f97316,#7c2d12)">PHX</span></span>
+          <span><span class="sc">0</span><span class="vs">vs</span><span class="sc w">3</span></span>
+          <span class="t-b"><span class="lg" style="background:linear-gradient(135deg,#0ea5e9,#1e3a8a)">AQ</span><span class="nm" style="color:var(--neon)">AQUA</span></span>
+        </div>
+        <div class="stat">26 min<br><b>MVP · TIDAL</b></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
