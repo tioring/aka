@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Design Preview — Four Themes</title>
+<title>Design Gallery — A reference of front-end design themes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,16 +14,14 @@
     --bg:#0a0a0c;
     --bg-2:#141418;
     --bg-3:#1d1d22;
+    --bg-4:#27272d;
     --fg:#f4f4f5;
     --fg-2:#a1a1aa;
     --fg-3:#71717a;
+    --fg-4:#52525b;
     --line:#27272a;
     --line-2:#3f3f46;
-
-    --c-mnemonic:#ff5b2e;
-    --c-conversion:#5b3df5;
-    --c-reading:#b13a1f;
-    --c-atelier:#c5a572;
+    --accent:#a78bfa;
   }
   html,body{height:100%;background:var(--bg);color:var(--fg)}
   body{
@@ -43,14 +41,15 @@
   header{
     border-bottom:1px solid var(--line);
     background:var(--bg);
-    z-index:10;
+    z-index:30;
+    position:relative;
   }
   .bar{
     display:grid;
     grid-template-columns:auto 1fr auto;
     gap:24px;
     align-items:center;
-    padding:14px 22px;
+    padding:12px 22px;
     height:56px;
   }
   .brand{
@@ -59,67 +58,203 @@
   }
   .brand .mark{
     width:22px;height:22px;border-radius:6px;
-    background:linear-gradient(135deg,var(--c-mnemonic) 0%,var(--c-conversion) 33%,var(--c-reading) 66%,var(--c-atelier) 100%);
+    background:conic-gradient(from 180deg at 50% 50%,#ff5b2e,#ffd23f,#5ed4c4,#5b3df5,#ff79b0,#ff5b2e);
     display:grid;place-items:center;
     color:#fff;font-weight:700;font-size:11px;
     letter-spacing:-0.01em;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08);
   }
   .brand .label{color:var(--fg)}
   .brand .sub{color:var(--fg-3);font-weight:400;margin-left:6px;font-size:13px}
 
-  /* SEGMENTED CONTROL */
-  .seg{
-    justify-self:center;
-    display:flex;
+  /* DROPDOWN TRIGGER */
+  .dd-wrap{justify-self:center;position:relative;width:100%;max-width:520px}
+  .dd-trigger{
+    width:100%;
+    display:grid;
+    grid-template-columns:auto 1fr auto auto;
+    align-items:center;
+    gap:12px;
+    padding:8px 14px 8px 12px;
     background:var(--bg-2);
     border:1px solid var(--line);
     border-radius:9px;
-    padding:3px;
-    gap:2px;
-    position:relative;
-  }
-  .seg button{
-    border:none;background:transparent;cursor:pointer;
-    color:var(--fg-2);
-    font:inherit;font-weight:500;font-size:13px;
-    padding:7px 14px 7px 30px;
-    border-radius:6px;
-    display:flex;align-items:center;gap:0;
-    transition:color .15s,background .15s;
-    position:relative;
-    letter-spacing:-0.005em;
-  }
-  .seg button::before{
-    content:'';
-    position:absolute;
-    left:11px;top:50%;transform:translateY(-50%);
-    width:10px;height:10px;border-radius:3px;
-    background:var(--seg-color);
-    box-shadow:0 0 0 1px rgba(255,255,255,0.06);
-  }
-  .seg button:hover{color:var(--fg)}
-  .seg button.active{
-    background:var(--bg-3);
     color:var(--fg);
-    box-shadow:0 1px 0 rgba(255,255,255,0.04) inset,0 1px 2px rgba(0,0,0,0.3);
+    cursor:pointer;
+    font:inherit;
+    transition:background .15s,border-color .15s;
+    text-align:left;
   }
-  .seg button .key{
-    margin-left:10px;
+  .dd-trigger:hover{background:var(--bg-3);border-color:var(--line-2)}
+  .dd-trigger.open{background:var(--bg-3);border-color:var(--accent)}
+  .dd-trigger .swatch{
+    width:14px;height:14px;border-radius:4px;
+    background:var(--seg-color,var(--fg-3));
+    flex-shrink:0;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .dd-trigger .name{
+    font-weight:500;font-size:13.5px;letter-spacing:-0.005em;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .dd-trigger .name .cat{color:var(--fg-3);font-weight:400;margin-right:8px}
+  .dd-trigger .count{
     font-family:'JetBrains Mono',monospace;
-    font-size:10px;
+    font-size:10.5px;
     color:var(--fg-3);
-    background:var(--bg);
     border:1px solid var(--line);
     border-radius:4px;
-    padding:1px 5px;
+    padding:2px 7px;
+    letter-spacing:0.05em;
+  }
+  .dd-trigger .chev{
+    color:var(--fg-3);
+    transition:transform .2s,color .15s;
+    line-height:0;
+  }
+  .dd-trigger.open .chev{transform:rotate(180deg);color:var(--accent)}
+  .dd-trigger .chev svg{display:block}
+
+  /* DROPDOWN PANEL */
+  .dd-panel{
+    position:absolute;top:calc(100% + 6px);left:0;right:0;
+    background:var(--bg-2);
+    border:1px solid var(--line-2);
+    border-radius:11px;
+    box-shadow:0 16px 48px -12px rgba(0,0,0,0.6),0 4px 16px rgba(0,0,0,0.4);
+    overflow:hidden;
+    display:none;
+    z-index:40;
+    max-height:calc(100vh - 110px);
+    flex-direction:column;
+  }
+  .dd-panel.open{display:flex;animation:dd-in .18s ease}
+  @keyframes dd-in{
+    from{opacity:0;transform:translateY(-4px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .dd-search{
+    padding:10px 14px 10px 38px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg-3);
+    position:relative;
+    flex-shrink:0;
+  }
+  .dd-search::before{
+    content:'';
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:14px;height:14px;
+    background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23a1a1aa" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>') center/contain no-repeat;
+  }
+  .dd-search input{
+    width:100%;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--fg);
+    font:inherit;
+    font-size:14px;
+  }
+  .dd-search input::placeholder{color:var(--fg-3)}
+  .dd-list{
+    overflow-y:auto;
+    padding:4px;
+    flex:1;
+  }
+  .dd-list::-webkit-scrollbar{width:8px}
+  .dd-list::-webkit-scrollbar-thumb{background:var(--bg-4);border-radius:4px}
+  .dd-list::-webkit-scrollbar-track{background:transparent}
+
+  .dd-cat{
+    padding:10px 12px 6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--fg-4);
     font-weight:500;
   }
-  .seg button.active .key{color:var(--fg-2);border-color:var(--line-2)}
+  .dd-cat:not(:first-child){border-top:1px solid var(--line);margin-top:4px}
 
-  .right{
-    display:flex;align-items:center;gap:14px;
-    color:var(--fg-3);font-size:12.5px;
+  .dd-item{
+    display:grid;
+    grid-template-columns:18px 1fr auto;
+    gap:10px;
+    align-items:center;
+    padding:8px 10px;
+    border-radius:7px;
+    cursor:pointer;
+    transition:background .1s;
   }
+  .dd-item:hover,.dd-item.cursor{background:var(--bg-3)}
+  .dd-item.active{background:var(--bg-4)}
+  .dd-item .sw{
+    width:12px;height:12px;border-radius:3px;
+    background:var(--item-color);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .dd-item .meta{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .dd-item .nm{
+    font-weight:500;font-size:13.5px;letter-spacing:-0.005em;
+    color:var(--fg);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .dd-item .ds{
+    font-size:11.5px;color:var(--fg-3);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .dd-item .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--fg-4);
+    border:1px solid var(--line);
+    border-radius:99px;
+    padding:2px 8px;
+    flex-shrink:0;
+  }
+  .dd-item.active .tag{border-color:var(--line-2);color:var(--fg-3)}
+  .dd-item.locked{opacity:0.5;cursor:not-allowed}
+  .dd-item.locked .tag{color:#a78bfa;border-color:rgba(167,139,250,0.3)}
+
+  .dd-empty{padding:24px 16px;text-align:center;color:var(--fg-3);font-size:13px}
+  .dd-foot{
+    flex-shrink:0;
+    padding:8px 14px;
+    border-top:1px solid var(--line);
+    background:var(--bg-3);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--fg-3);
+    letter-spacing:0.04em;
+    display:flex;justify-content:space-between;align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .dd-foot kbd{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:1px 5px;
+    margin:0 2px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--fg-2);
+  }
+
+  /* RIGHT META */
+  .right{
+    display:flex;align-items:center;gap:10px;
+    color:var(--fg-3);font-size:12.5px;
+    justify-self:end;
+  }
+  .right .info{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--fg-3);letter-spacing:0.04em;
+    max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .right .info b{color:var(--fg-2);font-weight:500}
   .right a{
     color:var(--fg-2);
     text-decoration:none;
@@ -127,33 +262,46 @@
     border-radius:6px;
     border:1px solid var(--line);
     transition:all .15s;
-    display:inline-flex;align-items:center;gap:6px;
     font-size:12.5px;
+    white-space:nowrap;
   }
   .right a:hover{color:var(--fg);border-color:var(--line-2);background:var(--bg-2)}
-  .right .info{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    color:var(--fg-3);letter-spacing:0.04em;
+  .right .nav{
+    display:flex;gap:2px;
   }
-  .right .info b{color:var(--fg-2);font-weight:500}
+  .right .nav button{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    color:var(--fg-3);
+    width:28px;height:28px;
+    border-radius:6px;
+    cursor:pointer;
+    font:inherit;
+    display:grid;place-items:center;
+    transition:all .15s;
+  }
+  .right .nav button:hover{color:var(--fg);border-color:var(--line-2);background:var(--bg-3)}
+  .right .nav button:first-child{border-top-right-radius:0;border-bottom-right-radius:0}
+  .right .nav button:last-child{border-top-left-radius:0;border-bottom-left-radius:0;border-left:none}
 
   /* SUBHEADER STRIP */
   .strip{
     border-bottom:1px solid var(--line);
-    padding:10px 22px;
+    padding:9px 22px;
     background:var(--bg-2);
     display:flex;
     align-items:center;
-    gap:16px;
+    gap:14px;
     font-size:12.5px;
     color:var(--fg-2);
     overflow-x:auto;
     white-space:nowrap;
   }
+  .strip::-webkit-scrollbar{display:none}
   .strip .badge{
     font-family:'JetBrains Mono',monospace;
     font-size:10px;
-    letter-spacing:0.18em;
+    letter-spacing:0.2em;
     text-transform:uppercase;
     color:var(--fg-3);
     border-right:1px solid var(--line);
@@ -172,21 +320,14 @@
   }
 
   /* IFRAME STAGE */
-  .stage{
-    position:relative;
-    background:var(--bg-2);
-    overflow:hidden;
-  }
+  .stage{position:relative;background:var(--bg-2);overflow:hidden}
   .frame{
     position:absolute;inset:0;
     width:100%;height:100%;
-    border:none;
-    background:#fff;
-    opacity:0;
-    transition:opacity .25s ease;
+    border:none;background:#fff;
+    opacity:0;transition:opacity .25s ease;
   }
   .frame.visible{opacity:1}
-
   .loader{
     position:absolute;inset:0;
     display:grid;place-items:center;
@@ -205,83 +346,67 @@
     animation:blink 1.2s infinite ease-in-out;
     display:inline-block;vertical-align:middle;
   }
-  @keyframes blink{
-    0%,100%{opacity:0.3;transform:scale(.85)}
-    50%{opacity:1;transform:scale(1)}
-  }
+  @keyframes blink{0%,100%{opacity:0.3;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
 
-  /* HINT TOAST */
-  .hint{
-    position:absolute;bottom:18px;right:18px;
-    padding:8px 12px;
-    background:rgba(20,20,24,0.92);
-    backdrop-filter:blur(8px);
-    border:1px solid var(--line);
-    border-radius:8px;
-    font-size:11.5px;
-    color:var(--fg-2);
-    display:flex;align-items:center;gap:10px;
-    z-index:5;
-    transition:opacity .3s,transform .3s;
+  /* OVERLAY when dd open */
+  .scrim{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.3);
+    z-index:20;
+    display:none;
   }
-  .hint kbd{
-    font-family:'JetBrains Mono',monospace;font-size:10px;
-    background:var(--bg-3);
-    border:1px solid var(--line-2);
-    padding:1px 5px;border-radius:3px;
-    color:var(--fg);
-    font-weight:500;
-  }
-  .hint.faded{opacity:0;transform:translateY(8px);pointer-events:none}
-  .hint .x{
-    cursor:pointer;color:var(--fg-3);
-    margin-left:4px;font-size:14px;line-height:1;
-  }
-  .hint .x:hover{color:var(--fg)}
+  .scrim.on{display:block}
 
   @media (max-width:840px){
     .bar{
-      grid-template-columns:1fr;
-      grid-auto-rows:auto;
-      height:auto;
-      padding:10px 14px;
-      gap:10px;
+      grid-template-columns:auto auto;
+      grid-template-rows:auto auto;
+      gap:8px;height:auto;padding:10px 14px;
     }
-    .seg{justify-self:stretch;overflow-x:auto;flex-wrap:nowrap}
-    .seg button{padding:7px 12px 7px 26px}
-    .seg button .key{display:none}
-    .right{justify-self:stretch;justify-content:space-between}
+    .brand{grid-column:1;grid-row:1}
+    .right{grid-column:2;grid-row:1}
+    .right .info{display:none}
+    .dd-wrap{grid-column:1 / -1;grid-row:2;max-width:none}
     .strip{padding:8px 14px}
-    .strip .badge{padding-right:10px}
-    .hint{display:none}
+    .dd-panel{max-height:calc(100vh - 130px)}
   }
 </style>
 </head>
 <body>
 
+<div class="scrim" id="scrim"></div>
+
 <header>
   <div class="bar">
     <div class="brand">
-      <span class="mark">3</span>
-      <span class="label">Design Preview</span>
-      <span class="sub">three themes, one repo</span>
+      <span class="mark">G</span>
+      <span class="label">Design Gallery</span>
+      <span class="sub">a front-end reference</span>
     </div>
-    <div class="seg" role="tablist" aria-label="테마 선택">
-      <button role="tab" data-theme="mnemonic" style="--seg-color:var(--c-mnemonic)">
-        Mnemonic <span class="key">1</span>
+    <div class="dd-wrap">
+      <button class="dd-trigger" id="trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+        <span class="swatch" id="trig-sw" style="--seg-color:var(--fg-3)"></span>
+        <span class="name"><span class="cat" id="trig-cat">—</span><span id="trig-name">테마 선택…</span></span>
+        <span class="count" id="trig-count">—</span>
+        <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
       </button>
-      <button role="tab" data-theme="conversion" style="--seg-color:var(--c-conversion)">
-        Conversion <span class="key">2</span>
-      </button>
-      <button role="tab" data-theme="reading" style="--seg-color:var(--c-reading)">
-        Reading <span class="key">3</span>
-      </button>
-      <button role="tab" data-theme="atelier" style="--seg-color:var(--c-atelier)">
-        Atelier <span class="key">4</span>
-      </button>
+      <div class="dd-panel" id="panel" role="listbox">
+        <div class="dd-search">
+          <input id="search" type="text" placeholder="이름·도메인·태그로 검색…" autocomplete="off"/>
+        </div>
+        <div class="dd-list" id="list"></div>
+        <div class="dd-foot">
+          <span><kbd>↑↓</kbd> 이동 <kbd>Enter</kbd> 선택 <kbd>Esc</kbd> 닫기 <kbd>/</kbd> 검색</span>
+          <span id="count-foot">—</span>
+        </div>
+      </div>
     </div>
     <div class="right">
       <span class="info"><b id="info-name">—</b> · <span id="info-file">—</span></span>
+      <div class="nav">
+        <button id="prev" title="이전 (←)">‹</button>
+        <button id="next" title="다음 (→)">›</button>
+      </div>
       <a id="open-tab" href="#" target="_blank" rel="noopener">Open ↗</a>
     </div>
   </div>
@@ -295,113 +420,289 @@
 <div class="stage">
   <div class="loader" id="loader"><span class="dot"></span><span>Loading</span></div>
   <iframe class="frame" id="frame" title="Theme preview" loading="lazy"></iframe>
-  <div class="hint" id="hint">
-    <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> 키로 빠른 전환</span>
-    <span class="x" onclick="document.getElementById('hint').classList.add('faded')">×</span>
-  </div>
 </div>
 
 <script>
-  const themes = {
-    mnemonic: {
-      file:    'themes/mnemonic.html',
-      name:    'Mnemonic',
-      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-mnemonic').trim(),
-      desc:    '잊히지 않을 일곱 카드 — Claude Code Power Moves. 큰 숫자 앵커, 단일 색 강조, 기억 갈고리.',
-      meta:    '7 cards · cream + ink',
-    },
-    conversion: {
-      file:    'themes/conversion.html',
-      name:    'Conversion',
-      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-conversion').trim(),
-      desc:    'Ralph — 매일 굴러가는 AI 에이전트 SaaS 랜딩. Hero·feature grid·pricing·FAQ·final CTA.',
-      meta:    'SaaS landing · violet accent',
-    },
-    reading: {
-      file:    'themes/reading.html',
-      name:    'Reading',
-      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-reading').trim(),
-      desc:    'The Map of AI in 2026 — 학계 6명의 시선을 모은 장문 에세이. Newsreader serif, drop cap, pull quotes.',
-      meta:    '11 min read · 6 voices',
-    },
-    atelier: {
-      file:    'themes/atelier.html',
-      name:    'Atelier',
-      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-atelier').trim(),
-      desc:    '공방 — 종이와 잉크의 하루. 따뜻한 다크 톤, Cormorant serif + 모노 자간, 빨간 낙관, 체본·단상·작업·일지.',
-      meta:    'warm dark · 4 sections',
-    },
+/* THEME REGISTRY
+   - id: stable identifier (used in URL hash)
+   - file: relative path
+   - name: displayed name
+   - cat: category bucket
+   - color: accent color (hex)
+   - desc: one-line summary shown in strip + dropdown
+   - meta: small metadata shown on right of strip
+   - tags: search keywords
+   - status: 'ready' | 'soon' (soon = grayed out, can't open)
+*/
+const themes = [
+  /* ─── CURATED · 초기 4종 ─── */
+  { id:'mnemonic',   cat:'Curated',  name:'Mnemonic Cards',     file:'themes/mnemonic.html',   color:'#ff5b2e', meta:'7 cards · cream + ink',
+    desc:'잊히지 않을 일곱 카드 — Claude Code Power Moves. 큰 숫자 앵커, 강한 색면, 기억 갈고리.',
+    tags:['cards','memory','flashcard','korean','cream','dark on light'], status:'ready' },
+  { id:'conversion', cat:'Curated',  name:'Conversion Landing', file:'themes/conversion.html', color:'#5b3df5', meta:'SaaS · violet accent',
+    desc:'Ralph SaaS 랜딩 — Hero·features·testimonials·pricing·FAQ·final CTA. Linear/Vercel 톤.',
+    tags:['saas','landing','marketing','violet','vercel','linear'], status:'ready' },
+  { id:'reading',    cat:'Curated',  name:'Reading Essay',      file:'themes/reading.html',    color:'#b13a1f', meta:'11 min · 6 voices',
+    desc:'AI 학계 6명의 시선을 종합한 장문 에세이. Newsreader serif, drop cap, pull quotes.',
+    tags:['essay','editorial','serif','reading','newspaper','newsreader'], status:'ready' },
+  { id:'atelier',    cat:'Curated',  name:'Atelier Journal',    file:'themes/atelier.html',    color:'#c5a572', meta:'warm dark · 4 sections',
+    desc:'공방 일지 — 종이와 잉크. 따뜻한 다크, Cormorant serif, 빨간 낙관, 체본·단상·작업·일지.',
+    tags:['warm dark','korean','calligraphy','craft','journal','seal'], status:'ready' },
+
+  /* ─── DATA · MONITOR ─── */
+  { id:'subway',       cat:'Data',     name:'Subway Display',        file:'themes/subway.html',       color:'#f6c443', meta:'LED board · 5min trace',
+    desc:'지하철 출도착 전광판 — 켜기 누르면 5분간 시뮬레이션, API 연결 가능 자리.',
+    tags:['transit','korean','subway','led','board','realtime','api'], status:'ready' },
+  { id:'trading',      cat:'Data',     name:'Trading Dashboard',     file:'themes/trading.html',      color:'#22c55e', meta:'Bloomberg · dense',
+    desc:'주식·코인 트레이딩 대시보드 — 캔들·호가·뉴스·red/green 변동률.',
+    tags:['stock','crypto','dashboard','bloomberg','candle','dense'], status:'soon' },
+  { id:'inventory',    cat:'Data',     name:'Inventory Monitor',     file:'themes/inventory.html',    color:'#ef4444', meta:'eCommerce · urgency',
+    desc:'재고·주문 모니터 — "3개 남음", SKU 그리드, 주문 큐.',
+    tags:['ecommerce','inventory','sku','urgency','admin','monitor'], status:'soon' },
+  { id:'observability',cat:'Data',     name:'Observability Console', file:'themes/observability.html',color:'#06b6d4', meta:'Datadog · graphs',
+    desc:'Datadog 톤 콘솔 — 메트릭 라인차트·로그 스트림·알람 패널.',
+    tags:['datadog','grafana','observability','logs','metrics','sre'], status:'soon' },
+
+  /* ─── LIFE ─── */
+  { id:'travelogue',cat:'Life',     name:'Dev Travelogue',        file:'themes/travelogue.html',   color:'#0ea5e9', meta:'cities · I went there',
+    desc:'개발자 여행기 — 가본 도시 자랑 보드, 지도 + 카드 + 사진 + 한 줄 후기.',
+    tags:['travel','personal','map','cities','blog','log'], status:'ready' },
+  { id:'wedding',   cat:'Life',     name:'Wedding Invite',        file:'themes/wedding.html',      color:'#ec4899', meta:'serif · watercolor',
+    desc:'결혼식 청첩장 — 엘레강스 세리프, 수채화 모티프, RSVP, 약도, 식순.',
+    tags:['wedding','invitation','elegant','romantic','serif','watercolor'], status:'soon' },
+  { id:'menu',      cat:'Life',     name:'Korean Menu',           file:'themes/menu.html',         color:'#7c2d12', meta:'한식당 · 3-lang',
+    desc:'한식당 메뉴판 — 한자·한글·영문 3종 표기, 코스/단품, 따뜻한 종이 톤.',
+    tags:['restaurant','menu','korean','food','warm','print'], status:'soon' },
+  { id:'yearbook',  cat:'Life',     name:'Yearbook Page',         file:'themes/yearbook.html',     color:'#f59e0b', meta:'90s · halftone',
+    desc:'졸업앨범 — 노스탤지어 90년대 교과서 톤, 사진+한 줄 인용+별명.',
+    tags:['yearbook','nostalgia','school','retro','90s','halftone'], status:'soon' },
+
+  /* ─── MEDIA ─── */
+  { id:'newspaper', cat:'Media',    name:'Newspaper Front',       file:'themes/newspaper.html',    color:'#1f2937', meta:'broadsheet · 6 col',
+    desc:'신문 1면 — 큰 헤드라인, 다단 칼럼, 부고/날씨/발행번호, 진지한 모놀리식 톤.',
+    tags:['newspaper','broadsheet','editorial','print','nyt','korean'], status:'ready' },
+  { id:'magazine',  cat:'Media',    name:'Magazine Essay',        file:'themes/magazine.html',     color:'#dc2626', meta:'editorial · pull quote',
+    desc:'잡지 에세이 — 큰 디스플레이 헤더, 사이드 콜아웃, pull quote, full-bleed 이미지.',
+    tags:['magazine','editorial','print','spread','quote','feature'], status:'soon' },
+  { id:'wrapped',   cat:'Media',    name:'Wrapped Infographic',   file:'themes/wrapped.html',      color:'#d946ef', meta:'big stats · gradient',
+    desc:'Spotify Wrapped — 비비드 그라디언트, 큰 숫자, 스토리 시퀀스, 한 페이지 회고.',
+    tags:['spotify','wrapped','infographic','stats','gradient','story'], status:'soon' },
+  { id:'gallery',   cat:'Media',    name:'Gallery Exhibition',    file:'themes/gallery.html',      color:'#737373', meta:'museum · captions',
+    desc:'미술관 도록 — 흰 여백, 작품 캡션, 큐레이터 노트, 차분한 세리프.',
+    tags:['gallery','museum','art','exhibition','curator','minimal'], status:'soon' },
+
+  /* ─── GENRE · EXPERIMENTAL ─── */
+  { id:'brutalist', cat:'Genre',    name:'Brutalist Folio',       file:'themes/brutalist.html',    color:'#fbbf24', meta:'raw · mono only',
+    desc:'Brutalist 포트폴리오 — 손볼 흔적 그대로, 굵은 검정 보더, 모노 only, swiss 표.',
+    tags:['brutalist','raw','swiss','mono','portfolio','harsh'], status:'ready' },
+  { id:'terminal',  cat:'Genre',    name:'Terminal Doc',          file:'themes/terminal.html',     color:'#22c55e', meta:'green on black · ASCII',
+    desc:'터미널/CLI 문서 — 녹색 모노, ASCII 박스, man page 톤, 깜빡이는 커서.',
+    tags:['terminal','cli','man page','ascii','green','tty'], status:'ready' },
+  { id:'y2k',       cat:'Genre',    name:'Y2K Memphis',           file:'themes/y2k.html',          color:'#06b6d4', meta:'2000 · blobs',
+    desc:'Y2K 멤피스 — 비비드 그라디언트, 블롭, glossy 버튼, geocities 향수.',
+    tags:['y2k','memphis','retro','2000s','playful','gradient'], status:'soon' },
+  { id:'esports',   cat:'Genre',    name:'Esports Leaderboard',   file:'themes/esports.html',      color:'#a855f7', meta:'cyber · neon',
+    desc:'e스포츠 리더보드 — 사이버펑크 네온, 토너먼트 브래킷, 전적 카드.',
+    tags:['gaming','esports','neon','cyberpunk','leaderboard','bracket'], status:'soon' },
+];
+
+/* ── STATE ── */
+let currentId = null;
+let cursorIdx = 0;
+let filtered = themes;
+
+const trigger = document.getElementById('trigger');
+const panel = document.getElementById('panel');
+const search = document.getElementById('search');
+const list = document.getElementById('list');
+const scrim = document.getElementById('scrim');
+const frame = document.getElementById('frame');
+const loader = document.getElementById('loader');
+const trigSw = document.getElementById('trig-sw');
+const trigName = document.getElementById('trig-name');
+const trigCat = document.getElementById('trig-cat');
+const trigCount = document.getElementById('trig-count');
+const stripSwatch = document.getElementById('strip-swatch');
+const stripDesc = document.getElementById('strip-desc');
+const stripMeta = document.getElementById('strip-meta');
+const infoName = document.getElementById('info-name');
+const infoFile = document.getElementById('info-file');
+const openTab = document.getElementById('open-tab');
+const countFoot = document.getElementById('count-foot');
+
+/* ── HELPERS ── */
+function readyThemes(){ return themes.filter(t => t.status === 'ready'); }
+function indexOfReady(id){ return readyThemes().findIndex(t => t.id === id); }
+
+function renderList(){
+  list.innerHTML = '';
+  if(filtered.length === 0){
+    list.innerHTML = '<div class="dd-empty">검색 결과 없음</div>';
+    countFoot.textContent = '0 / ' + themes.length;
+    return;
+  }
+  let lastCat = null;
+  filtered.forEach((t, i) => {
+    if(t.cat !== lastCat){
+      const h = document.createElement('div');
+      h.className = 'dd-cat';
+      h.textContent = t.cat;
+      list.appendChild(h);
+      lastCat = t.cat;
+    }
+    const it = document.createElement('div');
+    it.className = 'dd-item' + (t.id === currentId ? ' active' : '') + (i === cursorIdx ? ' cursor' : '') + (t.status === 'soon' ? ' locked' : '');
+    it.style.setProperty('--item-color', t.color);
+    it.dataset.id = t.id;
+    it.innerHTML = `
+      <span class="sw"></span>
+      <span class="meta">
+        <span class="nm">${t.name}</span>
+        <span class="ds">${t.desc}</span>
+      </span>
+      <span class="tag">${t.status === 'soon' ? 'soon' : t.cat}</span>
+    `;
+    it.addEventListener('click', () => {
+      if(t.status === 'soon') return;
+      selectTheme(t.id);
+      closePanel();
+    });
+    list.appendChild(it);
+  });
+  const readyCount = themes.filter(t => t.status === 'ready').length;
+  countFoot.textContent = `${filtered.length} shown · ${readyCount} ready / ${themes.length} total`;
+}
+
+function applyFilter(){
+  const q = search.value.trim().toLowerCase();
+  if(!q){ filtered = themes.slice(); }
+  else {
+    filtered = themes.filter(t => {
+      const hay = (t.name + ' ' + t.cat + ' ' + t.desc + ' ' + (t.tags||[]).join(' ')).toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  cursorIdx = 0;
+  while(cursorIdx < filtered.length && filtered[cursorIdx].status === 'soon') cursorIdx++;
+  renderList();
+}
+
+function openPanel(){
+  trigger.classList.add('open');
+  trigger.setAttribute('aria-expanded','true');
+  panel.classList.add('open');
+  scrim.classList.add('on');
+  setTimeout(() => search.focus(), 50);
+}
+function closePanel(){
+  trigger.classList.remove('open');
+  trigger.setAttribute('aria-expanded','false');
+  panel.classList.remove('open');
+  scrim.classList.remove('on');
+  search.value = '';
+  applyFilter();
+}
+function togglePanel(){
+  if(panel.classList.contains('open')) closePanel(); else openPanel();
+}
+
+function selectTheme(id){
+  const t = themes.find(x => x.id === id);
+  if(!t || t.status !== 'ready') return;
+  if(id === currentId) return;
+  currentId = id;
+
+  trigSw.style.setProperty('--seg-color', t.color);
+  trigName.textContent = t.name;
+  trigCat.textContent = t.cat;
+  const ri = indexOfReady(id);
+  const total = readyThemes().length;
+  trigCount.textContent = `${ri + 1} / ${total}`;
+
+  frame.classList.remove('visible');
+  loader.classList.remove('hidden');
+  loader.style.setProperty('--c-active', t.color);
+  frame.onload = () => {
+    frame.classList.add('visible');
+    loader.classList.add('hidden');
   };
+  frame.src = t.file;
 
-  const order = ['mnemonic','conversion','reading','atelier'];
-  const buttons = document.querySelectorAll('.seg button');
-  const frame = document.getElementById('frame');
-  const loader = document.getElementById('loader');
-  const stripSwatch = document.getElementById('strip-swatch');
-  const stripDesc = document.getElementById('strip-desc');
-  const stripMeta = document.getElementById('strip-meta');
-  const infoName = document.getElementById('info-name');
-  const infoFile = document.getElementById('info-file');
-  const openTab = document.getElementById('open-tab');
-  const hint = document.getElementById('hint');
+  stripSwatch.style.setProperty('--strip-color', t.color);
+  stripDesc.innerHTML = `<span class="em">${t.name}</span> — ${t.desc}`;
+  stripMeta.textContent = t.meta;
+  infoName.textContent = t.id;
+  infoFile.textContent = t.file;
+  openTab.href = t.file;
 
-  let current = null;
+  history.replaceState(null,'','#' + id);
+}
 
-  function setTheme(key, push){
-    if(!(key in themes) || key === current) return;
-    current = key;
-    const t = themes[key];
+function fromHash(){
+  const h = location.hash.replace('#','');
+  const t = themes.find(x => x.id === h && x.status === 'ready');
+  return t ? t.id : (readyThemes()[0] || {}).id;
+}
 
-    buttons.forEach(b => b.classList.toggle('active', b.dataset.theme === key));
+function step(dir){
+  const ready = readyThemes();
+  let idx = ready.findIndex(t => t.id === currentId);
+  if(idx < 0) idx = 0;
+  idx = (idx + dir + ready.length) % ready.length;
+  selectTheme(ready[idx].id);
+}
 
-    frame.classList.remove('visible');
-    loader.classList.remove('hidden');
-    loader.style.setProperty('--c-active', t.color);
+/* ── EVENTS ── */
+trigger.addEventListener('click', togglePanel);
+scrim.addEventListener('click', closePanel);
+search.addEventListener('input', applyFilter);
+document.getElementById('prev').addEventListener('click', () => step(-1));
+document.getElementById('next').addEventListener('click', () => step(1));
 
-    // Swap iframe src
-    frame.onload = () => {
-      frame.classList.add('visible');
-      loader.classList.add('hidden');
-    };
-    frame.src = t.file;
+document.addEventListener('keydown', (e) => {
+  const open = panel.classList.contains('open');
+  const tag = e.target.tagName;
+  const inField = tag === 'INPUT' || tag === 'TEXTAREA';
 
-    // Update strip
-    stripSwatch.style.setProperty('--strip-color', t.color);
-    stripDesc.innerHTML = `<span class="em">${t.name}</span> — ${t.desc}`;
-    stripMeta.textContent = t.meta;
-
-    infoName.textContent = t.name.toLowerCase();
-    infoFile.textContent = t.file;
-    openTab.href = t.file;
-
-    if(push) history.replaceState(null, '', '#' + key);
+  if(open){
+    if(e.key === 'Escape'){ closePanel(); e.preventDefault(); return; }
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      const dir = e.key === 'ArrowDown' ? 1 : -1;
+      let n = cursorIdx;
+      for(let tries = 0; tries < filtered.length; tries++){
+        n = (n + dir + filtered.length) % filtered.length;
+        if(filtered[n].status === 'ready'){ cursorIdx = n; break; }
+      }
+      renderList();
+      const el = list.querySelectorAll('.dd-item')[cursorIdx >= 0 ? Array.from(list.querySelectorAll('.dd-item')).findIndex(e => e.dataset.id === filtered[cursorIdx].id) : 0];
+      if(el) el.scrollIntoView({block:'nearest'});
+      return;
+    }
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      const t = filtered[cursorIdx];
+      if(t && t.status === 'ready'){ selectTheme(t.id); closePanel(); }
+      return;
+    }
+    return;
   }
 
-  // Click handlers
-  buttons.forEach(b => {
-    b.addEventListener('click', () => setTheme(b.dataset.theme, true));
-  });
+  if(inField || e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.key === '/' || e.key === 'k'){ e.preventDefault(); openPanel(); return; }
+  if(e.key === 'ArrowLeft'){ step(-1); return; }
+  if(e.key === 'ArrowRight'){ step(1); return; }
+});
 
-  // Keyboard 1/2/3
-  document.addEventListener('keydown', (e) => {
-    if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    if(e.metaKey || e.ctrlKey || e.altKey) return;
-    const idx = ['1','2','3','4'].indexOf(e.key);
-    if(idx >= 0){ setTheme(order[idx], true); e.preventDefault(); }
-  });
+window.addEventListener('hashchange', () => {
+  const id = fromHash();
+  if(id && id !== currentId) selectTheme(id);
+});
 
-  // Hash routing
-  function fromHash(){
-    const h = location.hash.replace('#','');
-    return h in themes ? h : 'mnemonic';
-  }
-  window.addEventListener('hashchange', () => setTheme(fromHash(), false));
-
-  // Init
-  setTheme(fromHash(), false);
-
-  // Auto-fade hint after 6s
-  setTimeout(() => hint.classList.add('faded'), 6000);
+/* ── INIT ── */
+applyFilter();
+const startId = fromHash();
+if(startId) selectTheme(startId);
 </script>
 
 </body>

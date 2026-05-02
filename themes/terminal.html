@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>aka(1) — A reference of front-end design themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#080a06;
+    --bg-2:#0e120a;
+    --bg-3:#141a0e;
+    --fg:#a8e063;
+    --fg-2:#5fb04a;
+    --fg-3:#3a7a32;
+    --fg-4:#1f4318;
+    --amber:#ffb454;
+    --red:#ff5e5e;
+    --cyan:#5ed4f0;
+    --hi:rgba(168,224,99,0.18);
+  }
+  html,body{background:var(--bg);color:var(--fg)}
+  body{
+    font-family:'JetBrains Mono','Courier New',monospace;
+    font-size:14px;
+    line-height:1.5;
+    letter-spacing:0;
+    font-feature-settings:"calt" 0;
+    text-rendering:geometricPrecision;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(ellipse at 50% 0%,rgba(168,224,99,0.04) 0%,transparent 60%),
+      repeating-linear-gradient(0deg,rgba(0,0,0,0.06) 0px,rgba(0,0,0,0.06) 1px,transparent 1px,transparent 3px),
+      var(--bg);
+    min-height:100vh;
+  }
+  .crt{
+    font-family:'VT323','JetBrains Mono',monospace;
+    font-feature-settings:normal;
+  }
+  ::selection{background:var(--fg);color:var(--bg)}
+
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px dashed var(--cyan)}
+  a:hover{background:var(--cyan);color:var(--bg)}
+
+  .term{
+    max-width:920px;
+    margin:24px auto;
+    background:var(--bg-2);
+    border:1px solid var(--fg-4);
+    border-radius:6px;
+    box-shadow:
+      0 0 0 1px rgba(168,224,99,0.08) inset,
+      0 24px 48px -16px rgba(0,0,0,0.6),
+      0 0 80px -10px rgba(168,224,99,0.04);
+    overflow:hidden;
+  }
+  .titlebar{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 14px;
+    background:var(--bg-3);
+    border-bottom:1px solid var(--fg-4);
+    font-size:11.5px;
+    color:var(--fg-3);
+    letter-spacing:0.04em;
+  }
+  .titlebar .dots{display:flex;gap:6px;margin-right:10px}
+  .titlebar .d{width:11px;height:11px;border-radius:50%;background:var(--fg-4)}
+  .titlebar .d.red{background:#5a3030}
+  .titlebar .d.amb{background:#5a4a20}
+  .titlebar .d.grn{background:#3a5a32}
+  .titlebar .path{
+    flex:1;text-align:center;
+    color:var(--fg-2);
+    font-weight:500;
+  }
+  .titlebar .path b{color:var(--fg)}
+
+  .body{padding:18px 22px 28px;min-height:80vh}
+
+  /* PROMPT LINE */
+  .prompt{
+    display:flex;gap:0;align-items:baseline;
+    margin:14px 0 8px;
+    font-size:13.5px;
+  }
+  .prompt .who{color:var(--cyan)}
+  .prompt .at{color:var(--fg-3)}
+  .prompt .where{color:var(--amber)}
+  .prompt .sep{color:var(--fg-3)}
+  .prompt .sym{color:var(--fg);margin-right:6px}
+  .prompt .cmd{color:var(--fg);font-weight:500}
+  .prompt .cmd .arg{color:var(--amber)}
+  .prompt .cmd .opt{color:var(--cyan)}
+  .blink{
+    display:inline-block;width:8px;height:14px;
+    background:var(--fg);
+    margin-left:4px;
+    vertical-align:text-bottom;
+    animation:cur 1.05s steps(1) infinite;
+  }
+  @keyframes cur{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+  /* OUTPUT BLOCK */
+  .out{
+    margin:0 0 14px;
+    font-size:13px;
+    color:var(--fg-2);
+    line-height:1.55;
+  }
+  .out .em{color:var(--fg)}
+  .out .dim{color:var(--fg-3)}
+  .out .red{color:var(--red)}
+  .out .amber{color:var(--amber)}
+  .out .cyan{color:var(--cyan)}
+
+  /* ASCII BOX */
+  pre.ascii{
+    margin:6px 0 14px;
+    color:var(--fg);
+    line-height:1.25;
+    font-size:12.5px;
+    white-space:pre;
+    overflow-x:auto;
+  }
+  pre.ascii::-webkit-scrollbar{height:6px}
+  pre.ascii::-webkit-scrollbar-thumb{background:var(--fg-4);border-radius:3px}
+
+  /* MAN PAGE STYLING */
+  .man-h{
+    color:var(--fg);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    margin:18px 0 6px;
+    font-size:13px;
+  }
+  .man-h::before{content:'╾ ';color:var(--fg-3)}
+  .man-p{
+    margin:6px 0 12px 18px;
+    color:var(--fg-2);
+    font-size:13px;
+    max-width:78ch;
+    line-height:1.6;
+  }
+  .man-p .em{color:var(--fg);font-weight:500}
+
+  /* DEFINITION LIST */
+  dl.opts{
+    margin:6px 0 14px 18px;
+    font-size:13px;
+  }
+  dl.opts dt{
+    color:var(--fg);
+    font-weight:600;
+    margin-top:8px;
+  }
+  dl.opts dt .arg{color:var(--amber);font-style:italic}
+  dl.opts dd{
+    color:var(--fg-2);
+    margin-left:30px;
+    line-height:1.5;
+    max-width:74ch;
+  }
+  dl.opts dd em{color:var(--fg);font-style:normal}
+
+  /* TABLE */
+  table.tbl{
+    width:100%;
+    border-collapse:collapse;
+    margin:6px 0 14px;
+    font-size:12.5px;
+  }
+  table.tbl th,table.tbl td{
+    text-align:left;
+    padding:4px 10px;
+    border-bottom:1px solid var(--fg-4);
+  }
+  table.tbl th{
+    color:var(--fg);font-weight:700;
+    border-bottom:1px solid var(--fg-3);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    font-size:11.5px;
+  }
+  table.tbl td{color:var(--fg-2)}
+  table.tbl td.id{color:var(--amber);width:10%}
+  table.tbl td.tag{color:var(--cyan);width:18%}
+  table.tbl td.st{width:15%;text-transform:uppercase;font-size:11.5px;letter-spacing:0.06em}
+  table.tbl td.st.ok{color:#5fff7a}
+  table.tbl td.st.warn{color:var(--amber)}
+  table.tbl td.st.err{color:var(--red)}
+  table.tbl tr:hover td{background:rgba(168,224,99,0.04)}
+
+  /* INLINE CODE */
+  code{
+    background:var(--bg-3);
+    color:var(--amber);
+    padding:1px 6px;
+    border-radius:3px;
+    font-size:12.5px;
+    border:1px solid var(--fg-4);
+  }
+
+  /* PROGRESS BAR */
+  .bar{
+    margin:4px 0 10px;
+    font-size:12.5px;color:var(--fg-2);
+  }
+  .bar .lbl{color:var(--fg);margin-right:8px}
+  .bar .rail{
+    display:inline-block;
+    color:var(--fg-3);
+    letter-spacing:0;
+    margin:0 8px;
+  }
+  .bar .rail .fill{color:var(--fg)}
+  .bar .pct{color:var(--amber)}
+
+  /* STATUSBAR */
+  .status{
+    border-top:1px solid var(--fg-4);
+    background:var(--bg-3);
+    padding:6px 14px;
+    font-size:11px;
+    color:var(--fg-3);
+    letter-spacing:0.04em;
+    display:flex;gap:18px;
+    flex-wrap:wrap;
+  }
+  .status b{color:var(--fg-2);font-weight:500}
+  .status .right{margin-left:auto}
+
+  /* HEADER ASCII NAMEPLATE */
+  .nameplate{
+    margin:8px 0 4px;
+    color:var(--fg);
+    font-size:13px;
+    line-height:1.05;
+    white-space:pre;
+    overflow-x:auto;
+  }
+
+  @media (max-width:640px){
+    .term{margin:10px;border-radius:4px}
+    .body{padding:14px 14px 20px}
+    .nameplate{font-size:9.5px}
+    pre.ascii{font-size:10.5px}
+  }
+</style>
+</head>
+<body>
+
+<div class="term">
+  <div class="titlebar">
+    <span class="dots"><span class="d red"></span><span class="d amb"></span><span class="d grn"></span></span>
+    <span class="path"><b>jin@atrium</b>:~/aka/themes — zsh — 96×40</span>
+    <span>● live</span>
+  </div>
+
+  <div class="body">
+
+    <pre class="nameplate">
+   ┌─────────────────────────────────────────────────────────────┐
+   │   ▄▀█ █ █▄▀ ▄▀█    a reference of front-end design themes   │
+   │   █▀█ █ █ █ █▀█    v0.4.0 · GPL-3.0 · 2026                  │
+   └─────────────────────────────────────────────────────────────┘
+    </pre>
+    <div class="out dim">A small, opinionated tool for browsing one-page design references.</div>
+
+    <div class="prompt">
+      <span class="who">jin</span><span class="at">@</span><span class="where">atrium</span><span class="sep">:</span><span class="cyan">~/aka</span><span class="sep">$</span>
+      <span class="sym">▶</span>
+      <span class="cmd">aka <span class="opt">--help</span></span>
+    </div>
+    <div class="out">
+      <span class="em">aka</span>(1) — General Commands Manual
+    </div>
+
+    <div class="man-h">name</div>
+    <div class="man-p"><span class="em">aka</span> — open one-page design references in your browser, fast.</div>
+
+    <div class="man-h">synopsis</div>
+    <div class="man-p"><span class="em">aka</span> [<span class="amber">--list</span>] [<span class="amber">--cat</span>=<i>category</i>] [<span class="amber">--search</span>=<i>query</i>] [<span class="amber">theme</span>]</div>
+
+    <div class="man-h">description</div>
+    <div class="man-p">
+      <span class="em">aka</span> is a tiny CLI front-end for the Atrium theme gallery. It opens a single design theme as a self-contained HTML preview in your default browser. It does not install anything, fetch over the network, or write to your home directory. Themes live in <code>./themes/</code>.
+    </div>
+
+    <div class="man-h">options</div>
+    <dl class="opts">
+      <dt>-l, --list</dt>
+      <dd>List all themes registered in the gallery, grouped by category.</dd>
+      <dt>-c, --cat=<span class="arg">category</span></dt>
+      <dd>Filter listing by category. Valid: <em>curated · data · life · media · genre</em>.</dd>
+      <dt>-s, --search=<span class="arg">query</span></dt>
+      <dd>Substring search across name, description, and tags.</dd>
+      <dt>-o, --open=<span class="arg">theme</span></dt>
+      <dd>Open the named theme in <em>$BROWSER</em>. Equivalent to passing the theme as a positional argument.</dd>
+      <dt>-r, --random</dt>
+      <dd>Open a random ready theme. Useful when you don't know what you want.</dd>
+      <dt>-v, --version</dt>
+      <dd>Print version and exit.</dd>
+      <dt>-h, --help</dt>
+      <dd>Print this help and exit.</dd>
+    </dl>
+
+    <div class="prompt">
+      <span class="who">jin</span><span class="at">@</span><span class="where">atrium</span><span class="sep">:</span><span class="cyan">~/aka</span><span class="sep">$</span>
+      <span class="sym">▶</span>
+      <span class="cmd">aka <span class="opt">--list</span></span>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>id</th><th>category</th><th>name</th><th>status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="id">mnemonic</td><td class="tag">curated</td><td>Mnemonic Cards</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">conversion</td><td class="tag">curated</td><td>Conversion Landing</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">reading</td><td class="tag">curated</td><td>Reading Essay</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">atelier</td><td class="tag">curated</td><td>Atelier Journal</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">newspaper</td><td class="tag">media</td><td>Newspaper Front</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">brutalist</td><td class="tag">genre</td><td>Brutalist Folio</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">travelogue</td><td class="tag">life</td><td>Dev Travelogue</td><td class="st ok">ready</td></tr>
+        <tr><td class="id">terminal</td><td class="tag">genre</td><td>Terminal Doc <span class="dim">(this page)</span></td><td class="st ok">ready</td></tr>
+        <tr><td class="id">subway</td><td class="tag">data</td><td>Subway Display</td><td class="st warn">building</td></tr>
+        <tr><td class="id">trading</td><td class="tag">data</td><td>Trading Dashboard</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">inventory</td><td class="tag">data</td><td>Inventory Monitor</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">observability</td><td class="tag">data</td><td>Observability Console</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">wedding</td><td class="tag">life</td><td>Wedding Invite</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">menu</td><td class="tag">life</td><td>Korean Menu</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">yearbook</td><td class="tag">life</td><td>Yearbook Page</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">magazine</td><td class="tag">media</td><td>Magazine Essay</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">wrapped</td><td class="tag">media</td><td>Wrapped Infographic</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">gallery</td><td class="tag">media</td><td>Gallery Exhibition</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">y2k</td><td class="tag">genre</td><td>Y2K Memphis</td><td class="st warn">queued</td></tr>
+        <tr><td class="id">esports</td><td class="tag">genre</td><td>Esports Leaderboard</td><td class="st warn">queued</td></tr>
+      </tbody>
+    </table>
+
+    <div class="out dim">20 entries · 8 ready · 12 queued</div>
+
+    <div class="prompt">
+      <span class="who">jin</span><span class="at">@</span><span class="where">atrium</span><span class="sep">:</span><span class="cyan">~/aka</span><span class="sep">$</span>
+      <span class="sym">▶</span>
+      <span class="cmd">aka <span class="opt">--search</span>=<span class="arg">"warm dark"</span></span>
+    </div>
+    <div class="out">
+      <span class="em">2 matches:</span><br>
+      &nbsp;&nbsp;<span class="amber">atelier</span> &nbsp;&nbsp;Atelier Journal — 종이와 잉크. 따뜻한 다크.<br>
+      &nbsp;&nbsp;<span class="amber">subway</span> &nbsp;&nbsp;Subway Display — LED 전광판 톤, 야간 운행.
+    </div>
+
+    <div class="prompt">
+      <span class="who">jin</span><span class="at">@</span><span class="where">atrium</span><span class="sep">:</span><span class="cyan">~/aka</span><span class="sep">$</span>
+      <span class="sym">▶</span>
+      <span class="cmd">aka <span class="opt">--build-status</span></span>
+    </div>
+
+    <div class="bar">
+      <span class="lbl">themes</span>
+      <span class="rail"><span class="fill">████████████████████</span><span>░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span></span>
+      <span class="pct">8 / 20 · 40%</span>
+    </div>
+    <div class="bar">
+      <span class="lbl">tokens</span>
+      <span class="rail"><span class="fill">██████████████████████████████</span><span>░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span></span>
+      <span class="pct">drained · last day</span>
+    </div>
+
+    <pre class="ascii">
+   ┌──────────────────────── ENVIRONMENT ────────────────────────┐
+   │  hostname    atrium.local         shell      zsh 5.9         │
+   │  os          ubuntu 24.04 LTS     editor     nvim 0.10       │
+   │  cpu         m4 max · 16 cores    multiplx   tmux 3.4        │
+   │  ram         64 GB                browser    firefox dev     │
+   │  disk        2 TB · 38% used      font       jetbrains-mono  │
+   └─────────────────────────────────────────────────────────────┘
+    </pre>
+
+    <div class="prompt">
+      <span class="who">jin</span><span class="at">@</span><span class="where">atrium</span><span class="sep">:</span><span class="cyan">~/aka</span><span class="sep">$</span>
+      <span class="sym">▶</span>
+      <span class="cmd">aka <span class="amber">atelier</span></span>
+    </div>
+    <div class="out dim">Opening <span class="amber">themes/atelier.html</span> in firefox-dev … <span class="em" style="color:#5fff7a">[ ok ]</span></div>
+
+    <div class="prompt">
+      <span class="who">jin</span><span class="at">@</span><span class="where">atrium</span><span class="sep">:</span><span class="cyan">~/aka</span><span class="sep">$</span>
+      <span class="sym">▶</span>
+      <span class="cmd">_<span class="blink"></span></span>
+    </div>
+
+    <div class="man-h">see also</div>
+    <div class="man-p">
+      <a href="#">themes(7)</a>, <a href="#">preview(1)</a>, <a href="#">html(7)</a>, <a href="#">colophon(7)</a><br>
+      Source: <a href="#">github.com/tioring/aka</a>
+    </div>
+
+    <div class="man-h">copyright</div>
+    <div class="man-p">© 2026, Jin. Distributed under the GPL-3.0. This man page itself is the theme — what you are reading is the documentation rendered as the example.</div>
+
+  </div>
+
+  <div class="status">
+    <span><b>NORMAL</b></span>
+    <span>themes/terminal.html</span>
+    <span>utf-8</span>
+    <span>unix</span>
+    <span class="right">L 1 · C 1 · 100%</span>
+  </div>
+</div>
+
+</body>
+</html>

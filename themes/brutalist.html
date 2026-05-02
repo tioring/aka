@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JIN ~/portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#fafaf7;
+    --bg-2:#ffffff;
+    --bg-3:#eeebe2;
+    --ink:#0a0a0a;
+    --ink-2:#222;
+    --rule:#0a0a0a;
+    --link:#0033ff;
+    --link-v:#aa00aa;
+    --hi:#ffd60a;
+    --red:#e10600;
+  }
+  html,body{background:var(--bg);color:var(--ink)}
+  body{
+    font-family:'JetBrains Mono','Courier New',monospace;
+    font-size:14px;
+    line-height:1.55;
+    letter-spacing:0;
+    font-feature-settings:"calt" 0;
+    -webkit-font-smoothing:auto;
+    text-rendering:geometricPrecision;
+  }
+  a{color:var(--link);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+  a:visited{color:var(--link-v)}
+  a:hover{background:var(--hi);color:var(--ink);text-decoration:none}
+  hr{border:none;border-top:2px solid var(--ink);margin:24px 0}
+
+  .display{font-family:'Space Grotesk',sans-serif}
+
+  .wrap{
+    max-width:880px;
+    margin:0 auto;
+    padding:24px 28px 96px;
+    border-left:2px solid var(--ink);
+    border-right:2px solid var(--ink);
+    background:var(--bg);
+    min-height:100vh;
+  }
+
+  /* HEADER STRIP */
+  .strip{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border:2px solid var(--ink);
+    background:var(--bg-2);
+    margin-bottom:0;
+  }
+  .strip > div{
+    padding:8px 12px;
+    font-size:11.5px;
+    font-weight:500;
+    border-right:2px solid var(--ink);
+  }
+  .strip > div:last-child{border-right:none;text-align:right}
+  .strip b{font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+
+  /* MASTHEAD BLOCK */
+  .mast{
+    border:2px solid var(--ink);
+    border-top:none;
+    padding:36px 24px 28px;
+    background:var(--bg-2);
+    position:relative;
+  }
+  .mast::before{
+    content:'index.html';
+    position:absolute;top:6px;right:10px;
+    font-size:10px;color:#888;
+  }
+  .name{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(72px,12vw,144px);
+    line-height:0.9;
+    letter-spacing:-0.06em;
+    color:var(--ink);
+    margin-bottom:8px;
+  }
+  .name .slash{color:var(--red);font-weight:400}
+  .role{
+    font-size:13.5px;
+    font-weight:500;
+    margin-bottom:14px;
+  }
+  .role .hi{background:var(--hi);padding:0 4px}
+  .meta-line{
+    font-size:11.5px;
+    color:#444;
+    border-top:1px dashed var(--ink);
+    padding-top:10px;
+    display:flex;flex-wrap:wrap;gap:0 14px;
+  }
+  .meta-line span{white-space:nowrap}
+  .meta-line b{color:var(--ink);font-weight:700}
+
+  /* NAV */
+  .nav{
+    display:flex;flex-wrap:wrap;gap:0;
+    border:2px solid var(--ink);
+    border-top:none;
+    background:var(--bg-3);
+  }
+  .nav a{
+    padding:8px 14px;
+    color:var(--ink);
+    text-decoration:none;
+    border-right:2px solid var(--ink);
+    background:var(--bg-3);
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .nav a:hover{background:var(--ink);color:var(--bg);text-decoration:none}
+  .nav a:last-child{border-right:none;margin-left:auto;background:var(--ink);color:var(--bg)}
+  .nav a:last-child:hover{background:var(--red)}
+
+  /* SECTION */
+  section{margin:48px 0 0}
+  h2.h{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:36px;
+    line-height:1;
+    letter-spacing:-0.04em;
+    margin-bottom:6px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:8px;
+    display:flex;align-items:baseline;justify-content:space-between;
+    gap:12px;
+  }
+  h2.h .num{font-size:13px;font-weight:500;color:#666;font-family:'JetBrains Mono',monospace;letter-spacing:0}
+  h3.sh{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:18px;
+    margin:16px 0 6px;
+    letter-spacing:-0.02em;
+  }
+  p{margin:0 0 12px}
+
+  /* INTRO PARA */
+  .intro{
+    margin-top:18px;
+    font-size:15px;
+    line-height:1.65;
+    max-width:64ch;
+  }
+  .intro b{font-weight:700;background:var(--hi);padding:0 2px}
+
+  /* TABLE — swiss style */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+    font-size:13px;
+  }
+  th,td{
+    border:1.5px solid var(--ink);
+    padding:7px 10px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    background:var(--ink);
+    color:var(--bg);
+    font-weight:700;
+    font-size:11.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  td.n{font-weight:600;width:8%;white-space:nowrap}
+  td.d{width:12%;color:#666;white-space:nowrap;font-size:12px}
+  td.k{width:14%;font-weight:600}
+  td.k.k-note{color:var(--red)}
+  td.k.k-tool{color:var(--link)}
+  td.k.k-essay{color:#1a6629}
+  td.k.k-talk{color:#aa00aa}
+  td.l a{font-weight:500}
+  tr:hover td{background:#fffbe5}
+
+  /* WORK LIST — file-list style */
+  ul.files{
+    list-style:none;
+    margin:8px 0;
+    padding:0;
+    border:2px solid var(--ink);
+    background:var(--bg-2);
+  }
+  ul.files li{
+    display:grid;
+    grid-template-columns:24px 1fr auto auto;
+    gap:14px;
+    padding:9px 12px;
+    border-bottom:1.5px solid var(--ink);
+    font-size:13px;
+    align-items:baseline;
+  }
+  ul.files li:last-child{border-bottom:none}
+  ul.files .ico{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    color:var(--red);
+  }
+  ul.files .nm{font-weight:600}
+  ul.files .nm .ext{color:#666;font-weight:400;margin-left:2px}
+  ul.files .desc{color:#444;font-size:12px;margin-left:14px}
+  ul.files .sz{font-size:11px;color:#666;font-family:'JetBrains Mono',monospace}
+  ul.files .st{font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor}
+  ul.files .st.live{color:#1a6629}
+  ul.files .st.wip{color:var(--red)}
+  ul.files .st.dead{color:#666;text-decoration:line-through}
+
+  /* CURRENTLY block */
+  .now{
+    margin-top:24px;
+    border:2px solid var(--ink);
+    background:var(--hi);
+    padding:14px 18px;
+    font-size:14px;
+    line-height:1.6;
+  }
+  .now h3{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  .now .row{display:grid;grid-template-columns:80px 1fr;gap:10px;padding:3px 0;border-top:1px dashed var(--ink)}
+  .now .row:first-of-type{border-top:none}
+  .now .lbl{font-weight:700;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase}
+
+  /* QUOTES / NOTES */
+  .note{
+    border-left:6px solid var(--ink);
+    background:var(--bg-2);
+    padding:10px 14px;
+    margin:14px 0;
+    font-size:13.5px;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  .note .lbl{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    background:var(--ink);
+    color:var(--bg);
+    padding:1px 6px;
+    margin-right:8px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    vertical-align:middle;
+  }
+
+  /* RAW HTML COMMENT */
+  .comment{
+    font-size:11.5px;
+    color:#888;
+    margin:14px 0;
+  }
+  .comment::before{content:'<!-- '}
+  .comment::after{content:' -->'}
+
+  /* CONTACT FOOTER */
+  footer.bottom{
+    margin-top:64px;
+    border-top:6px solid var(--ink);
+    padding-top:18px;
+    font-size:13px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px 24px;
+  }
+  footer.bottom dl{display:contents}
+  footer.bottom dt{font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:0.1em;border-bottom:1.5px solid var(--ink);padding-bottom:2px}
+  footer.bottom dd{margin-bottom:8px}
+  footer.bottom .colophon{
+    grid-column:1 / -1;
+    margin-top:18px;
+    font-size:11px;
+    color:#666;
+    border-top:1px dashed var(--ink);
+    padding-top:10px;
+  }
+
+  /* MISC */
+  ::selection{background:var(--ink);color:var(--bg)}
+  kbd{font:inherit;background:var(--ink);color:var(--bg);padding:1px 5px;border-radius:0;font-size:11px}
+
+  @media (max-width:640px){
+    .wrap{padding:16px 14px 64px;border-left:none;border-right:none}
+    .name{font-size:64px}
+    .nav{flex-direction:column}
+    .nav a{border-right:none;border-bottom:2px solid var(--ink);text-align:left}
+    .nav a:last-child{margin-left:0}
+    table{font-size:12px}
+    th,td{padding:5px 7px}
+    td.k{width:auto}
+    ul.files li{grid-template-columns:1fr;gap:4px}
+    ul.files .desc{margin-left:0}
+    footer.bottom{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="strip">
+    <div><b>STATUS</b> · 200 OK · text/html · last-modified Sat, 02 May 2026 11:14:00 GMT</div>
+    <div><b>VIEW SOURCE</b> · <a href="#">github.com/jin/portfolio</a></div>
+  </div>
+
+  <header class="mast">
+    <div class="name">JIN<span class="slash">/</span></div>
+    <div class="role">a developer who writes things, mostly small ones, sometimes <span class="hi">strange</span> ones.</div>
+    <div class="meta-line">
+      <span><b>BASED</b> Seoul</span>
+      <span><b>TIMEZONE</b> Asia/Seoul (UTC+9)</span>
+      <span><b>OPEN TO</b> contract · 2 days/wk</span>
+      <span><b>LAST UPDATED</b> 2026-05-02</span>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="#about">about</a>
+    <a href="#works">works</a>
+    <a href="#notes">notes</a>
+    <a href="#tools">tools</a>
+    <a href="#log">log</a>
+    <a href="#contact">→ get in touch</a>
+  </nav>
+
+  <p class="intro" id="about">
+    I build small software with care, write notes that nobody asked for, and keep a journal of dip-pen experiments. I prefer <b>fewer things, made better</b> over many things made fast. This page is intentionally crude — it loads in 24KB and renders without a single line of layout JavaScript.
+  </p>
+
+  <p class="comment">below: a swiss-style index of recent notes, sorted descending by date.</p>
+
+  <section id="notes">
+    <h2 class="h"><span>Notes &amp; Writing</span><span class="num">N=12 · last 4 weeks</span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Date</th><th>Kind</th><th>Title</th><th>Length</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="n">012</td><td class="d">2026-05-01</td><td class="k k-essay">essay</td><td class="l"><a href="#">In ink we trust — three years of writing by hand</a></td><td>2,400w</td></tr>
+        <tr><td class="n">011</td><td class="d">2026-04-28</td><td class="k k-note">note</td><td class="l"><a href="#">Brause No.66 EF after coating removal — first impressions</a></td><td>800w</td></tr>
+        <tr><td class="n">010</td><td class="d">2026-04-22</td><td class="k k-tool">tool</td><td class="l"><a href="#">Hangeul stroke order data — a quick parser for Make-Me-a-Hanzi</a></td><td>1,100w</td></tr>
+        <tr><td class="n">009</td><td class="d">2026-04-18</td><td class="k k-essay">essay</td><td class="l"><a href="#">Six voices on AI in 2026 — a coordinate plane, not a road</a></td><td>3,800w</td></tr>
+        <tr><td class="n">008</td><td class="d">2026-04-12</td><td class="k k-talk">talk</td><td class="l"><a href="#">Slides — "Software 3.0 was always going to come for the side projects first"</a></td><td>32 slides</td></tr>
+        <tr><td class="n">007</td><td class="d">2026-04-09</td><td class="k k-note">note</td><td class="l"><a href="#">Why my CSS file fits in one viewport</a></td><td>500w</td></tr>
+        <tr><td class="n">006</td><td class="d">2026-03-31</td><td class="k k-tool">tool</td><td class="l"><a href="#">A 90-line static site generator that I keep meaning to throw away</a></td><td>1,400w</td></tr>
+        <tr><td class="n">005</td><td class="d">2026-03-22</td><td class="k k-essay">essay</td><td class="l"><a href="#">A bookstore that doesn't care if you buy</a></td><td>1,800w</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:8px;font-size:12px;color:#666">↪ Older notes archived at <a href="#">/archive/</a></p>
+  </section>
+
+  <section id="works">
+    <h2 class="h"><span>Works</span><span class="num">5 / 12 visible</span></h2>
+    <ul class="files">
+      <li>
+        <span class="ico">[+]</span>
+        <span><span class="nm">calicali<span class="ext">.app</span></span> <span class="desc">— a calligraphy editor that gets out of your way</span></span>
+        <span class="sz">42 KB</span>
+        <span class="st live">live</span>
+      </li>
+      <li>
+        <span class="ico">[+]</span>
+        <span><span class="nm">gbwtypewriter<span class="ext">.app</span></span> <span class="desc">— a digital reconstruction of the Kong-byung-u Korean typewriter</span></span>
+        <span class="sz">86 KB</span>
+        <span class="st wip">wip</span>
+      </li>
+      <li>
+        <span class="ico">[+]</span>
+        <span><span class="nm">ralph<span class="ext">.dev</span></span> <span class="desc">— run AI agents on a daily loop, get PRs while you sleep</span></span>
+        <span class="sz">128 KB</span>
+        <span class="st live">live</span>
+      </li>
+      <li>
+        <span class="ico">[·]</span>
+        <span><span class="nm">hanji-store<span class="ext">.kr</span></span> <span class="desc">— a 1-page catalogue of Korean paper sheets I keep buying</span></span>
+        <span class="sz">12 KB</span>
+        <span class="st wip">wip</span>
+      </li>
+      <li>
+        <span class="ico">[—]</span>
+        <span><span class="nm">monkey-rss<span class="ext">.app</span></span> <span class="desc">— a feed reader I deprecated because I read paper now</span></span>
+        <span class="sz">—</span>
+        <span class="st dead">archived</span>
+      </li>
+    </ul>
+  </section>
+
+  <section id="tools">
+    <h2 class="h"><span>Tools I keep</span><span class="num">7 of them</span></h2>
+    <p style="margin-top:6px;font-size:13px">Listed in the order I would re-buy them if I lost everything tomorrow.</p>
+    <ol style="margin-top:10px;padding-left:24px;font-size:13.5px;line-height:1.85">
+      <li>An A5 grid notebook. Any brand. Many.</li>
+      <li><b>Brause No.66 EF</b> dip pen with the manufacturer's coating filed off.</li>
+      <li><b>Iroshizuku take-sumi</b> ink, mixed 4:1 with distilled water.</li>
+      <li>Pretendard variable font, JetBrains Mono, and exactly one serif.</li>
+      <li>A terminal multiplexer. <a href="#">tmux</a>, sometimes <a href="#">zellij</a>.</li>
+      <li>A static site host that does not require a build step.</li>
+      <li>A friend who will read drafts that don't need to be read.</li>
+    </ol>
+  </section>
+
+  <div class="now" id="log">
+    <h3>Currently · 2026-05</h3>
+    <div class="row"><span class="lbl">Reading</span><span>"Essays in Idleness" · Yoshida Kenkō, 14th c.</span></div>
+    <div class="row"><span class="lbl">Writing</span><span>A long note on dip-pen ink chemistry that may or may not turn into a zine.</span></div>
+    <div class="row"><span class="lbl">Building</span><span>Hangeul Mono — a stroke-engineered Korean monospace, alpha 0.4.</span></div>
+    <div class="row"><span class="lbl">Avoiding</span><span>Yet another framework rewrite. The HTML works.</span></div>
+    <div class="row"><span class="lbl">Listening</span><span>Bach unaccompanied · Hilary Hahn · 2018 recording on repeat.</span></div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">caveat</span>
+    This page is deliberately ugly. I have no quarrel with beauty; I just trust the bones first. If you came expecting a hero animation, I am sorry, please file a bug at <a href="#">issues/01</a>.
+  </div>
+
+  <hr>
+
+  <footer class="bottom" id="contact">
+    <dl>
+      <dt>Mail</dt><dd><a href="mailto:caasboudaabitabe@gmail.com">caasboudaabitabe @ gmail.com</a></dd>
+      <dt>GitHub</dt><dd><a href="#">github.com/jin</a></dd>
+    </dl>
+    <dl>
+      <dt>Reading list</dt><dd><a href="#">/now/reading</a></dd>
+      <dt>RSS</dt><dd><a href="#">/feed.xml</a> (please, please use a reader)</dd>
+    </dl>
+    <div class="colophon">
+      Built by hand in plain HTML. No analytics. No cookies. <kbd>view-source:</kbd> away. — Last build: 2026-05-02 11:14 KST · 24,108 bytes · checked with <a href="#">html-validator</a> just now.
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

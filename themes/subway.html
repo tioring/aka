@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>실시간 도착 — Subway Departure Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DotGothic16&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#050608;
+    --bg-2:#0a0d12;
+    --bg-3:#10141b;
+    --bg-4:#1a2030;
+    --rule:#1a2030;
+    --rule-2:#283244;
+    --fg:#e6ecf5;
+    --fg-2:#9aa6bb;
+    --fg-3:#5d6a82;
+    --fg-4:#3a4358;
+    --led-amber:#ffb13d;
+    --led-amber-bright:#ffd884;
+    --led-green:#3dff85;
+    --led-red:#ff4d63;
+    --led-blue:#5ec6ff;
+
+    --line-1:#0052a4;
+    --line-2:#00a84d;
+    --line-3:#ef7c1c;
+    --line-4:#00a5de;
+    --line-5:#996cac;
+    --line-9:#bdb092;
+    --line-bd:#77c4a3;
+    --line-sb:#0c8e72;
+  }
+  html,body{background:var(--bg);color:var(--fg);min-height:100vh}
+  body{
+    font-family:'Inter','Pretendard Variable',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(ellipse 1200px 600px at 50% -20%,rgba(255,177,61,0.04) 0%,transparent 60%),
+      var(--bg);
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"calt" 0}
+  .led-font{font-family:'DotGothic16','JetBrains Mono',monospace;font-feature-settings:normal}
+
+  .frame{
+    max-width:1100px;
+    margin:24px auto;
+    padding:0 24px 64px;
+  }
+
+  /* TITLE BAR */
+  .titlebar{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--rule);
+    flex-wrap:wrap;gap:14px;
+  }
+  .titlebar h1{
+    font-weight:600;font-size:22px;letter-spacing:-0.015em;color:var(--fg);
+  }
+  .titlebar h1 .ko{
+    font-family:'Pretendard Variable',sans-serif;
+    color:var(--led-amber);font-weight:500;
+    margin-right:10px;
+  }
+  .titlebar h1 .sep{color:var(--fg-3);margin:0 8px;font-weight:300}
+  .titlebar h1 small{
+    color:var(--fg-3);font-weight:400;font-size:12px;
+    margin-left:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;
+  }
+  .titlebar .ctrls{display:flex;gap:10px;align-items:center}
+
+  .meta-row{
+    display:flex;gap:6px 18px;flex-wrap:wrap;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--fg-3);
+    letter-spacing:0.06em;text-transform:uppercase;
+    margin-bottom:24px;
+  }
+  .meta-row b{color:var(--fg-2);font-weight:500}
+
+  /* TOGGLE BUTTON */
+  .toggle{
+    background:var(--bg-3);
+    border:1px solid var(--rule-2);
+    color:var(--fg);
+    padding:9px 18px 9px 12px;
+    font:inherit;font-weight:600;font-size:13px;
+    border-radius:7px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:9px;
+    transition:all .2s;
+    letter-spacing:-0.005em;
+  }
+  .toggle:hover{background:var(--bg-4);border-color:var(--led-amber)}
+  .toggle .pulse{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--fg-3);
+    transition:background .2s;
+    flex-shrink:0;
+  }
+  .toggle.on{
+    border-color:var(--led-green);
+    background:rgba(61,255,133,0.06);
+  }
+  .toggle.on .pulse{
+    background:var(--led-green);
+    box-shadow:0 0 0 0 rgba(61,255,133,0.6);
+    animation:p 1.4s ease-out infinite;
+  }
+  @keyframes p{
+    0%{box-shadow:0 0 0 0 rgba(61,255,133,0.5)}
+    100%{box-shadow:0 0 0 12px rgba(61,255,133,0)}
+  }
+
+  .station-pick{
+    background:var(--bg-3);
+    border:1px solid var(--rule-2);
+    color:var(--fg);
+    padding:9px 12px;
+    font:inherit;font-size:13px;
+    border-radius:7px;
+    cursor:pointer;
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239aa6bb" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat:no-repeat;
+    background-position:right 9px center;
+    background-size:14px;
+    padding-right:32px;
+    letter-spacing:-0.005em;
+  }
+  .station-pick:focus{outline:none;border-color:var(--led-amber)}
+
+  /* COUNTDOWN STRIP */
+  .countdown{
+    margin-bottom:18px;
+    padding:14px 20px;
+    background:var(--bg-2);
+    border:1px solid var(--rule-2);
+    border-radius:10px;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:18px;align-items:center;
+    transition:border-color .25s,background .25s;
+  }
+  .countdown.on{border-color:var(--led-green);background:linear-gradient(90deg,rgba(61,255,133,0.05) 0%,var(--bg-2) 60%)}
+  .countdown.off{border-color:var(--rule-2);opacity:0.85}
+  .countdown .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--fg-3);
+  }
+  .countdown.on .lbl{color:var(--led-green)}
+  .countdown .timer{
+    text-align:center;
+    font-family:'DotGothic16',monospace;
+    font-size:32px;line-height:1;letter-spacing:0.04em;
+    color:var(--led-amber);
+  }
+  .countdown.off .timer{color:var(--fg-4)}
+  .countdown .timer .sep{opacity:0.5;animation:none}
+  .countdown.on .timer .sep{animation:blink 1s steps(1) infinite}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0.2}}
+  .countdown .progress{
+    height:4px;
+    background:var(--bg-4);
+    border-radius:2px;
+    overflow:hidden;
+    grid-column:1 / -1;
+    margin-top:6px;
+  }
+  .countdown .progress .fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--led-green),var(--led-amber));
+    transition:width 0.4s linear;
+  }
+
+  /* BOARD */
+  .board{
+    background:#000;
+    border:1px solid var(--rule-2);
+    border-radius:10px;
+    padding:18px 22px 22px;
+    box-shadow:
+      inset 0 0 60px rgba(255,177,61,0.04),
+      inset 0 0 0 1px rgba(255,177,61,0.04);
+    position:relative;
+    overflow:hidden;
+  }
+  .board::before{
+    content:'';
+    position:absolute;inset:0;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0.5) 0px,rgba(0,0,0,0.5) 1px,transparent 1px,transparent 3px);
+    pointer-events:none;
+  }
+  .board::after{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 80% 60% at 50% 50%,transparent 0%,rgba(0,0,0,0.4) 100%);
+    pointer-events:none;
+  }
+  .board > *{position:relative;z-index:1}
+
+  .board-head{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:18px;
+    align-items:center;
+    border-bottom:1px solid #1a1a1a;
+    padding-bottom:10px;
+    margin-bottom:10px;
+  }
+  .board-head .station{
+    font-family:'DotGothic16',monospace;
+    color:var(--led-amber);
+    font-size:24px;letter-spacing:0.04em;
+    line-height:1;
+  }
+  .board-head .station .en{color:var(--led-amber-bright);opacity:0.7;font-size:14px;margin-left:10px}
+  .board-head .now{
+    text-align:center;
+    font-family:'DotGothic16',monospace;
+    color:var(--led-amber);
+    font-size:18px;letter-spacing:0.06em;
+  }
+  .board-head .now .sep{animation:blink 1s steps(1) infinite}
+  .board-head .signal{
+    display:flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-3);
+  }
+  .board-head .signal .led{
+    width:8px;height:8px;border-radius:50%;background:var(--fg-4);
+  }
+  .board-head .signal.live .led{
+    background:var(--led-green);
+    box-shadow:0 0 8px rgba(61,255,133,0.6);
+  }
+  .board-head .signal.live{color:var(--led-green)}
+
+  /* ARRIVAL ROWS */
+  .row{
+    display:grid;
+    grid-template-columns:36px 60px 1fr auto 100px;
+    gap:14px;align-items:center;
+    padding:12px 0;
+    border-bottom:1px dashed #181818;
+  }
+  .row:last-child{border-bottom:none}
+
+  .line-mark{
+    width:32px;height:32px;border-radius:50%;
+    display:grid;place-items:center;
+    color:#fff;font-weight:700;font-size:14px;
+    font-family:'Inter',sans-serif;letter-spacing:-0.02em;
+    box-shadow:0 0 0 1px rgba(0,0,0,0.4) inset,0 0 12px rgba(0,0,0,0.5);
+  }
+  .dir{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--fg-3);
+    text-align:center;
+  }
+  .dir.up{color:var(--led-blue)}
+  .dir.dn{color:#ff8e3d}
+
+  .destination{
+    font-family:'DotGothic16',monospace;
+    color:var(--led-amber);
+    font-size:22px;line-height:1.05;letter-spacing:0.03em;
+  }
+  .destination .ko{color:var(--led-amber)}
+  .destination .en{color:var(--led-amber-bright);opacity:0.6;font-size:13px;margin-left:10px}
+  .destination .via{display:block;color:var(--fg-3);font-size:11px;margin-top:3px;letter-spacing:0.06em;font-family:'JetBrains Mono',monospace;text-transform:uppercase}
+
+  .badge-status{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--fg-3);
+    border:1px solid #222;
+    padding:3px 8px;border-radius:99px;
+    white-space:nowrap;
+  }
+  .badge-status.imminent{color:var(--led-red);border-color:rgba(255,77,99,0.6);animation:pulse-red 1s infinite}
+  .badge-status.approaching{color:var(--led-amber-bright);border-color:rgba(255,216,132,0.5)}
+  .badge-status.next{color:var(--fg-2);border-color:#2a2a2a}
+  @keyframes pulse-red{
+    0%,100%{background:rgba(255,77,99,0.05)}
+    50%{background:rgba(255,77,99,0.18)}
+  }
+
+  .eta{
+    text-align:right;
+    font-family:'DotGothic16',monospace;
+    color:var(--led-amber);
+    font-size:30px;line-height:1;letter-spacing:0.02em;
+  }
+  .eta.imm{color:var(--led-red);text-shadow:0 0 8px rgba(255,77,99,0.4)}
+  .eta .unit{font-size:14px;color:var(--led-amber-bright);opacity:0.7;margin-left:3px}
+
+  /* TICKER */
+  .ticker{
+    margin-top:14px;
+    padding:8px 14px;
+    background:#000;
+    border:1px solid #181818;
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+    font-family:'DotGothic16',monospace;
+    color:var(--led-amber);
+    font-size:14px;letter-spacing:0.05em;
+    white-space:nowrap;
+  }
+  .ticker-track{
+    display:inline-block;
+    animation:scroll 30s linear infinite;
+    padding-left:100%;
+  }
+  @keyframes scroll{
+    from{transform:translateX(0)}
+    to{transform:translateX(-100%)}
+  }
+  .ticker .em{color:var(--led-red)}
+  .ticker .dim{color:var(--fg-3)}
+
+  /* CONFIG NOTE */
+  .config{
+    margin-top:24px;
+    padding:18px 20px;
+    background:var(--bg-2);
+    border:1px dashed var(--rule-2);
+    border-radius:10px;
+    font-size:13px;color:var(--fg-2);
+    line-height:1.65;
+  }
+  .config h3{
+    font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--fg-3);margin-bottom:10px;
+    font-family:'JetBrains Mono',monospace;font-weight:500;
+  }
+  .config code{
+    background:var(--bg-3);
+    color:var(--led-amber);
+    padding:2px 7px;border-radius:4px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    border:1px solid var(--rule);
+  }
+  .config p{margin-bottom:8px}
+  .config p:last-child{margin-bottom:0}
+
+  /* NOTICE WHEN OFF */
+  .off-notice{
+    text-align:center;
+    padding:32px 18px;
+    color:var(--fg-3);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;letter-spacing:0.16em;text-transform:uppercase;
+  }
+  .off-notice .big{
+    font-family:'DotGothic16',monospace;
+    color:var(--fg-4);
+    font-size:34px;letter-spacing:0.08em;
+    margin-bottom:6px;text-transform:none;
+  }
+
+  @media (max-width:760px){
+    .frame{padding:0 14px 48px}
+    .titlebar h1{font-size:18px}
+    .titlebar .ctrls{width:100%}
+    .countdown{grid-template-columns:1fr;gap:10px;text-align:center}
+    .board{padding:14px 14px 18px}
+    .board-head{grid-template-columns:1fr;gap:6px;text-align:center}
+    .row{grid-template-columns:32px 1fr 80px;gap:10px}
+    .row .dir,.row .badge-status{display:none}
+    .destination{font-size:18px}
+    .eta{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <div class="titlebar">
+    <h1>
+      <span class="ko">실시간 도착정보</span>
+      <span class="sep">/</span>
+      Subway departures
+      <small>v1 · seoul metro</small>
+    </h1>
+    <div class="ctrls">
+      <select class="station-pick" id="stationPick">
+        <option value="강남">강남 (2호선)</option>
+        <option value="신도림">신도림 (1·2호선)</option>
+        <option value="잠실">잠실 (2·8호선)</option>
+        <option value="홍대입구">홍대입구 (2·6·공항철도)</option>
+        <option value="여의도">여의도 (5·9호선)</option>
+        <option value="시청">시청 (1·2호선)</option>
+        <option value="고속터미널">고속터미널 (3·7·9호선)</option>
+      </select>
+      <button class="toggle" id="trigger" type="button">
+        <span class="pulse"></span>
+        <span id="triggerLabel">전광판 켜기</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="meta-row">
+    <span><b>session</b> · 한 번 켜면 5분간 추적 후 자동 OFF</span>
+    <span><b>refresh</b> · 12s</span>
+    <span><b>data</b> · simulation (real API hookable below)</span>
+  </div>
+
+  <div class="countdown off" id="countdown">
+    <span class="lbl" id="cdLbl">대기 중 · idle</span>
+    <span class="timer" id="cdTimer">05<span class="sep">:</span>00</span>
+    <span class="lbl mono" id="cdInfo">refresh in —</span>
+    <div class="progress"><div class="fill" id="cdFill"></div></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="board-head">
+      <div class="station" id="boardStation">강남<span class="en">GANGNAM</span></div>
+      <div class="now" id="boardClock">--<span class="sep">:</span>--<span class="sep">:</span>--</div>
+      <div class="signal" id="boardSignal"><span class="led"></span><span id="signalText">offline</span></div>
+    </div>
+    <div id="rows">
+      <div class="off-notice">
+        <div class="big">▣ &nbsp;전 광 판 &nbsp;꺼 짐</div>
+        <div>press · 전광판 켜기 · to start a 5-minute live session</div>
+      </div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-track" id="ticker">
+        — 환승 안내 · 2호선 &nbsp;·&nbsp; <span class="em">현재 신도림 ↔ 합정 일부 구간 서행</span> &nbsp;·&nbsp; <span class="dim">평소보다 3 ~ 4분 지연 가능</span> &nbsp;·&nbsp; 다음 환승역 안내는 차내 모니터를 확인하세요 &nbsp;·&nbsp; thank you for riding · 안전한 하루 되세요 ·
+      </div>
+    </div>
+  </div>
+
+  <div class="config">
+    <h3>API 연동 가이드 — Real-data hookup</h3>
+    <p>이 페이지는 기본적으로 <b>시뮬레이션 데이터</b>로 동작합니다. 실제 데이터에 연결하려면 <code>&lt;script&gt;</code>의 <code>CONFIG</code> 객체를 채워주세요.</p>
+    <p style="font-size:12.5px;color:var(--fg-3)">
+      <code>CONFIG.apiKey</code> · <a href="http://data.seoul.go.kr" target="_blank" rel="noopener" style="color:var(--led-amber)">서울 열린데이터광장</a>의 <em>실시간 도착정보</em> API 키<br>
+      <code>CONFIG.endpoint</code> · 기본은 <code>http://swopenapi.seoul.go.kr/api/subway/{key}/json/realtimeStationArrival/0/10/{station}</code>
+    </p>
+    <p style="font-size:12.5px;color:var(--fg-3)">키가 비어 있거나 요청이 실패하면 자동으로 시뮬레이션 모드로 폴백합니다. 5분 세션이 끝나면 폴링을 자동 중단해 API 호출을 절약합니다.</p>
+  </div>
+
+</div>
+
+<script>
+/* ================================
+   CONFIG — fill these to go live
+   ================================ */
+const CONFIG = {
+  apiKey:   '',  // 서울 열린데이터광장 API key here
+  endpoint: 'http://swopenapi.seoul.go.kr/api/subway/{key}/json/realtimeStationArrival/0/10/{station}',
+  station:  '강남',
+  refreshMs: 12000,
+  sessionMs: 5 * 60 * 1000,
+};
+
+/* line metadata (Seoul Metro colors) */
+const LINES = {
+  '1':  { color:'var(--line-1)',  short:'1' },
+  '2':  { color:'var(--line-2)',  short:'2' },
+  '3':  { color:'var(--line-3)',  short:'3' },
+  '4':  { color:'var(--line-4)',  short:'4' },
+  '5':  { color:'var(--line-5)',  short:'5' },
+  '6':  { color:'#cd6614',        short:'6' },
+  '7':  { color:'#747f00',        short:'7' },
+  '8':  { color:'#e6186c',        short:'8' },
+  '9':  { color:'var(--line-9)',  short:'9' },
+  '공항': { color:'#0090d2',       short:'A' },
+  '분당': { color:'var(--line-bd)',short:'분당' },
+  '신분': { color:'var(--line-sb)',short:'신분당' },
+};
+
+/* SIMULATION DATA — per-station train pool */
+const SIM = {
+  '강남':       { headline:'GANGNAM', primary:'2', trains:[
+    { line:'2', dir:'inner', toKo:'성수行', toEn:'TO SEONGSU', via:'via 잠실' },
+    { line:'2', dir:'outer', toKo:'서울대입구行', toEn:'TO SNU ENT.', via:'via 사당' },
+    { line:'신분', dir:'up',  toKo:'신사行', toEn:'TO SINSA', via:'EX' },
+    { line:'신분', dir:'dn',  toKo:'광교行', toEn:'TO GWANGGYO', via:'via 정자' },
+  ]},
+  '신도림':     { headline:'SINDORIM', primary:'2', trains:[
+    { line:'1', dir:'up',    toKo:'동두천行', toEn:'TO DONGDUCHEON', via:'via 광운대' },
+    { line:'1', dir:'dn',    toKo:'인천行', toEn:'TO INCHEON', via:'급행' },
+    { line:'2', dir:'inner', toKo:'성수行', toEn:'TO SEONGSU', via:'via 충정로' },
+    { line:'2', dir:'outer', toKo:'까치산行', toEn:'TO KKACHISAN', via:'순환' },
+  ]},
+  '잠실':       { headline:'JAMSIL', primary:'2', trains:[
+    { line:'2', dir:'inner', toKo:'성수行', toEn:'TO SEONGSU', via:'via 강변' },
+    { line:'2', dir:'outer', toKo:'강남行', toEn:'TO GANGNAM', via:'via 종합운동장' },
+    { line:'8', dir:'up',    toKo:'암사行', toEn:'TO AMSA', via:'via 천호' },
+    { line:'8', dir:'dn',    toKo:'모란行', toEn:'TO MORAN', via:'via 가락시장' },
+  ]},
+  '홍대입구':   { headline:'HONGIK UNIV.', primary:'2', trains:[
+    { line:'2', dir:'inner', toKo:'성수行', toEn:'TO SEONGSU', via:'via 합정' },
+    { line:'2', dir:'outer', toKo:'까치산行', toEn:'TO KKACHISAN', via:'순환' },
+    { line:'6', dir:'up',    toKo:'응암行', toEn:'TO EUNGAM', via:'via 망원' },
+    { line:'공항', dir:'up', toKo:'서울역行', toEn:'TO SEOUL STN.', via:'급행' },
+  ]},
+  '여의도':     { headline:'YEOUIDO', primary:'9', trains:[
+    { line:'5', dir:'up',    toKo:'방화行', toEn:'TO BANGHWA', via:'via 영등포구청' },
+    { line:'5', dir:'dn',    toKo:'마천行', toEn:'TO MACHEON', via:'via 광화문' },
+    { line:'9', dir:'up',    toKo:'중앙보훈병원行', toEn:'TO BOHUN', via:'급행' },
+    { line:'9', dir:'dn',    toKo:'개화行', toEn:'TO GAEHWA', via:'완행' },
+  ]},
+  '시청':       { headline:'CITY HALL', primary:'1', trains:[
+    { line:'1', dir:'up',    toKo:'소요산行', toEn:'TO SOYOSAN', via:'via 종로' },
+    { line:'1', dir:'dn',    toKo:'서동탄行', toEn:'TO SEODONGTAN', via:'via 영등포' },
+    { line:'2', dir:'inner', toKo:'성수行', toEn:'TO SEONGSU', via:'순환' },
+    { line:'2', dir:'outer', toKo:'을지로입구行', toEn:'TO EULJIRO', via:'via 충정로' },
+  ]},
+  '고속터미널': { headline:'EXPRESS BUS TERM.', primary:'9', trains:[
+    { line:'3', dir:'up',    toKo:'대화行', toEn:'TO DAEHWA', via:'via 압구정' },
+    { line:'3', dir:'dn',    toKo:'오금行', toEn:'TO OGEUM', via:'via 교대' },
+    { line:'7', dir:'up',    toKo:'장암行', toEn:'TO JANGAM', via:'via 청담' },
+    { line:'9', dir:'up',    toKo:'중앙보훈병원行', toEn:'TO BOHUN', via:'급행' },
+  ]},
+};
+
+/* ================================
+   STATE
+   ================================ */
+let active = false;
+let sessionEnd = 0;
+let sessionTimer = null;
+let refreshTimer = null;
+let clockTimer = null;
+let nextRefresh = 0;
+let stationKey = CONFIG.station;
+
+/* DOM */
+const $ = (id) => document.getElementById(id);
+const trigger = $('trigger');
+const triggerLabel = $('triggerLabel');
+const stationPick = $('stationPick');
+const countdown = $('countdown');
+const cdLbl = $('cdLbl');
+const cdTimer = $('cdTimer');
+const cdInfo = $('cdInfo');
+const cdFill = $('cdFill');
+const board = $('board');
+const boardStation = $('boardStation');
+const boardClock = $('boardClock');
+const boardSignal = $('boardSignal');
+const signalText = $('signalText');
+const rows = $('rows');
+
+/* ================================
+   RENDER
+   ================================ */
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function renderClock(){
+  const d = new Date();
+  boardClock.innerHTML = `${pad(d.getHours())}<span class="sep">:</span>${pad(d.getMinutes())}<span class="sep">:</span>${pad(d.getSeconds())}`;
+}
+
+function renderStationHeader(){
+  const cfg = SIM[stationKey] || SIM['강남'];
+  boardStation.innerHTML = `${stationKey}<span class="en">${cfg.headline}</span>`;
+}
+
+function statusForEta(sec){
+  if(sec <= 30) return { cls:'imminent', label:'잠시 후 도착' };
+  if(sec <= 90) return { cls:'approaching', label:'전역 출발' };
+  return { cls:'next', label:'다음 열차' };
+}
+function fmtEta(sec){
+  if(sec <= 0) return { big:'곧', unit:'' };
+  if(sec < 60) return { big:String(sec), unit:'초' };
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return { big:String(m), unit: s ? `분 ${pad(s)}` : '분' };
+}
+
+function renderRows(arrivals){
+  if(!arrivals || arrivals.length === 0){
+    rows.innerHTML = '<div class="off-notice"><div class="big">▣ &nbsp;데이터 없음</div><div>NO ARRIVAL DATA</div></div>';
+    return;
+  }
+  rows.innerHTML = arrivals.map(t => {
+    const ln = LINES[t.line] || { color:'#888', short:t.line };
+    const st = statusForEta(t.eta);
+    const ef = fmtEta(t.eta);
+    const dirCls = (t.dir === 'up' || t.dir === 'inner') ? 'up' : 'dn';
+    const dirLbl = (t.dir === 'up') ? '상행' : (t.dir === 'dn') ? '하행' : (t.dir === 'inner') ? '내선' : '외선';
+    return `
+      <div class="row">
+        <div class="line-mark" style="background:${ln.color}">${ln.short}</div>
+        <div class="dir ${dirCls}">${dirLbl}</div>
+        <div class="destination">
+          <span class="ko">${t.toKo}</span><span class="en">${t.toEn}</span>
+          <span class="via">${t.via}</span>
+        </div>
+        <div class="badge-status ${st.cls}">${st.label}</div>
+        <div class="eta ${ef.unit === '' ? 'imm' : ''}">${ef.big}<span class="unit">${ef.unit}</span></div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ================================
+   FETCH (real or simulated)
+   ================================ */
+function generateSim(){
+  const cfg = SIM[stationKey] || SIM['강남'];
+  return cfg.trains.map((t, i) => ({
+    ...t,
+    eta: Math.max(0, 30 + i * 90 + Math.floor((Math.random() - 0.5) * 60)),
+  }));
+}
+
+async function fetchArrivals(){
+  if(!CONFIG.apiKey){ return generateSim(); }
+  try {
+    const url = CONFIG.endpoint
+      .replace('{key}', encodeURIComponent(CONFIG.apiKey))
+      .replace('{station}', encodeURIComponent(stationKey));
+    const res = await fetch(url, { mode:'cors' });
+    if(!res.ok) throw new Error('http ' + res.status);
+    const data = await res.json();
+    /* The Seoul API returns `realtimeArrivalList` with fields like
+       trainLineNm, arvlMsg2 (status), barvlDt (seconds-to-arrival),
+       updnLine ('상행'/'하행'). Map them into our shape:                */
+    const list = data.realtimeArrivalList || [];
+    return list.slice(0, 6).map(it => {
+      const lineNum = (it.subwayId || '').replace(/^100/, '');
+      const isUp = it.updnLine === '상행' || it.updnLine === '내선';
+      const eta = parseInt(it.barvlDt || '0', 10) || 0;
+      return {
+        line: lineNum.toString(),
+        dir: isUp ? 'up' : 'dn',
+        toKo: (it.trainLineNm || '').split('-')[0] + '行',
+        toEn: '',
+        via: it.arvlMsg2 || '',
+        eta,
+      };
+    });
+  } catch (e) {
+    console.warn('[subway] API fetch failed, using simulation:', e.message);
+    return generateSim();
+  }
+}
+
+/* ================================
+   SESSION CONTROL
+   ================================ */
+async function tick(){
+  if(!active) return;
+  const arrivals = await fetchArrivals();
+  renderRows(arrivals);
+  nextRefresh = Date.now() + CONFIG.refreshMs;
+}
+
+function setSignal(state){
+  if(state === 'live'){
+    boardSignal.classList.add('live');
+    signalText.textContent = 'live · 추적 중';
+  } else {
+    boardSignal.classList.remove('live');
+    signalText.textContent = 'offline';
+  }
+}
+
+function startSession(){
+  active = true;
+  sessionEnd = Date.now() + CONFIG.sessionMs;
+  trigger.classList.add('on');
+  triggerLabel.textContent = '전광판 끄기';
+  countdown.classList.add('on');
+  countdown.classList.remove('off');
+  cdLbl.textContent = '추적 중 · live';
+  setSignal('live');
+
+  tick();
+  refreshTimer = setInterval(tick, CONFIG.refreshMs);
+  sessionTimer = setInterval(updateCountdown, 250);
+}
+
+function stopSession(reason){
+  active = false;
+  clearInterval(refreshTimer);
+  clearInterval(sessionTimer);
+  refreshTimer = sessionTimer = null;
+
+  trigger.classList.remove('on');
+  triggerLabel.textContent = '전광판 켜기';
+  countdown.classList.remove('on');
+  countdown.classList.add('off');
+  cdLbl.textContent = reason === 'auto' ? '세션 종료 · auto-off' : '대기 중 · idle';
+  cdTimer.innerHTML = '05<span class="sep">:</span>00';
+  cdInfo.textContent = 'refresh in —';
+  cdFill.style.width = '0%';
+  setSignal('off');
+
+  rows.innerHTML = `
+    <div class="off-notice">
+      <div class="big">▣ &nbsp;전 광 판 &nbsp;꺼 짐</div>
+      <div>${reason === 'auto' ? 'auto-stopped after 5 minutes · 다시 켜려면 버튼을 누르세요' : 'press · 전광판 켜기 · to start a 5-minute live session'}</div>
+    </div>
+  `;
+}
+
+function updateCountdown(){
+  const ms = sessionEnd - Date.now();
+  if(ms <= 0){ stopSession('auto'); return; }
+  const totalS = Math.ceil(ms / 1000);
+  const m = Math.floor(totalS / 60);
+  const s = totalS % 60;
+  cdTimer.innerHTML = `${pad(m)}<span class="sep">:</span>${pad(s)}`;
+  const elapsed = CONFIG.sessionMs - ms;
+  cdFill.style.width = (elapsed / CONFIG.sessionMs * 100).toFixed(2) + '%';
+  const nextS = Math.max(0, Math.ceil((nextRefresh - Date.now()) / 1000));
+  cdInfo.textContent = active ? `refresh in ${nextS}s` : 'refresh in —';
+}
+
+/* ================================
+   EVENTS
+   ================================ */
+trigger.addEventListener('click', () => {
+  if(active) stopSession('manual'); else startSession();
+});
+
+stationPick.addEventListener('change', (e) => {
+  stationKey = e.target.value;
+  CONFIG.station = stationKey;
+  renderStationHeader();
+  if(active) tick();
+});
+
+/* clock keeps running always */
+clockTimer = setInterval(renderClock, 1000);
+renderClock();
+renderStationHeader();
+</script>
+
+</body>
+</html>
