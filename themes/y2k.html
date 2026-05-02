@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>★彡 KIM'S LIL CORNER ★彡 ~~ a website ~~</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Bungee&family=Comic+Neue:wght@400;700&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --pink:#ff4dd2;
+    --cyan:#00e5ff;
+    --lime:#bcff5a;
+    --yellow:#ffe33d;
+    --purple:#9b3df0;
+    --orange:#ff8c1c;
+    --black:#0a0a14;
+    --white:#fff8e7;
+  }
+  html{background:#1a0033}
+  body{
+    font-family:'Comic Neue','Comic Sans MS',cursive;
+    background:
+      radial-gradient(circle at 15% 25%,rgba(255,77,210,0.55) 0%,transparent 35%),
+      radial-gradient(circle at 80% 15%,rgba(0,229,255,0.5) 0%,transparent 30%),
+      radial-gradient(circle at 90% 85%,rgba(188,255,90,0.5) 0%,transparent 30%),
+      radial-gradient(circle at 20% 90%,rgba(255,227,61,0.45) 0%,transparent 30%),
+      linear-gradient(135deg,#1a0033 0%,#0a0014 100%);
+    background-attachment:fixed;
+    color:var(--white);
+    font-size:15px;
+    line-height:1.5;
+    min-height:100vh;
+    padding:18px;
+    -webkit-font-smoothing:none;
+    image-rendering:pixelated;
+  }
+  body::before{
+    content:'';
+    position:fixed;inset:0;
+    background-image:
+      radial-gradient(circle at 30% 50%,rgba(255,255,255,0.04) 1px,transparent 2px),
+      radial-gradient(circle at 70% 80%,rgba(255,255,255,0.04) 1px,transparent 2px),
+      radial-gradient(circle at 10% 70%,rgba(255,255,255,0.04) 1px,transparent 2px);
+    background-size:300px 300px,400px 400px,200px 200px;
+    pointer-events:none;
+    z-index:-1;
+  }
+
+  a{color:var(--cyan);font-weight:700;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:2px}
+  a:visited{color:var(--pink)}
+  a:hover{color:var(--yellow);background:var(--purple);padding:0 4px;text-decoration:none}
+
+  .pixel{font-family:'VT323','Courier New',monospace;font-feature-settings:normal}
+  .arcade{font-family:'Press Start 2P','VT323',monospace;font-size:11px;line-height:1.7}
+  .bungee{font-family:'Bungee',sans-serif}
+  .spice{font-family:'Bungee Spice','Bungee',sans-serif}
+
+  /* MARQUEE */
+  .marquee{
+    background:linear-gradient(90deg,var(--pink) 0%,var(--purple) 50%,var(--cyan) 100%);
+    border:3px solid var(--white);
+    border-radius:99px;
+    padding:8px 18px;
+    overflow:hidden;
+    margin-bottom:18px;
+    font-family:'Press Start 2P',monospace;
+    font-size:11px;
+    color:var(--white);
+    letter-spacing:0.06em;
+    box-shadow:6px 6px 0 var(--black);
+  }
+  .marquee-track{
+    display:inline-block;
+    white-space:nowrap;
+    animation:scroll 35s linear infinite;
+    padding-left:100%;
+  }
+  @keyframes scroll{
+    from{transform:translateX(0)}
+    to{transform:translateX(-100%)}
+  }
+  .marquee-track .em{color:var(--yellow);text-shadow:2px 2px 0 var(--black)}
+
+  /* HERO */
+  .hero{
+    background:linear-gradient(135deg,#fff 0%,#ffe3f0 30%,#cef0ff 70%,#fff 100%);
+    border:4px dashed var(--pink);
+    border-radius:32px;
+    padding:32px 28px;
+    text-align:center;
+    position:relative;
+    margin-bottom:24px;
+    box-shadow:8px 8px 0 var(--purple),16px 16px 0 var(--cyan);
+    color:var(--black);
+  }
+  .hero::before{
+    content:'★';
+    position:absolute;top:-10px;left:14px;
+    font-size:32px;color:var(--yellow);
+    text-shadow:2px 2px 0 var(--black);
+    transform:rotate(-15deg);
+  }
+  .hero::after{
+    content:'☆';
+    position:absolute;bottom:-12px;right:14px;
+    font-size:38px;color:var(--cyan);
+    text-shadow:2px 2px 0 var(--black);
+    transform:rotate(20deg);
+  }
+  .hero h1{
+    font-family:'Bungee Spice',sans-serif;
+    font-size:clamp(48px,8vw,84px);
+    line-height:1;
+    letter-spacing:-0.02em;
+    margin-bottom:8px;
+    -webkit-text-stroke:0;
+  }
+  .hero .blink{
+    display:inline-block;
+    animation:blink 0.8s step-end infinite;
+    color:var(--pink);
+  }
+  @keyframes blink{50%{opacity:0}}
+  .hero .deco{
+    font-family:'VT323',monospace;
+    font-size:24px;letter-spacing:0;
+    color:var(--purple);margin:6px 0 10px;
+  }
+  .hero .greet{
+    font-family:'Comic Neue','Comic Sans MS',cursive;
+    font-weight:700;
+    font-size:18px;
+    color:var(--black);
+    background:var(--yellow);
+    display:inline-block;
+    padding:4px 14px;
+    border:2px solid var(--black);
+    border-radius:99px;
+    transform:rotate(-2deg);
+    box-shadow:3px 3px 0 var(--black);
+  }
+  .hero .construction{
+    margin-top:18px;
+    display:inline-flex;
+    align-items:center;gap:10px;
+    font-family:'Press Start 2P',monospace;
+    font-size:10px;
+    color:#a06010;
+    background:repeating-linear-gradient(45deg,#ffe33d 0 12px,#0a0a14 12px 24px);
+    padding:6px 12px;
+    border:2px solid var(--black);
+    border-radius:6px;
+    letter-spacing:0.1em;
+    color:var(--white);
+    text-shadow:1px 1px 0 var(--black);
+    transform:rotate(-1deg);
+  }
+
+  /* GRID */
+  .layout{
+    display:grid;
+    grid-template-columns:240px 1fr 240px;
+    gap:18px;
+    max-width:1240px;
+    margin:0 auto;
+  }
+
+  /* SIDEBAR */
+  .side{display:flex;flex-direction:column;gap:18px}
+
+  .panel{
+    background:var(--white);
+    color:var(--black);
+    border:3px solid var(--black);
+    border-radius:18px;
+    padding:14px;
+    position:relative;
+    box-shadow:5px 5px 0 var(--black);
+  }
+  .panel.tilt-l{transform:rotate(-1.5deg)}
+  .panel.tilt-r{transform:rotate(1.5deg)}
+  .panel h3{
+    font-family:'Bungee',sans-serif;
+    font-size:16px;
+    background:var(--pink);
+    color:var(--white);
+    text-align:center;
+    margin:-14px -14px 12px -14px;
+    padding:6px 10px;
+    border-bottom:3px solid var(--black);
+    letter-spacing:0.04em;
+    text-shadow:2px 2px 0 var(--black);
+  }
+  .panel.cyan h3{background:var(--cyan);color:var(--black);text-shadow:none}
+  .panel.lime h3{background:var(--lime);color:var(--black);text-shadow:none}
+  .panel.yellow h3{background:var(--yellow);color:var(--black);text-shadow:none}
+  .panel.purple h3{background:var(--purple);color:var(--white)}
+  .panel ul{list-style:none}
+  .panel ul li{padding:5px 0;border-bottom:1px dotted var(--black);font-size:14px;font-weight:700}
+  .panel ul li:last-child{border-bottom:none}
+  .panel ul li::before{content:'☆ ';color:var(--pink)}
+
+  .visitor{
+    text-align:center;
+    font-family:'Press Start 2P',monospace;
+    font-size:10px;
+    color:var(--black);
+    line-height:1.8;
+    letter-spacing:0.06em;
+  }
+  .visitor .count{
+    display:inline-block;
+    background:var(--black);
+    color:var(--lime);
+    padding:6px 12px;
+    border:2px solid var(--lime);
+    margin-top:8px;
+    font-size:18px;
+    letter-spacing:0.18em;
+    font-family:'VT323',monospace;
+  }
+
+  .mood{
+    text-align:center;
+    font-family:'Comic Neue',cursive;
+    font-weight:700;
+    font-size:14px;
+  }
+  .mood .face{
+    font-size:64px;
+    line-height:1;margin:8px 0;
+    filter:drop-shadow(3px 3px 0 var(--pink));
+    color:var(--yellow);
+  }
+
+  .tunes{font-size:13px;line-height:1.8}
+  .tunes .now{
+    font-family:'VT323',monospace;
+    font-size:18px;color:var(--purple);
+    background:var(--lime);
+    padding:6px 10px;border-radius:6px;
+    margin-bottom:8px;
+    border:2px solid var(--black);
+    text-align:center;
+  }
+  .tunes .now::before{content:'♫  ';animation:wiggle 1s ease-in-out infinite}
+  @keyframes wiggle{0%,100%{transform:rotate(-5deg) translateX(0)}50%{transform:rotate(5deg) translateX(2px)}}
+
+  /* MAIN COLUMN */
+  .main{display:flex;flex-direction:column;gap:18px}
+
+  .blog-post{
+    background:var(--white);
+    color:var(--black);
+    border:3px solid var(--black);
+    border-radius:18px;
+    padding:22px 24px 20px;
+    position:relative;
+    box-shadow:6px 6px 0 var(--cyan);
+  }
+  .blog-post .meta{
+    font-family:'VT323',monospace;
+    font-size:16px;
+    color:var(--purple);
+    letter-spacing:0.04em;
+    border-bottom:2px dotted var(--black);
+    padding-bottom:6px;margin-bottom:10px;
+    display:flex;justify-content:space-between;
+  }
+  .blog-post h2{
+    font-family:'Bungee',sans-serif;
+    font-size:28px;
+    color:var(--black);
+    line-height:1.05;
+    margin-bottom:12px;
+    letter-spacing:-0.01em;
+  }
+  .blog-post h2 em{
+    font-style:normal;
+    background:var(--yellow);
+    padding:0 6px;
+    transform:rotate(-1deg);
+    display:inline-block;
+  }
+  .blog-post p{
+    font-size:15px;line-height:1.7;
+    margin-bottom:10px;
+    color:var(--black);
+  }
+  .blog-post p strong{
+    background:var(--cyan);
+    padding:0 4px;font-weight:700;
+  }
+  .blog-post .signature{
+    margin-top:16px;
+    font-family:'Comic Neue',cursive;
+    font-size:18px;font-weight:700;
+    color:var(--pink);
+    text-align:right;
+    transform:rotate(-2deg);
+  }
+
+  /* WEBRING */
+  .webring{
+    background:linear-gradient(135deg,var(--purple) 0%,var(--pink) 100%);
+    color:var(--white);
+    border:3px solid var(--black);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:6px 6px 0 var(--lime);
+  }
+  .webring h2{
+    font-family:'Press Start 2P',monospace;
+    font-size:14px;text-align:center;
+    margin-bottom:14px;
+    letter-spacing:0.08em;
+    text-shadow:2px 2px 0 var(--black);
+  }
+  .webring .ring{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--black);
+    border:2px solid var(--white);
+    border-radius:8px;
+    padding:8px 12px;
+    font-family:'VT323',monospace;
+    font-size:18px;
+    color:var(--lime);
+    margin-bottom:12px;
+  }
+  .webring .ring a{color:var(--yellow)}
+  .webring .ring a:visited{color:var(--cyan)}
+  .webring .sites{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+    font-size:13.5px;
+  }
+  .webring .sites a{
+    background:rgba(0,0,0,0.4);
+    color:var(--cyan);
+    padding:5px 10px;border-radius:6px;
+    text-decoration:none;
+    border:1px dashed rgba(255,255,255,0.4);
+    font-family:'VT323',monospace;font-size:16px;letter-spacing:0.04em;
+  }
+  .webring .sites a:hover{background:var(--yellow);color:var(--black);border-color:var(--black)}
+
+  /* GUESTBOOK */
+  .guestbook{
+    background:var(--white);
+    color:var(--black);
+    border:3px solid var(--black);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:6px 6px 0 var(--orange);
+  }
+  .guestbook h2{
+    font-family:'Bungee Spice',sans-serif;
+    font-size:32px;text-align:center;margin-bottom:14px;
+  }
+  .gb-entry{
+    background:#fff;
+    border:2px solid var(--black);
+    border-radius:8px;
+    padding:10px 12px 8px;
+    margin-bottom:10px;
+    font-family:'Comic Neue',cursive;
+    font-size:14px;line-height:1.5;
+    box-shadow:3px 3px 0 var(--pink);
+  }
+  .gb-entry:nth-child(odd){box-shadow:3px 3px 0 var(--cyan)}
+  .gb-entry:nth-child(3){box-shadow:3px 3px 0 var(--lime);transform:rotate(-0.5deg)}
+  .gb-entry .who{
+    font-weight:700;color:var(--purple);font-size:14px;
+    border-bottom:1px dotted var(--black);
+    padding-bottom:4px;margin-bottom:6px;
+    display:flex;justify-content:space-between;
+  }
+  .gb-entry .who .when{color:var(--orange);font-family:'VT323',monospace;font-size:14px;font-weight:400;letter-spacing:0.04em}
+
+  /* BANNER 88x31 */
+  .banners{
+    display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+    margin-top:14px;
+  }
+  .banner88{
+    width:88px;height:31px;
+    border:1px solid var(--black);
+    color:var(--white);
+    font-family:'Press Start 2P',monospace;
+    font-size:7px;letter-spacing:0.04em;
+    display:grid;place-items:center;text-align:center;
+    line-height:1.3;
+    cursor:pointer;
+  }
+  .banner88.b1{background:linear-gradient(45deg,#ff4dd2,#9b3df0);text-shadow:1px 1px 0 #000}
+  .banner88.b2{background:linear-gradient(45deg,#00e5ff,#0066ff);text-shadow:1px 1px 0 #000}
+  .banner88.b3{background:linear-gradient(45deg,#bcff5a,#22c55e);color:#000}
+  .banner88.b4{background:linear-gradient(45deg,#ffe33d,#ff8c1c);color:#000}
+  .banner88.b5{background:repeating-linear-gradient(90deg,#000 0 4px,#fff 4px 8px);color:#ff4dd2;text-shadow:0 0 2px #000}
+  .banner88.b6{background:#000;color:#bcff5a;border:1px solid #bcff5a}
+
+  /* FOOTER */
+  .footer{
+    grid-column:1 / -1;
+    margin-top:18px;
+    text-align:center;
+    background:var(--black);
+    border:3px solid var(--white);
+    border-radius:24px;
+    padding:18px;
+    color:var(--cyan);
+    font-family:'VT323',monospace;
+    font-size:18px;
+    line-height:1.6;
+  }
+  .footer .stamp{
+    font-family:'Press Start 2P',monospace;
+    font-size:9px;
+    color:var(--lime);
+    letter-spacing:0.18em;
+    margin-bottom:10px;
+  }
+  .footer .copy{
+    color:var(--pink);
+    font-family:'Comic Neue',cursive;font-weight:700;font-size:16px;
+  }
+  .footer .ie{
+    margin-top:8px;
+    color:var(--yellow);font-size:14px;
+    font-family:'VT323',monospace;letter-spacing:0.06em;
+  }
+  .footer .ie::before,.footer .ie::after{content:' ✧ '}
+
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr}
+    .panel.tilt-l,.panel.tilt-r{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="marquee">
+  <div class="marquee-track">
+    ★彡 WELCOME TO KIM'S LIL CORNER OF THE WEB ★彡 &nbsp;✧✧✧&nbsp; <span class="em">NEW POST!</span> 5월 일기 ★ now playing — Strawberry by Anri ✧ <span class="em">SIGN MY GUESTBOOK</span> ★ Y2K vibes only ✦ best viewed in 1024×768 ★ thanx for visiting hehe ✧ ★彡 ─────── ★彡
+  </div>
+</div>
+
+<div class="hero">
+  <div class="greet">hi! ♡ ♥ ♡</div>
+  <h1>kim's lil <span class="blink">★</span> corner</h1>
+  <div class="deco">~~ a website made with my own two hands ~~</div>
+  <div class="construction">⚠ &nbsp;UNDER CONSTRUCTION SINCE 2003 &nbsp;⚠</div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="side">
+
+    <div class="panel tilt-l visitor">
+      <h3>★ counter ★</h3>
+      <div>you are visitor #</div>
+      <div class="count">00 8 4 2 0 1</div>
+      <div style="margin-top:6px">since may 2003</div>
+    </div>
+
+    <div class="panel cyan tilt-r mood">
+      <h3>♥ mood ♥</h3>
+      <div class="face">(づ｡◕‿‿◕｡)づ</div>
+      <div>vibing &amp; sipping iced tea</div>
+      <div style="font-family:'VT323',monospace;font-size:18px;color:var(--purple);margin-top:6px">2026.05.02 sat</div>
+    </div>
+
+    <div class="panel lime tilt-l">
+      <h3>★ navi ★</h3>
+      <ul>
+        <li><a href="#blog">my blog</a></li>
+        <li><a href="#about">about me</a></li>
+        <li><a href="#tunes">music page</a></li>
+        <li><a href="#stamps">stamps</a></li>
+        <li><a href="#fanart">fanart</a></li>
+        <li><a href="#guest">guestbook</a></li>
+      </ul>
+    </div>
+
+    <div class="panel yellow tilt-r tunes">
+      <h3>♫ now playing ♫</h3>
+      <div class="now">side a · 04:32</div>
+      <div style="font-family:'Comic Neue',cursive;font-weight:700">Anri — <em>Last Summer Whisper</em></div>
+      <div style="font-family:'VT323',monospace;font-size:16px;margin-top:8px;color:var(--purple)">▸ next: Tatsuro — Plastic Love</div>
+    </div>
+
+  </aside>
+
+  <!-- CENTER MAIN -->
+  <main class="main">
+
+    <article class="blog-post" id="blog">
+      <div class="meta">
+        <span>★ POSTED 2026·05·02 SAT ★</span>
+        <span>4 comments</span>
+      </div>
+      <h2>this week i made <em>scones</em> and learned <em>git rebase</em></h2>
+      <p>HII GUYS!!! ✿ this week was suuuper packed!! i finally got around to baking the scones from that one cookbook (you know the one) and they came out <strong>actually edible</strong>!!! revolutionary i kno.</p>
+      <p>also i learned what <strong>interactive rebase</strong> does and i feel like i unlocked a new dimension of being. my friend was like "you'll never go back" and reader.... she was right. i am never going back.</p>
+      <p>random thought of the day → why are all the websites starting to look the same?? like why does every saas page have the SAME blue gradient hero. boring. i miss when websites had personality (this one for example) (im humble like that)</p>
+      <p>more later xoxo &nbsp;going to sit on the floor and play final fantasy now</p>
+      <div class="signature">~ kim ♡♡</div>
+    </article>
+
+    <article class="blog-post" id="about">
+      <div class="meta">
+        <span>★ ABOUT ME ★</span>
+        <span>updated 2026·04·14</span>
+      </div>
+      <h2>about <em>this corner</em></h2>
+      <p>hi i'm <strong>kim</strong>, i live somewhere with too much rain and i make small things on the internet. this site is hand-coded in plain html bc i think CMSes are for cowards and also bc i can't afford a CMS.</p>
+      <p>i like <strong>typography, dip pens, late 90s rpg soundtracks</strong>, and overengineered grocery lists. i don't like uppercase letters or talking on the phone or websites that make you scroll for ten minutes to find the price.</p>
+      <p>this page has been online since may 2003. it had three different themes before this one. each was uglier than the last and i stand by that.</p>
+      <div class="signature">~ kim, 2026 edition</div>
+    </article>
+
+    <div class="webring" id="stamps">
+      <h2>★彡 the cool kids webring ★彡</h2>
+      <div class="ring">
+        <span><a href="#">« prev</a></span>
+        <span style="color:var(--white)">★ join the ring ★</span>
+        <span><a href="#">next »</a></span>
+      </div>
+      <div class="sites">
+        <a href="#">jamie's noodle log</a>
+        <a href="#">bunny pixel art zone</a>
+        <a href="#">hong's guitar tabs</a>
+        <a href="#">★ the moss collective ★</a>
+        <a href="#">retro keyboards.gif</a>
+        <a href="#">soohyun draws stuff</a>
+      </div>
+      <div class="banners">
+        <div class="banner88 b1">KIM'S<br>CORNER</div>
+        <div class="banner88 b2">CYBER<br>★MOON★</div>
+        <div class="banner88 b3">y2k<br>FOREVER</div>
+        <div class="banner88 b4">NETSCAPE<br>NOW!</div>
+        <div class="banner88 b5">NO<br>FRAMES</div>
+        <div class="banner88 b6">UNIX<br>POWERED</div>
+      </div>
+    </div>
+
+    <div class="guestbook" id="guest">
+      <h2>guestbook ♡</h2>
+      <div class="gb-entry">
+        <div class="who"><span>★ anonymous ★</span><span class="when">2026·05·01</span></div>
+        i made it from yumi's site!! love the pixel cat in the corner btw &gt;_&lt; please make more posts about scones
+      </div>
+      <div class="gb-entry">
+        <div class="who"><span>~minji~</span><span class="when">2026·04·28</span></div>
+        ohmygoddd kim ur site is so cute i wanna have a website too can u teach me html one day plzzzzz ・゚:* ✿
+      </div>
+      <div class="gb-entry">
+        <div class="who"><span>noseduck404</span><span class="when">2026·04·22</span></div>
+        i was looking for tutorials on css blob shapes and ended up here. stayed for the marquee. respect.
+      </div>
+      <div style="text-align:center;margin-top:10px;font-family:'VT323',monospace;font-size:18px;color:var(--purple)">
+        <a href="#" style="background:var(--lime);padding:4px 14px;border:2px solid var(--black);border-radius:6px;color:var(--black);text-decoration:none">→ sign the guestbook ←</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="side">
+
+    <div class="panel purple tilt-r">
+      <h3>♥ stuff i like ♥</h3>
+      <ul>
+        <li>green tea ice cream</li>
+        <li>bus rides at night</li>
+        <li>pre-2003 Korean web</li>
+        <li>walls of post-its</li>
+        <li>mechanical keyboards</li>
+        <li>physical newspapers</li>
+        <li>mid-album skip tracks</li>
+        <li>finding 5,000 won in pockets</li>
+      </ul>
+    </div>
+
+    <div class="panel tilt-l">
+      <h3>★彡 awards ★彡</h3>
+      <div style="font-family:'VT323',monospace;font-size:18px;line-height:1.6;text-align:center">
+        ✿ best in show ✿<br>
+        2003 webring awards<br><br>
+        ☆ pixel of the month ☆<br>
+        oct 2024<br><br>
+        ♡ cute site ♡<br>
+        4 weeks running<br>
+        on tildes.kim
+      </div>
+    </div>
+
+    <div class="panel cyan tilt-r">
+      <h3>✦ subscribe ✦</h3>
+      <div style="font-family:'Comic Neue',cursive;font-weight:700;font-size:14px;margin-bottom:8px;text-align:center">get a postcard from me when i post a new thing</div>
+      <input type="email" placeholder="your email here" style="width:100%;padding:6px 10px;border:2px solid var(--black);border-radius:6px;font-family:inherit;font-size:14px;background:var(--white);margin-bottom:6px"/>
+      <button style="width:100%;padding:7px;border:2px solid var(--black);border-radius:6px;background:var(--pink);color:var(--white);font-family:'Bungee',sans-serif;font-size:14px;cursor:pointer;box-shadow:3px 3px 0 var(--black);text-shadow:1px 1px 0 var(--black)">→ SEND IT ←</button>
+    </div>
+
+    <div class="panel lime tilt-l" style="text-align:center">
+      <h3>★ web 1.0 ★</h3>
+      <div class="arcade" style="line-height:2.5">
+        no ads · no js<br>
+        no analytics<br>
+        no cookies<br>
+        no popups<br>
+        no NEWSLETTER<br>
+        modal pls<br>
+        <span style="color:var(--purple)">just html ♥</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <div class="footer">
+    <div class="stamp">★彡 hand-coded in notepad ★彡</div>
+    <div class="copy">© 2003–2026 kim ♡ all rights reserved (just kidding, steal everything)</div>
+    <div class="ie">best viewed in netscape 4.7 at 1024×768 ✦ this site looks like ass on mobile sorry not sorry</div>
+    <div style="margin-top:8px;font-size:12px;color:var(--cyan);font-family:'Press Start 2P',monospace;letter-spacing:0.1em">made by hand · made on earth · made with love</div>
+  </div>
+
+</div>
+
+</body>
+</html>

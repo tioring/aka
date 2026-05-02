@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inventory · 재고 모니터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0e0f12;
+    --bg-2:#15171c;
+    --bg-3:#1c1f25;
+    --bg-4:#262a32;
+    --line:#252830;
+    --line-2:#363a45;
+    --fg:#f1f3f6;
+    --fg-2:#a8aebb;
+    --fg-3:#6f7689;
+    --fg-4:#4a5060;
+    --green:#22c55e;
+    --green-d:#15803d;
+    --amber:#f59e0b;
+    --amber-d:#b45309;
+    --red:#ef4444;
+    --red-d:#991b1b;
+    --blue:#3b82f6;
+    --pink:#ec4899;
+  }
+  html,body{background:var(--bg);color:var(--fg)}
+  body{
+    font-family:'Inter','Pretendard Variable',system-ui,sans-serif;
+    font-size:13.5px;
+    line-height:1.5;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+  /* TOP BAR */
+  .top{
+    position:sticky;top:0;z-index:20;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+    padding:12px 22px;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:18px;align-items:center;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+  .brand .mark{
+    width:22px;height:22px;border-radius:6px;
+    background:linear-gradient(135deg,var(--pink) 0%,var(--blue) 100%);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px;
+  }
+  .brand .label{color:var(--fg)}
+  .brand .pill{
+    margin-left:4px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;
+    color:var(--green);
+    background:rgba(34,197,94,0.1);
+    padding:2px 8px;border-radius:99px;
+    text-transform:uppercase;
+  }
+  .brand .pill .dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--green);margin-right:5px;vertical-align:middle;
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:0.6;transform:scale(0.85)}
+  }
+  .top .meta{
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--fg-3);letter-spacing:0.05em;
+  }
+  .top .meta b{color:var(--fg-2);font-weight:500}
+  .top .actions{display:flex;gap:8px}
+  .btn{
+    background:var(--bg-3);
+    border:1px solid var(--line);
+    color:var(--fg);
+    padding:7px 12px;
+    font:inherit;font-size:12.5px;font-weight:500;
+    border-radius:6px;cursor:pointer;
+    transition:all .15s;
+  }
+  .btn:hover{border-color:var(--line-2);background:var(--bg-4)}
+  .btn.primary{background:var(--blue);border-color:var(--blue)}
+  .btn.primary:hover{background:#2563eb}
+
+  /* MAIN */
+  main{padding:22px 22px 60px}
+
+  /* ALERT BANNER */
+  .alert{
+    background:linear-gradient(90deg,rgba(239,68,68,0.10) 0%,rgba(239,68,68,0.02) 100%);
+    border:1px solid rgba(239,68,68,0.4);
+    border-left:3px solid var(--red);
+    border-radius:8px;
+    padding:14px 18px;
+    margin-bottom:20px;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:14px;align-items:center;
+  }
+  .alert .ic{
+    width:32px;height:32px;border-radius:8px;
+    background:rgba(239,68,68,0.15);
+    display:grid;place-items:center;
+    color:var(--red);font-size:16px;font-weight:700;
+  }
+  .alert .body{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .alert h3{font-size:14px;font-weight:600;color:var(--fg);letter-spacing:-0.01em}
+  .alert h3 b{color:var(--red);font-weight:700;margin:0 4px}
+  .alert p{font-size:12.5px;color:var(--fg-2);line-height:1.5}
+  .alert .urgent-list{
+    display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+  }
+  .alert .urgent-list span{
+    background:rgba(239,68,68,0.12);
+    color:var(--red);
+    padding:2px 8px;border-radius:99px;
+    border:1px solid rgba(239,68,68,0.3);
+    letter-spacing:0.04em;
+  }
+
+  /* KPI STRIP */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-bottom:20px;
+  }
+  .kpi{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px 12px;
+    display:flex;flex-direction:column;gap:4px;
+    position:relative;overflow:hidden;
+  }
+  .kpi .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--fg-3);
+  }
+  .kpi .val{
+    font-size:24px;font-weight:700;color:var(--fg);
+    letter-spacing:-0.02em;line-height:1;margin:6px 0 2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .kpi .val .un{font-size:13px;font-weight:500;color:var(--fg-2);margin-left:3px}
+  .kpi .delta{font-size:11.5px;font-weight:500;color:var(--fg-3)}
+  .kpi .delta.up{color:var(--green)}
+  .kpi .delta.up::before{content:'▲ '}
+  .kpi .delta.dn{color:var(--red)}
+  .kpi .delta.dn::before{content:'▼ '}
+  .kpi .spark{
+    position:absolute;bottom:0;left:0;right:0;height:24px;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .kpi .spark svg{width:100%;height:100%}
+
+  /* LAYOUT */
+  .grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+  }
+  .panel{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .panel-head{
+    padding:12px 18px;
+    border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .panel-head h2{font-size:14px;font-weight:600;letter-spacing:-0.01em;color:var(--fg)}
+  .panel-head h2 small{color:var(--fg-3);font-weight:400;margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.04em}
+  .panel-head .filters{display:flex;gap:4px}
+  .panel-head .filters .chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    padding:3px 9px;
+    border-radius:99px;
+    background:var(--bg-3);
+    color:var(--fg-3);
+    border:1px solid var(--line);
+    cursor:pointer;
+    letter-spacing:0.06em;
+    transition:all .15s;
+  }
+  .panel-head .filters .chip.on{background:var(--bg-4);color:var(--fg);border-color:var(--line-2)}
+  .panel-head .filters .chip:hover{color:var(--fg)}
+
+  /* SKU GRID */
+  .skus{
+    padding:12px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:10px;
+  }
+  .sku{
+    background:var(--bg-3);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 12px 10px;
+    cursor:pointer;
+    transition:border-color .15s,transform .15s;
+    position:relative;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .sku:hover{border-color:var(--line-2);transform:translateY(-1px)}
+  .sku.crit{border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.05)}
+  .sku.warn{border-color:rgba(245,158,11,0.4)}
+  .sku .img{
+    aspect-ratio:1;
+    background:linear-gradient(135deg,var(--c,var(--bg-4)) 0%,color-mix(in srgb,var(--c,var(--bg-4)) 50%,var(--bg)) 100%);
+    border-radius:6px;
+    margin-bottom:4px;
+    display:grid;place-items:center;
+    color:rgba(255,255,255,0.7);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+    font-weight:600;
+    position:relative;
+    overflow:hidden;
+  }
+  .sku .img::after{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15) 0%,transparent 40%);
+  }
+  .sku .head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;min-width:0}
+  .sku .nm{
+    font-size:13px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;
+  }
+  .sku .id{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;
+    color:var(--fg-4);letter-spacing:0.04em;flex-shrink:0;
+  }
+  .sku .price{font-size:12px;color:var(--fg-2)}
+  .sku .price b{color:var(--fg);font-weight:700;margin-right:3px}
+  .sku .stock-row{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    margin-top:auto;padding-top:6px;
+    border-top:1px solid var(--line);
+  }
+  .sku .stock{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--fg-2);
+    letter-spacing:0.04em;
+  }
+  .sku .stock b{
+    font-size:14px;font-weight:700;
+    color:var(--fg);margin-right:2px;
+  }
+  .sku.crit .stock b{color:var(--red)}
+  .sku.warn .stock b{color:var(--amber)}
+  .sku .badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;
+    padding:2px 7px;border-radius:99px;font-weight:600;
+  }
+  .sku .badge.crit{background:rgba(239,68,68,0.15);color:var(--red)}
+  .sku .badge.warn{background:rgba(245,158,11,0.15);color:var(--amber)}
+  .sku .badge.ok{background:rgba(34,197,94,0.12);color:var(--green)}
+  .sku .meter{
+    height:3px;border-radius:2px;background:var(--bg-4);
+    overflow:hidden;
+  }
+  .sku .meter .fill{
+    height:100%;background:var(--meter-c,var(--green));border-radius:2px;
+    width:var(--w);
+    transition:width .3s;
+  }
+
+  /* ORDER STREAM */
+  .stream{
+    max-height:480px;
+    overflow-y:auto;
+  }
+  .stream::-webkit-scrollbar{width:6px}
+  .stream::-webkit-scrollbar-thumb{background:var(--bg-4);border-radius:3px}
+  .stream .order{
+    padding:10px 18px;
+    border-bottom:1px solid var(--line);
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:10px;align-items:start;
+  }
+  .stream .order:last-child{border-bottom:none}
+  .stream .order:hover{background:var(--bg-3)}
+  .stream .ic{
+    width:28px;height:28px;border-radius:6px;
+    display:grid;place-items:center;
+    font-size:12px;font-weight:700;color:#fff;
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:0;
+  }
+  .stream .ic.new{background:var(--blue)}
+  .stream .ic.pay{background:var(--green)}
+  .stream .ic.ship{background:var(--amber)}
+  .stream .ic.cancel{background:var(--red)}
+  .stream .ic.refund{background:var(--fg-3)}
+  .stream .det{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .stream .det .head{display:flex;align-items:baseline;gap:8px;font-size:12.5px;color:var(--fg)}
+  .stream .det .head b{font-weight:600}
+  .stream .det .head .id{font-family:'JetBrains Mono',monospace;color:var(--fg-3);font-size:11px}
+  .stream .det .info{font-size:11.5px;color:var(--fg-2);line-height:1.45}
+  .stream .det .info b{color:var(--fg);font-weight:500}
+  .stream .det .badge-line{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
+  .stream .det .badge-line span{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;
+    letter-spacing:0.1em;text-transform:uppercase;
+    background:var(--bg-4);color:var(--fg-3);
+    padding:1.5px 6px;border-radius:99px;
+  }
+  .stream .det .badge-line .vip{background:rgba(236,72,153,0.15);color:var(--pink)}
+  .stream .det .badge-line .gift{background:rgba(245,158,11,0.15);color:var(--amber)}
+  .stream .det .badge-line .priority{background:rgba(239,68,68,0.15);color:var(--red)}
+  .stream .right{
+    text-align:right;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--fg-3);
+    letter-spacing:0.04em;
+  }
+  .stream .right .amt{font-size:13px;color:var(--fg);font-weight:600;display:block;margin-bottom:2px;letter-spacing:0}
+
+  /* LOW-STOCK CHART */
+  .panel.chart{margin-top:20px}
+  .bars{padding:14px 18px 18px}
+  .bars .row{
+    display:grid;grid-template-columns:140px 1fr 60px;
+    gap:12px;align-items:center;
+    padding:6px 0;
+  }
+  .bars .nm{font-size:12px;color:var(--fg-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bars .nm b{color:var(--fg);font-weight:500}
+  .bars .bar{
+    height:8px;border-radius:4px;background:var(--bg-3);
+    overflow:hidden;position:relative;
+  }
+  .bars .bar .fill{
+    height:100%;border-radius:4px;
+    background:linear-gradient(90deg,var(--c) 0%,color-mix(in srgb,var(--c) 60%,var(--bg)) 100%);
+  }
+  .bars .qty{
+    text-align:right;font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--fg);font-weight:600;
+  }
+  .bars .qty.crit{color:var(--red)}
+  .bars .qty.warn{color:var(--amber)}
+
+  @media (max-width:980px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid{grid-template-columns:1fr}
+    .top{grid-template-columns:1fr;gap:8px}
+    .top .meta{text-align:left}
+    .alert{grid-template-columns:auto 1fr;gap:10px}
+    .alert .urgent-list{grid-column:1 / -1}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <span class="mark">M</span>
+    <span class="label">Marketplace</span>
+    <span class="pill"><span class="dot"></span>live · 12s refresh</span>
+  </div>
+  <div class="meta">
+    <b>2026.05.02 (토)</b> · 13:48 KST &nbsp;|&nbsp; store · <b>byline.kr</b> &nbsp;|&nbsp; warehouse · <b>김포 #2</b>
+  </div>
+  <div class="actions">
+    <button class="btn">↻ 새로고침</button>
+    <button class="btn">필터</button>
+    <button class="btn primary">+ 상품 추가</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ALERT -->
+  <div class="alert">
+    <div class="ic">!</div>
+    <div class="body">
+      <h3>발주 필요 상품 <b>4종</b> · 즉시 재고 보충 권장</h3>
+      <p>아래 상품들은 <b>오늘 마감 시간 전까지</b> 발주하지 않으면 내일 신규 주문에서 자동 품절 처리됩니다.</p>
+      <div class="urgent-list">
+        <span>SKU-A-014 · 3개 남음</span>
+        <span>SKU-B-009 · 1개 남음</span>
+        <span>SKU-D-022 · 5개 남음</span>
+        <span>SKU-A-007 · 2개 남음</span>
+      </div>
+    </div>
+    <button class="btn primary">일괄 발주</button>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpis">
+    <div class="kpi">
+      <span class="lbl">today's orders</span>
+      <span class="val">142<span class="un">건</span></span>
+      <span class="delta up">12.8% &nbsp;<span style="color:var(--fg-3);font-weight:400">vs 어제</span></span>
+      <span class="spark"><svg viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,18 8,16 16,17 24,12 32,14 40,9 48,11 56,8 64,10 72,5 80,7 88,3 96,5 100,4" stroke="var(--green)" stroke-width="1.4" fill="none"/></svg></span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">revenue · today</span>
+      <span class="val">₩4.82<span class="un">M</span></span>
+      <span class="delta up">+₩612K &nbsp;<span style="color:var(--fg-3);font-weight:400">vs 평균</span></span>
+      <span class="spark"><svg viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 10,17 20,18 30,14 40,15 50,11 60,12 70,8 80,9 90,5 100,3" stroke="var(--green)" stroke-width="1.4" fill="none"/></svg></span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">stock alerts</span>
+      <span class="val" style="color:var(--red)">14<span class="un">건</span></span>
+      <span class="delta dn">+ 4 신규</span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">delayed shipments</span>
+      <span class="val" style="color:var(--amber)">3<span class="un">건</span></span>
+      <span class="delta" style="color:var(--amber)">→ 평균 1.4일 지연</span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">conversion</span>
+      <span class="val">3.84<span class="un">%</span></span>
+      <span class="delta up">+0.42%p</span>
+      <span class="spark"><svg viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,16 12,15 24,18 36,13 48,14 60,11 72,12 84,9 96,10 100,8" stroke="var(--blue)" stroke-width="1.4" fill="none"/></svg></span>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- SKU GRID -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>활성 상품 <small>248개 · 노출 142 · 품절 14 · 중지 92</small></h2>
+        <div class="filters">
+          <span class="chip on">전체</span>
+          <span class="chip">위험</span>
+          <span class="chip">베스트</span>
+          <span class="chip">신상</span>
+        </div>
+      </div>
+      <div class="skus">
+
+        <div class="sku crit" style="--c:#dc2626;--meter-c:var(--red);--w:5%">
+          <div class="img">A 014</div>
+          <div class="head">
+            <span class="nm">한지 노트 · A5</span>
+            <span class="id">A-014</span>
+          </div>
+          <div class="price"><b>₩18,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>3</b>/ 60 left</span>
+            <span class="badge crit">긴급</span>
+          </div>
+        </div>
+
+        <div class="sku crit" style="--c:#7c3aed;--meter-c:var(--red);--w:2%">
+          <div class="img">B 009</div>
+          <div class="head">
+            <span class="nm">딥펜 잉크 · 흑갈</span>
+            <span class="id">B-009</span>
+          </div>
+          <div class="price"><b>₩24,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>1</b>/ 40 left</span>
+            <span class="badge crit">긴급</span>
+          </div>
+        </div>
+
+        <div class="sku warn" style="--c:#0ea5e9;--meter-c:var(--amber);--w:14%">
+          <div class="img">D 022</div>
+          <div class="head">
+            <span class="nm">린넨 손수건 · 5색</span>
+            <span class="id">D-022</span>
+          </div>
+          <div class="price"><b>₩12,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>5</b>/ 35 left</span>
+            <span class="badge warn">경고</span>
+          </div>
+        </div>
+
+        <div class="sku warn" style="--c:#f59e0b;--meter-c:var(--amber);--w:22%">
+          <div class="img">C 003</div>
+          <div class="head">
+            <span class="nm">유리 잉크병 · 30ml</span>
+            <span class="id">C-003</span>
+          </div>
+          <div class="price"><b>₩8,500</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>11</b>/ 50 left</span>
+            <span class="badge warn">경고</span>
+          </div>
+        </div>
+
+        <div class="sku" style="--c:#10b981;--meter-c:var(--green);--w:62%">
+          <div class="img">E 001</div>
+          <div class="head">
+            <span class="nm">필기 가죽 케이스</span>
+            <span class="id">E-001</span>
+          </div>
+          <div class="price"><b>₩42,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>62</b>/ 100 left</span>
+            <span class="badge ok">정상</span>
+          </div>
+        </div>
+
+        <div class="sku" style="--c:#ec4899;--meter-c:var(--green);--w:78%">
+          <div class="img">A 008</div>
+          <div class="head">
+            <span class="nm">한지 양장본 · 2종</span>
+            <span class="id">A-008</span>
+          </div>
+          <div class="price"><b>₩28,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>78</b>/ 100 left</span>
+            <span class="badge ok">정상</span>
+          </div>
+        </div>
+
+        <div class="sku" style="--c:#84cc16;--meter-c:var(--green);--w:88%">
+          <div class="img">F 011</div>
+          <div class="head">
+            <span class="nm">대나무 펜홀더</span>
+            <span class="id">F-011</span>
+          </div>
+          <div class="price"><b>₩16,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>44</b>/ 50 left</span>
+            <span class="badge ok">정상</span>
+          </div>
+        </div>
+
+        <div class="sku" style="--c:#06b6d4;--meter-c:var(--green);--w:55%">
+          <div class="img">G 002</div>
+          <div class="head">
+            <span class="nm">캘리그래피 키트</span>
+            <span class="id">G-002</span>
+          </div>
+          <div class="price"><b>₩68,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>11</b>/ 20 left</span>
+            <span class="badge ok">정상</span>
+          </div>
+        </div>
+
+        <div class="sku crit" style="--c:#a855f7;--meter-c:var(--red);--w:8%">
+          <div class="img">A 007</div>
+          <div class="head">
+            <span class="nm">한지 시트 · 12색</span>
+            <span class="id">A-007</span>
+          </div>
+          <div class="price"><b>₩9,800</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>2</b>/ 25 left</span>
+            <span class="badge crit">긴급</span>
+          </div>
+        </div>
+
+        <div class="sku" style="--c:#f97316;--meter-c:var(--green);--w:42%">
+          <div class="img">D 004</div>
+          <div class="head">
+            <span class="nm">먹 · 송연먹</span>
+            <span class="id">D-004</span>
+          </div>
+          <div class="price"><b>₩32,000</b></div>
+          <div class="meter"><span class="fill"></span></div>
+          <div class="stock-row">
+            <span class="stock"><b>21</b>/ 50 left</span>
+            <span class="badge ok">정상</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ORDER STREAM -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>실시간 주문 <small>last 30 min · live</small></h2>
+        <div class="filters">
+          <span class="chip on">all</span>
+          <span class="chip">신규</span>
+          <span class="chip">결제</span>
+        </div>
+      </div>
+      <div class="stream">
+
+        <div class="order">
+          <div class="ic new">N</div>
+          <div class="det">
+            <div class="head"><b>김민지</b> 님 · <span class="id">#10238-A</span></div>
+            <div class="info"><b>한지 노트 · A5</b> ×2 + <b>유리 잉크병</b> ×1</div>
+            <div class="badge-line"><span>seoul</span><span class="vip">VIP</span></div>
+          </div>
+          <div class="right"><span class="amt">₩44,500</span>13:47</div>
+        </div>
+
+        <div class="order">
+          <div class="ic pay">P</div>
+          <div class="det">
+            <div class="head"><b>이재호</b> 님 · <span class="id">#10237-B</span></div>
+            <div class="info"><b>딥펜 잉크 · 흑갈</b> ×1 → 결제 완료</div>
+            <div class="badge-line"><span>busan</span><span class="priority">last 1</span></div>
+          </div>
+          <div class="right"><span class="amt">₩24,000</span>13:46</div>
+        </div>
+
+        <div class="order">
+          <div class="ic ship">S</div>
+          <div class="det">
+            <div class="head"><b>박혜원</b> 님 · <span class="id">#10231-A</span></div>
+            <div class="info">발송 완료 · <b>CJ 대한통운</b> 1234-5678-9012</div>
+            <div class="badge-line"><span>incheon</span><span class="gift">선물포장</span></div>
+          </div>
+          <div class="right"><span class="amt">₩68,000</span>13:42</div>
+        </div>
+
+        <div class="order">
+          <div class="ic new">N</div>
+          <div class="det">
+            <div class="head"><b>최우진</b> 님 · <span class="id">#10236-A</span></div>
+            <div class="info"><b>캘리그래피 키트</b> ×1 + <b>한지 시트</b> ×3</div>
+            <div class="badge-line"><span>seoul</span></div>
+          </div>
+          <div class="right"><span class="amt">₩97,400</span>13:38</div>
+        </div>
+
+        <div class="order">
+          <div class="ic pay">P</div>
+          <div class="det">
+            <div class="head"><b>정유진</b> 님 · <span class="id">#10235-B</span></div>
+            <div class="info"><b>대나무 펜홀더</b> ×4 → 결제 완료</div>
+            <div class="badge-line"><span>daegu</span></div>
+          </div>
+          <div class="right"><span class="amt">₩64,000</span>13:34</div>
+        </div>
+
+        <div class="order">
+          <div class="ic cancel">C</div>
+          <div class="det">
+            <div class="head"><b>한지영</b> 님 · <span class="id">#10229-A</span></div>
+            <div class="info">주문 취소 · 사유: <em>색상 변경 요청</em></div>
+            <div class="badge-line"><span>gwangju</span></div>
+          </div>
+          <div class="right"><span class="amt" style="color:var(--fg-3);text-decoration:line-through">₩28,000</span>13:30</div>
+        </div>
+
+        <div class="order">
+          <div class="ic new">N</div>
+          <div class="det">
+            <div class="head"><b>송기훈</b> 님 · <span class="id">#10234-A</span></div>
+            <div class="info"><b>먹 · 송연먹</b> ×1 + <b>한지 양장본</b> ×2</div>
+            <div class="badge-line"><span>seoul</span><span class="vip">VIP</span></div>
+          </div>
+          <div class="right"><span class="amt">₩88,000</span>13:28</div>
+        </div>
+
+        <div class="order">
+          <div class="ic ship">S</div>
+          <div class="det">
+            <div class="head"><b>윤서연</b> 님 · <span class="id">#10220-A</span></div>
+            <div class="info">발송 완료 · <b>한진택배</b></div>
+            <div class="badge-line"><span>jeju</span></div>
+          </div>
+          <div class="right"><span class="amt">₩52,000</span>13:24</div>
+        </div>
+
+        <div class="order">
+          <div class="ic refund">R</div>
+          <div class="det">
+            <div class="head"><b>김도현</b> 님 · <span class="id">#10215-A</span></div>
+            <div class="info">환불 처리 · <b>품절</b></div>
+            <div class="badge-line"><span>seoul</span></div>
+          </div>
+          <div class="right"><span class="amt" style="color:var(--fg-3)">₩18,000</span>13:18</div>
+        </div>
+
+        <div class="order">
+          <div class="ic new">N</div>
+          <div class="det">
+            <div class="head"><b>오지현</b> 님 · <span class="id">#10233-A</span></div>
+            <div class="info"><b>린넨 손수건 · 5색</b> ×3</div>
+            <div class="badge-line"><span>seongnam</span></div>
+          </div>
+          <div class="right"><span class="amt">₩36,000</span>13:14</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOW STOCK CHART -->
+  <div class="panel chart">
+    <div class="panel-head">
+      <h2>재고 부족 TOP 10 <small>auto-sorted by remaining qty</small></h2>
+      <div class="filters">
+        <span class="chip">↓ 발주 일괄</span>
+      </div>
+    </div>
+    <div class="bars">
+      <div class="row" style="--c:var(--red)"><span class="nm"><b>딥펜 잉크 · 흑갈</b> · B-009</span><span class="bar"><span class="fill" style="width:2%"></span></span><span class="qty crit">1</span></div>
+      <div class="row" style="--c:var(--red)"><span class="nm"><b>한지 시트 · 12색</b> · A-007</span><span class="bar"><span class="fill" style="width:8%"></span></span><span class="qty crit">2</span></div>
+      <div class="row" style="--c:var(--red)"><span class="nm"><b>한지 노트 · A5</b> · A-014</span><span class="bar"><span class="fill" style="width:5%"></span></span><span class="qty crit">3</span></div>
+      <div class="row" style="--c:var(--amber)"><span class="nm"><b>린넨 손수건 · 5색</b> · D-022</span><span class="bar"><span class="fill" style="width:14%"></span></span><span class="qty warn">5</span></div>
+      <div class="row" style="--c:var(--amber)"><span class="nm"><b>달항아리 미니어처</b> · K-002</span><span class="bar"><span class="fill" style="width:18%"></span></span><span class="qty warn">9</span></div>
+      <div class="row" style="--c:var(--amber)"><span class="nm"><b>유리 잉크병 · 30ml</b> · C-003</span><span class="bar"><span class="fill" style="width:22%"></span></span><span class="qty warn">11</span></div>
+      <div class="row" style="--c:var(--amber)"><span class="nm"><b>캘리그래피 키트</b> · G-002</span><span class="bar"><span class="fill" style="width:55%"></span></span><span class="qty">11</span></div>
+      <div class="row" style="--c:var(--amber)"><span class="nm"><b>한지 시트 · 단색</b> · A-006</span><span class="bar"><span class="fill" style="width:30%"></span></span><span class="qty">15</span></div>
+      <div class="row" style="--c:var(--green)"><span class="nm"><b>먹 · 송연먹</b> · D-004</span><span class="bar"><span class="fill" style="width:42%"></span></span><span class="qty">21</span></div>
+      <div class="row" style="--c:var(--green)"><span class="nm"><b>도자기 잉크 트레이</b> · H-001</span><span class="bar"><span class="fill" style="width:50%"></span></span><span class="qty">25</span></div>
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>
