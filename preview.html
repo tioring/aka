@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design Preview — Three Themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0c;
+    --bg-2:#141418;
+    --bg-3:#1d1d22;
+    --fg:#f4f4f5;
+    --fg-2:#a1a1aa;
+    --fg-3:#71717a;
+    --line:#27272a;
+    --line-2:#3f3f46;
+
+    --c-mnemonic:#ff5b2e;
+    --c-conversion:#5b3df5;
+    --c-reading:#b13a1f;
+  }
+  html,body{height:100%;background:var(--bg);color:var(--fg)}
+  body{
+    font-family:'Inter','Pretendard Variable',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+    display:grid;
+    grid-template-rows:auto 1fr;
+    overflow:hidden;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+  .serif{font-family:'Instrument Serif',serif;font-style:italic}
+
+  /* TOP BAR */
+  header{
+    border-bottom:1px solid var(--line);
+    background:var(--bg);
+    z-index:10;
+  }
+  .bar{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:24px;
+    align-items:center;
+    padding:14px 22px;
+    height:56px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-weight:600;font-size:14px;letter-spacing:-0.01em;
+  }
+  .brand .mark{
+    width:22px;height:22px;border-radius:6px;
+    background:linear-gradient(135deg,var(--c-mnemonic) 0%,var(--c-conversion) 50%,var(--c-reading) 100%);
+    display:grid;place-items:center;
+    color:#fff;font-weight:700;font-size:11px;
+    letter-spacing:-0.01em;
+  }
+  .brand .label{color:var(--fg)}
+  .brand .sub{color:var(--fg-3);font-weight:400;margin-left:6px;font-size:13px}
+
+  /* SEGMENTED CONTROL */
+  .seg{
+    justify-self:center;
+    display:flex;
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:3px;
+    gap:2px;
+    position:relative;
+  }
+  .seg button{
+    border:none;background:transparent;cursor:pointer;
+    color:var(--fg-2);
+    font:inherit;font-weight:500;font-size:13px;
+    padding:7px 14px 7px 30px;
+    border-radius:6px;
+    display:flex;align-items:center;gap:0;
+    transition:color .15s,background .15s;
+    position:relative;
+    letter-spacing:-0.005em;
+  }
+  .seg button::before{
+    content:'';
+    position:absolute;
+    left:11px;top:50%;transform:translateY(-50%);
+    width:10px;height:10px;border-radius:3px;
+    background:var(--seg-color);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .seg button:hover{color:var(--fg)}
+  .seg button.active{
+    background:var(--bg-3);
+    color:var(--fg);
+    box-shadow:0 1px 0 rgba(255,255,255,0.04) inset,0 1px 2px rgba(0,0,0,0.3);
+  }
+  .seg button .key{
+    margin-left:10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--fg-3);
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1px 5px;
+    font-weight:500;
+  }
+  .seg button.active .key{color:var(--fg-2);border-color:var(--line-2)}
+
+  .right{
+    display:flex;align-items:center;gap:14px;
+    color:var(--fg-3);font-size:12.5px;
+  }
+  .right a{
+    color:var(--fg-2);
+    text-decoration:none;
+    padding:6px 12px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    transition:all .15s;
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12.5px;
+  }
+  .right a:hover{color:var(--fg);border-color:var(--line-2);background:var(--bg-2)}
+  .right .info{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--fg-3);letter-spacing:0.04em;
+  }
+  .right .info b{color:var(--fg-2);font-weight:500}
+
+  /* SUBHEADER STRIP */
+  .strip{
+    border-bottom:1px solid var(--line);
+    padding:10px 22px;
+    background:var(--bg-2);
+    display:flex;
+    align-items:center;
+    gap:16px;
+    font-size:12.5px;
+    color:var(--fg-2);
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  .strip .badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--fg-3);
+    border-right:1px solid var(--line);
+    padding-right:14px;
+    flex-shrink:0;
+  }
+  .strip .desc{color:var(--fg-2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .strip .desc .em{color:var(--fg);font-weight:500}
+  .strip .meta{
+    color:var(--fg-3);font-family:'JetBrains Mono',monospace;font-size:11px;
+    border-left:1px solid var(--line);padding-left:14px;flex-shrink:0;
+  }
+  .strip .swatch{
+    display:inline-block;width:9px;height:9px;border-radius:2px;
+    background:var(--strip-color);margin-right:7px;vertical-align:middle;
+  }
+
+  /* IFRAME STAGE */
+  .stage{
+    position:relative;
+    background:var(--bg-2);
+    overflow:hidden;
+  }
+  .frame{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    border:none;
+    background:#fff;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  .frame.visible{opacity:1}
+
+  .loader{
+    position:absolute;inset:0;
+    display:grid;place-items:center;
+    color:var(--fg-3);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.18em;
+    text-transform:uppercase;
+    pointer-events:none;
+    transition:opacity .2s;
+  }
+  .loader.hidden{opacity:0}
+  .loader .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--c-active,var(--fg-3));
+    margin-right:10px;
+    animation:blink 1.2s infinite ease-in-out;
+    display:inline-block;vertical-align:middle;
+  }
+  @keyframes blink{
+    0%,100%{opacity:0.3;transform:scale(.85)}
+    50%{opacity:1;transform:scale(1)}
+  }
+
+  /* HINT TOAST */
+  .hint{
+    position:absolute;bottom:18px;right:18px;
+    padding:8px 12px;
+    background:rgba(20,20,24,0.92);
+    backdrop-filter:blur(8px);
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:11.5px;
+    color:var(--fg-2);
+    display:flex;align-items:center;gap:10px;
+    z-index:5;
+    transition:opacity .3s,transform .3s;
+  }
+  .hint kbd{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    background:var(--bg-3);
+    border:1px solid var(--line-2);
+    padding:1px 5px;border-radius:3px;
+    color:var(--fg);
+    font-weight:500;
+  }
+  .hint.faded{opacity:0;transform:translateY(8px);pointer-events:none}
+  .hint .x{
+    cursor:pointer;color:var(--fg-3);
+    margin-left:4px;font-size:14px;line-height:1;
+  }
+  .hint .x:hover{color:var(--fg)}
+
+  @media (max-width:840px){
+    .bar{
+      grid-template-columns:1fr;
+      grid-auto-rows:auto;
+      height:auto;
+      padding:10px 14px;
+      gap:10px;
+    }
+    .seg{justify-self:stretch;overflow-x:auto;flex-wrap:nowrap}
+    .seg button{padding:7px 12px 7px 26px}
+    .seg button .key{display:none}
+    .right{justify-self:stretch;justify-content:space-between}
+    .strip{padding:8px 14px}
+    .strip .badge{padding-right:10px}
+    .hint{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <span class="mark">3</span>
+      <span class="label">Design Preview</span>
+      <span class="sub">three themes, one repo</span>
+    </div>
+    <div class="seg" role="tablist" aria-label="테마 선택">
+      <button role="tab" data-theme="mnemonic" style="--seg-color:var(--c-mnemonic)">
+        Mnemonic <span class="key">1</span>
+      </button>
+      <button role="tab" data-theme="conversion" style="--seg-color:var(--c-conversion)">
+        Conversion <span class="key">2</span>
+      </button>
+      <button role="tab" data-theme="reading" style="--seg-color:var(--c-reading)">
+        Reading <span class="key">3</span>
+      </button>
+    </div>
+    <div class="right">
+      <span class="info"><b id="info-name">—</b> · <span id="info-file">—</span></span>
+      <a id="open-tab" href="#" target="_blank" rel="noopener">Open ↗</a>
+    </div>
+  </div>
+  <div class="strip">
+    <span class="badge">Theme</span>
+    <span class="desc"><span class="swatch" id="strip-swatch"></span><span id="strip-desc">—</span></span>
+    <span class="meta" id="strip-meta">—</span>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="loader" id="loader"><span class="dot"></span><span>Loading</span></div>
+  <iframe class="frame" id="frame" title="Theme preview" loading="lazy"></iframe>
+  <div class="hint" id="hint">
+    <span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> 키로 빠른 전환</span>
+    <span class="x" onclick="document.getElementById('hint').classList.add('faded')">×</span>
+  </div>
+</div>
+
+<script>
+  const themes = {
+    mnemonic: {
+      file:    'themes/mnemonic.html',
+      name:    'Mnemonic',
+      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-mnemonic').trim(),
+      desc:    '잊히지 않을 일곱 카드 — Claude Code Power Moves. 큰 숫자 앵커, 단일 색 강조, 기억 갈고리.',
+      meta:    '7 cards · cream + ink',
+    },
+    conversion: {
+      file:    'themes/conversion.html',
+      name:    'Conversion',
+      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-conversion').trim(),
+      desc:    'Ralph — 매일 굴러가는 AI 에이전트 SaaS 랜딩. Hero·feature grid·pricing·FAQ·final CTA.',
+      meta:    'SaaS landing · violet accent',
+    },
+    reading: {
+      file:    'themes/reading.html',
+      name:    'Reading',
+      color:   getComputedStyle(document.documentElement).getPropertyValue('--c-reading').trim(),
+      desc:    'The Map of AI in 2026 — 학계 6명의 시선을 모은 장문 에세이. Newsreader serif, drop cap, pull quotes.',
+      meta:    '11 min read · 6 voices',
+    },
+  };
+
+  const order = ['mnemonic','conversion','reading'];
+  const buttons = document.querySelectorAll('.seg button');
+  const frame = document.getElementById('frame');
+  const loader = document.getElementById('loader');
+  const stripSwatch = document.getElementById('strip-swatch');
+  const stripDesc = document.getElementById('strip-desc');
+  const stripMeta = document.getElementById('strip-meta');
+  const infoName = document.getElementById('info-name');
+  const infoFile = document.getElementById('info-file');
+  const openTab = document.getElementById('open-tab');
+  const hint = document.getElementById('hint');
+
+  let current = null;
+
+  function setTheme(key, push){
+    if(!(key in themes) || key === current) return;
+    current = key;
+    const t = themes[key];
+
+    buttons.forEach(b => b.classList.toggle('active', b.dataset.theme === key));
+
+    frame.classList.remove('visible');
+    loader.classList.remove('hidden');
+    loader.style.setProperty('--c-active', t.color);
+
+    // Swap iframe src
+    frame.onload = () => {
+      frame.classList.add('visible');
+      loader.classList.add('hidden');
+    };
+    frame.src = t.file;
+
+    // Update strip
+    stripSwatch.style.setProperty('--strip-color', t.color);
+    stripDesc.innerHTML = `<span class="em">${t.name}</span> — ${t.desc}`;
+    stripMeta.textContent = t.meta;
+
+    infoName.textContent = t.name.toLowerCase();
+    infoFile.textContent = t.file;
+    openTab.href = t.file;
+
+    if(push) history.replaceState(null, '', '#' + key);
+  }
+
+  // Click handlers
+  buttons.forEach(b => {
+    b.addEventListener('click', () => setTheme(b.dataset.theme, true));
+  });
+
+  // Keyboard 1/2/3
+  document.addEventListener('keydown', (e) => {
+    if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if(e.metaKey || e.ctrlKey || e.altKey) return;
+    const idx = ['1','2','3'].indexOf(e.key);
+    if(idx >= 0){ setTheme(order[idx], true); e.preventDefault(); }
+  });
+
+  // Hash routing
+  function fromHash(){
+    const h = location.hash.replace('#','');
+    return h in themes ? h : 'mnemonic';
+  }
+  window.addEventListener('hashchange', () => setTheme(fromHash(), false));
+
+  // Init
+  setTheme(fromHash(), false);
+
+  // Auto-fade hint after 6s
+  setTimeout(() => hint.classList.add('faded'), 6000);
+</script>
+
+</body>
+</html>
