@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Threshold — An exhibition at the Gwacheon Modern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#fafaf7;
+    --bg-2:#f3f2ec;
+    --ink:#0c0c0a;
+    --ink-2:#3a3a36;
+    --muted:#807d72;
+    --muted-2:#b3b0a4;
+    --rule:#dcd9cc;
+    --accent:#1a1a18;
+    --highlight:#7a4f30;
+  }
+  html,body{background:var(--bg);color:var(--ink)}
+  body{
+    font-family:'Inter','Pretendard Variable',system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.6;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .serif{font-family:'EB Garamond','Times New Roman',serif;font-feature-settings:"liga","onum"}
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  /* TOP META */
+  .meta-top{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:24px;
+    padding:14px 32px;
+    border-bottom:1px solid var(--rule);
+    background:var(--bg);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .meta-top .l{text-align:left}
+  .meta-top .c{text-align:center}
+  .meta-top .r{text-align:right}
+  .meta-top b{color:var(--ink);font-weight:500}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:80px 56px 96px}
+
+  /* HERO */
+  .hero{
+    margin-bottom:96px;
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:64px;
+    align-items:end;
+  }
+  @media (max-width:880px){.hero{grid-template-columns:1fr;gap:32px}}
+
+  .hero .inst{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.32em;text-transform:uppercase;
+    color:var(--muted);
+    border-top:1px solid var(--ink);
+    padding-top:14px;
+    margin-bottom:32px;
+  }
+  .hero .inst b{color:var(--ink);font-weight:500;margin-right:6px}
+
+  h1.exh-title{
+    font-family:'EB Garamond',serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:clamp(68px,10vw,148px);
+    line-height:0.95;
+    letter-spacing:-0.04em;
+    color:var(--ink);
+    margin-bottom:18px;
+  }
+  h1.exh-title em{font-style:normal;font-weight:500}
+  .subtitle{
+    font-family:'EB Garamond',serif;
+    font-style:italic;
+    font-size:24px;
+    line-height:1.35;
+    color:var(--ink-2);
+    max-width:42ch;
+  }
+
+  .hero-side{
+    font-family:'Inter',sans-serif;font-size:13px;
+    color:var(--ink-2);line-height:1.75;
+  }
+  .hero-side dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px}
+  .hero-side dt{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;letter-spacing:0.24em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;
+    align-self:center;
+  }
+  .hero-side dd{font-family:'EB Garamond',serif;font-size:16px;line-height:1.4;color:var(--ink);font-style:italic}
+  .hero-side dd b{font-weight:500;font-style:normal;font-family:'Inter',sans-serif;font-size:14px}
+
+  /* CURATORIAL */
+  .curatorial{
+    display:grid;
+    grid-template-columns:240px 1fr;
+    gap:64px;
+    margin-bottom:96px;
+    border-top:1px solid var(--ink);
+    padding-top:32px;
+  }
+  @media (max-width:880px){.curatorial{grid-template-columns:1fr;gap:24px}}
+
+  .cur-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.28em;text-transform:uppercase;
+    color:var(--ink);font-weight:500;
+  }
+  .cur-text{
+    font-family:'EB Garamond',serif;
+    font-size:21px;
+    line-height:1.55;
+    color:var(--ink);
+    max-width:60ch;
+  }
+  .cur-text p{margin-bottom:18px}
+  .cur-text p:first-of-type::first-letter{
+    font-family:'EB Garamond',serif;
+    font-style:italic;
+    font-size:64px;
+    line-height:0.85;
+    float:left;
+    padding:8px 12px 0 0;
+    color:var(--highlight);
+  }
+  .cur-text p:last-child{margin-bottom:0}
+  .cur-text em{font-style:italic;color:var(--highlight)}
+  .cur-text strong{font-weight:500;color:var(--ink)}
+  .cur-attrib{
+    margin-top:24px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* PIECE GRID */
+  .pieces{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:48px 24px;
+    margin-bottom:96px;
+  }
+  @media (max-width:880px){.pieces{grid-template-columns:1fr;gap:48px}}
+
+  .piece{
+    display:flex;flex-direction:column;
+    gap:14px;
+  }
+  .piece.full{grid-column:1 / -1}
+  .piece.half{grid-column:span 6}
+  .piece.third{grid-column:span 4}
+  .piece.two-third{grid-column:span 8}
+  @media (max-width:880px){
+    .piece.half,.piece.third,.piece.two-third{grid-column:1}
+  }
+
+  .work-img{
+    aspect-ratio:4/3;
+    background:var(--bg-2);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 8px 24px -12px rgba(0,0,0,0.15);
+  }
+  .work-img.large{aspect-ratio:16/9}
+  .work-img.tall{aspect-ratio:3/4}
+  .work-img.square{aspect-ratio:1}
+
+  /* fictional artwork "renders" via CSS */
+  .work-img.w1{
+    background:
+      radial-gradient(circle at 30% 50%,#f5e2c4 0%,#e0c294 40%,transparent 60%),
+      radial-gradient(circle at 70% 60%,#9a7340 0%,transparent 50%),
+      linear-gradient(180deg,#fafaf7 0%,#d4c8a8 100%);
+  }
+  .work-img.w2{
+    background:
+      linear-gradient(135deg,#1a1a18 0%,#1a1a18 48%,#fafaf7 50%,#fafaf7 100%);
+  }
+  .work-img.w2::after{
+    content:'';position:absolute;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    width:38%;height:38%;
+    background:#7a4f30;
+    border-radius:50%;
+    opacity:0.85;
+  }
+  .work-img.w3{
+    background:
+      repeating-linear-gradient(90deg,#0c0c0a 0 1px,transparent 1px 24px),
+      linear-gradient(180deg,#fafaf7 0%,#dcd9cc 100%);
+  }
+  .work-img.w4{
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 100%,#3a3a36 0%,transparent 60%),
+      radial-gradient(circle at 20% 30%,#fff 0%,#fff 4%,transparent 5%),
+      radial-gradient(circle at 80% 25%,#fff 0%,#fff 3%,transparent 4%),
+      linear-gradient(180deg,#0c0c0a 0%,#3a3a36 100%);
+  }
+  .work-img.w5{
+    background:
+      conic-gradient(from 45deg at 50% 50%,#7a4f30 0%,#fafaf7 50%,#7a4f30 100%);
+  }
+  .work-img.w6{
+    background:
+      linear-gradient(180deg,#fafaf7 0%,#fafaf7 35%,#7a4f30 35%,#7a4f30 65%,#0c0c0a 65%,#0c0c0a 100%);
+  }
+  .work-img.w7{
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 60%,#dcd9cc 0%,transparent 50%),
+      linear-gradient(180deg,#fafaf7,#f3f2ec);
+  }
+  .work-img.w7::before{
+    content:'';position:absolute;
+    top:18%;left:50%;transform:translateX(-50%);
+    width:1.5px;height:64%;
+    background:#0c0c0a;
+  }
+  .work-img.w7::after{
+    content:'';position:absolute;
+    bottom:14%;left:50%;transform:translateX(-50%);
+    width:54%;height:8%;
+    background:#0c0c0a;border-radius:50%;opacity:0.4;
+  }
+  .work-img.w8{
+    background:
+      repeating-linear-gradient(45deg,#dcd9cc 0 4px,#fafaf7 4px 8px);
+  }
+
+  .caption{
+    font-family:'EB Garamond',serif;
+    font-size:14.5px;
+    color:var(--ink-2);
+    line-height:1.6;
+  }
+  .caption .ix{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;letter-spacing:0.24em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;
+    display:block;margin-bottom:6px;
+  }
+  .caption .ix b{color:var(--highlight)}
+  .caption .nm{
+    font-family:'EB Garamond',serif;
+    font-style:italic;
+    font-size:21px;
+    color:var(--ink);
+    line-height:1.2;
+    letter-spacing:-0.01em;
+    margin-bottom:6px;
+  }
+  .caption .nm b{font-style:normal;font-weight:500}
+  .caption .det{
+    font-family:'Inter',sans-serif;
+    font-size:11.5px;
+    color:var(--muted);
+    letter-spacing:0.04em;
+    margin-bottom:8px;
+  }
+  .caption .det b{color:var(--ink-2);font-weight:500}
+  .caption .des{font-family:'EB Garamond',serif;font-style:italic;font-size:14px;color:var(--ink-2);line-height:1.5;max-width:42ch}
+
+  /* DIVIDER */
+  .divider{
+    text-align:center;
+    margin:64px 0;
+    color:var(--muted-2);
+    font-family:'EB Garamond',serif;
+    font-size:14px;letter-spacing:0.6em;
+  }
+
+  /* PROGRAM TABLE */
+  .program{
+    margin-bottom:96px;
+  }
+  .program h2{
+    font-family:'EB Garamond',serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:48px;
+    color:var(--ink);
+    letter-spacing:-0.02em;
+    margin-bottom:24px;
+    border-top:1px solid var(--ink);
+    padding-top:14px;
+  }
+  .program table{
+    width:100%;
+    border-collapse:collapse;
+    font-family:'EB Garamond',serif;
+    font-size:16px;
+  }
+  .program th{
+    text-align:left;
+    font-family:'Inter',sans-serif;
+    font-size:10.5px;letter-spacing:0.22em;
+    text-transform:uppercase;color:var(--muted);font-weight:600;
+    padding:8px 12px;border-bottom:1px solid var(--ink);
+  }
+  .program td{
+    padding:14px 12px;
+    border-bottom:1px solid var(--rule);
+    vertical-align:top;
+    color:var(--ink);
+  }
+  .program td.d{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;color:var(--muted);
+    letter-spacing:0.06em;
+    width:140px;
+  }
+  .program td.t{font-style:italic;font-size:18px;letter-spacing:-0.005em}
+  .program td.t small{display:block;font-style:normal;font-size:13px;color:var(--muted);margin-top:2px;font-family:'Inter',sans-serif;letter-spacing:0}
+  .program td.who{
+    font-family:'Inter',sans-serif;font-size:13px;color:var(--ink-2);
+    width:200px;
+  }
+
+  /* COLOPHON */
+  footer{
+    border-top:3px double var(--ink);
+    padding-top:32px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:32px;
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    color:var(--ink-2);
+    line-height:1.7;
+  }
+  @media (max-width:760px){footer{grid-template-columns:1fr;gap:18px}}
+  footer h4{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.28em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;margin-bottom:10px;
+  }
+  footer b{color:var(--ink);font-weight:500}
+  footer .lockup{
+    text-align:right;
+    font-family:'EB Garamond',serif;
+    font-style:italic;font-size:18px;color:var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<div class="meta-top">
+  <span class="l"><b>Gwacheon Modern</b> · permanent collection · west wing</span>
+  <span class="c">no. 41 · spring 2026</span>
+  <span class="r">free admission · open Tue–Sun · 10–18</span>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="inst"><b>Exhibition no. 41</b> · 2026.04.18 — 2026.07.20 · west wing</div>
+      <h1 class="exh-title"><em>Threshold</em></h1>
+      <p class="subtitle">Twelve works on the line we cross when we are not quite paying attention. A solo exhibition by <em>Inhwan Choi</em>, with two earlier works on loan.</p>
+    </div>
+    <div class="hero-side">
+      <dl>
+        <dt>Artist</dt><dd><b>Inhwan Choi</b><br><em>(b. 1974, Yeosu)</em></dd>
+        <dt>Curator</dt><dd><b>Soomin Yang</b></dd>
+        <dt>Open</dt><dd>2026 · 04 · 18 (sat)</dd>
+        <dt>Close</dt><dd>2026 · 07 · 20 (sun)</dd>
+        <dt>Hours</dt><dd>Tue – Sun · 10:00 – 18:00<br><em>Closed on Mondays.</em></dd>
+        <dt>Tickets</dt><dd>Free admission with reservation</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- CURATORIAL -->
+  <div class="curatorial">
+    <div class="cur-label">— Curatorial note</div>
+    <div class="cur-text">
+      <p>Choi has been working with the same set of three colors for thirty-one years. He calls them, with the matter-of-factness that has always characterized his speech, <em>the morning, the wall, and the shadow</em>. The colors do not change. The light does. <strong>Threshold</strong> is, in part, a study of the latter.</p>
+      <p>The twelve works gathered here were made between 2018 and 2025. They are arranged not chronologically — Choi is uninterested in chronology — but according to a sequence the artist suggests is <em>"the order in which a person walks into a room and notices, at different speeds, that something has been moved."</em></p>
+      <p>This is not a quiet exhibition. It is, however, an exhibition that asks to be approached at the rate of walking.</p>
+      <div class="cur-attrib">— Soomin Yang, curator. April 2026</div>
+    </div>
+  </div>
+
+  <!-- PIECES -->
+  <div class="pieces">
+
+    <figure class="piece full">
+      <div class="work-img w1 large"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>I</b> &nbsp;·&nbsp; entry</span>
+        <span class="nm">A Morning <b>Without Voices</b></span>
+        <span class="det"><b>2024</b> · oil and wax on linen · 240 × 180 cm · Collection of the artist</span>
+        <span class="des">"The first wall of the room. He paints the first thing the day says, before the day is named." — S.Y.</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece half">
+      <div class="work-img w2"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>II</b></span>
+        <span class="nm">Door, in <b>Two Parts</b></span>
+        <span class="det">2023 · ink on hanji · 96 × 72 cm</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece half">
+      <div class="work-img w3"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>III</b></span>
+        <span class="nm">A <b>Threshold</b>, in October</span>
+        <span class="det">2022 · graphite on linen · 120 × 90 cm · loaned from MMCA</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece third">
+      <div class="work-img w4 tall"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>IV</b></span>
+        <span class="nm">Night, <b>Provisional</b></span>
+        <span class="det">2025 · oil on canvas · 180 × 130 cm</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece third">
+      <div class="work-img w5 tall"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>V</b></span>
+        <span class="nm">A Page, <b>Read at the Wrong Speed</b></span>
+        <span class="det">2024 · pigment on hanji · 180 × 130 cm</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece third">
+      <div class="work-img w6 tall"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>VI</b></span>
+        <span class="nm">The Wall, <b>Then a Window</b></span>
+        <span class="det">2025 · oil on canvas · 180 × 130 cm</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece two-third">
+      <div class="work-img w7"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>VII</b> &nbsp;·&nbsp; central work</span>
+        <span class="nm">A <b>Single Ink Stroke</b>, Held Until It Dried</span>
+        <span class="det">2024 · ink on hanji · 240 × 180 cm · Private collection, on loan</span>
+        <span class="des">"The work the artist returned to. He says — only once, in our recorded conversation — that <em>the painting is the holding</em>." — S.Y.</span>
+      </figcaption>
+    </figure>
+
+    <figure class="piece third">
+      <div class="work-img w8"></div>
+      <figcaption class="caption">
+        <span class="ix">No. <b>VIII</b></span>
+        <span class="nm">Diagonal, <b>Almost</b></span>
+        <span class="det">2018 · oil on canvas · 100 × 80 cm</span>
+      </figcaption>
+    </figure>
+
+  </div>
+
+  <div class="divider">·  ·  ·  ·  ·</div>
+
+  <!-- PROGRAM -->
+  <section class="program">
+    <h2>Public <em>Programs</em></h2>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Event</th><th>With</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="d">2026.04.18 (Sat)<br>15:00</td>
+          <td class="t">Opening &amp; artist conversation<small>An hour with Inhwan Choi, in conversation with the curator. In Korean, with English summary.</small></td>
+          <td class="who">Inhwan Choi · Soomin Yang</td>
+        </tr>
+        <tr>
+          <td class="d">2026.05.10 (Sat)<br>14:00</td>
+          <td class="t">Walk · the room at the rate of the room<small>A 90-minute slow walk through the exhibition with the curator. Limited to 12 visitors.</small></td>
+          <td class="who">Soomin Yang</td>
+        </tr>
+        <tr>
+          <td class="d">2026.05.24 (Sat)<br>11:00</td>
+          <td class="t">Workshop · making one mark<small>A two-hour ink workshop with the artist's assistant. Materials provided. Reservation required.</small></td>
+          <td class="who">Hyunjin Park (assistant)</td>
+        </tr>
+        <tr>
+          <td class="d">2026.06.21 (Sat)<br>14:00</td>
+          <td class="t">Talk · color, in three<small>An invited lecture on the painter's three pigments, by a specialist in early-Joseon mineral pigments.</small></td>
+          <td class="who">Dr. Yejin Kim</td>
+        </tr>
+        <tr>
+          <td class="d">2026.07.20 (Sun)<br>17:00</td>
+          <td class="t">Closing reading<small>A short closing reading of texts the artist has selected. No comments. Twelve minutes exactly.</small></td>
+          <td class="who">Inhwan Choi</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <div>
+      <h4>The Gwacheon Modern</h4>
+      313 Gwacheon-daero, Gwacheon-si, Gyeonggi-do<br>
+      <b>+82 2 200 0000</b> · <b>visit@gwacheon-modern.kr</b>
+    </div>
+    <div>
+      <h4>Visit</h4>
+      Tue – Sun · <b>10 – 18</b>. Closed Mon.<br>
+      Free admission · reservation recommended on weekends.<br>
+      Subway: Line 4, Daegongwon, exit 2.
+    </div>
+    <div class="lockup">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);font-style:normal;margin-bottom:12px">— exhibition no.</div>
+      <em>41</em>
+      <div style="font-family:'Inter',sans-serif;font-size:11.5px;color:var(--ink-2);font-style:normal;margin-top:14px">Threshold · Inhwan Choi · 2026</div>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

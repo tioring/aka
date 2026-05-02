@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YOUR · 2025 · WRAPPED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#080308;
+  }
+  html,body{background:var(--bg)}
+  body{
+    font-family:'Inter','Bricolage Grotesque',system-ui,sans-serif;
+    color:#fff;
+    font-size:14.5px;
+    line-height:1.5;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Bricolage Grotesque',sans-serif;font-feature-settings:"ss01","ss02"}
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  /* PAGE WRAP */
+  .wrap{max-width:520px;margin:0 auto;padding:18px 0 64px}
+
+  /* CARDS */
+  .card{
+    border-radius:24px;
+    padding:32px;
+    margin-bottom:14px;
+    position:relative;
+    overflow:hidden;
+    min-height:380px;
+    display:flex;
+    flex-direction:column;
+    color:#fff;
+  }
+  .card::after{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(circle at 20% 20%,rgba(255,255,255,0.18) 0%,transparent 50%);
+    pointer-events:none;
+  }
+  .card .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    opacity:0.7;font-weight:600;
+    margin-bottom:12px;
+  }
+  .card .num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.18em;
+    opacity:0.6;
+    position:absolute;top:32px;right:32px;
+    font-weight:600;
+  }
+  .card .footer-line{
+    margin-top:auto;
+    padding-top:18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.06em;
+    opacity:0.65;
+  }
+  .card .footer-line b{font-weight:700;opacity:1}
+
+  /* HERO */
+  .hero{
+    background:linear-gradient(160deg,#ff2e93 0%,#a829ff 50%,#1f1bff 100%);
+    text-align:center;
+    padding:48px 28px 40px;
+    min-height:auto;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;
+    top:-100px;right:-100px;
+    width:300px;height:300px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,0.3) 0%,transparent 60%);
+  }
+  .hero .year{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-style:italic;
+    font-size:120px;line-height:0.85;
+    letter-spacing:-0.05em;
+    margin-bottom:12px;
+  }
+  .hero h1{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;
+    font-size:42px;line-height:1;letter-spacing:-0.04em;
+    margin-bottom:18px;
+  }
+  .hero h1 .stroked{-webkit-text-stroke:2px #fff;color:transparent;font-style:italic;font-weight:400}
+  .hero .sub{
+    font-size:15px;opacity:0.9;line-height:1.5;
+    max-width:32ch;margin:0 auto 22px;
+  }
+  .hero .signature{
+    display:inline-block;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(6px);
+    padding:8px 16px;border-radius:99px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.16em;
+  }
+
+  /* MINUTES CARD */
+  .minutes{
+    background:linear-gradient(140deg,#22c55e 0%,#0d9d68 100%);
+  }
+  .minutes::before{
+    content:'';
+    position:absolute;
+    bottom:-80px;left:-40px;
+    width:240px;height:240px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.12);
+  }
+  .minutes .big{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;
+    font-size:108px;line-height:0.9;
+    letter-spacing:-0.05em;
+    margin:14px 0 4px;
+  }
+  .minutes .un{font-family:'Bricolage Grotesque',sans-serif;font-weight:400;font-style:italic;font-size:32px;letter-spacing:-0.02em;display:block;margin-bottom:18px}
+  .minutes .compare{
+    background:rgba(0,0,0,0.25);
+    backdrop-filter:blur(6px);
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:13px;line-height:1.5;
+  }
+  .minutes .compare b{font-weight:700;display:block;font-size:15px;margin-bottom:3px}
+
+  /* TOP SONG */
+  .top-song{
+    background:linear-gradient(150deg,#ff7a3a 0%,#ff2e93 100%);
+  }
+  .top-song .album{
+    aspect-ratio:1;
+    width:65%;max-width:260px;
+    margin:8px 0 18px;
+    border-radius:8px;
+    background:linear-gradient(135deg,#fef9e7 0%,#fbe4a4 100%);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 12px 36px rgba(0,0,0,0.4);
+  }
+  .top-song .album::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 60% 30%,#080308 0%,#080308 32%,transparent 33%),
+      radial-gradient(circle at 60% 30%,#fef9e7 0%,#fef9e7 12%,transparent 13%);
+  }
+  .top-song .album::after{
+    content:'';position:absolute;
+    bottom:18%;left:50%;transform:translateX(-30%);
+    width:50%;height:1px;
+    background:#080308;
+  }
+  .top-song .nm{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;
+    font-size:36px;
+    line-height:1.05;
+    letter-spacing:-0.03em;
+    margin-bottom:4px;
+  }
+  .top-song .ar{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:400;font-style:italic;
+    font-size:18px;opacity:0.9;
+    margin-bottom:10px;
+  }
+  .top-song .plays{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    letter-spacing:0.08em;opacity:0.85;
+  }
+
+  /* TOP 5 */
+  .top-five{
+    background:linear-gradient(150deg,#fbbf24 0%,#f97316 100%);
+    color:#1a0e00;
+  }
+  .top-five .label{color:#1a0e00}
+  .top-five h2{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-size:38px;line-height:1;letter-spacing:-0.03em;
+    margin-bottom:18px;color:#1a0e00;
+  }
+  .top-five h2 em{font-style:italic;font-weight:400}
+  .top-five ol{list-style:none}
+  .top-five ol li{
+    display:grid;grid-template-columns:30px 1fr auto;
+    gap:14px;align-items:center;
+    padding:10px 0;
+    border-bottom:2px solid rgba(26,14,0,0.15);
+  }
+  .top-five ol li:last-child{border-bottom:none}
+  .top-five ol li .pos{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-size:28px;line-height:1;
+    color:#1a0e00;letter-spacing:-0.03em;
+  }
+  .top-five ol li .info{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .top-five ol li .info .nm{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px;letter-spacing:-0.01em;color:#1a0e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top-five ol li .info .ar{font-size:12.5px;color:#1a0e00;opacity:0.7}
+  .top-five ol li .ct{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:0.04em;color:#1a0e00;font-weight:600}
+
+  /* GENRES */
+  .genres{
+    background:linear-gradient(145deg,#06b6d4 0%,#1f1bff 100%);
+  }
+  .genres .label{margin-bottom:18px}
+  .genres .genre-line{
+    margin-bottom:18px;
+  }
+  .genres .pri{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-style:italic;
+    font-size:64px;line-height:0.95;letter-spacing:-0.04em;
+    margin-bottom:6px;
+  }
+  .genres .pct{
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+    letter-spacing:0.06em;opacity:0.8;font-weight:600;margin-bottom:24px;
+  }
+  .genres .bars{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+  .genres .bar{
+    display:grid;grid-template-columns:90px 1fr auto;
+    gap:12px;align-items:center;
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  }
+  .genres .bar .nm{letter-spacing:-0.005em}
+  .genres .bar .rail{
+    height:9px;border-radius:5px;
+    background:rgba(255,255,255,0.18);overflow:hidden;
+  }
+  .genres .bar .rail .fill{
+    height:100%;
+    background:#fff;border-radius:5px;
+    width:var(--w);
+  }
+  .genres .bar .pc{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    opacity:0.8;letter-spacing:0;
+  }
+
+  /* MOMENT */
+  .moment{
+    background:linear-gradient(150deg,#1a0033 0%,#7c3aed 60%,#ec4899 100%);
+    text-align:center;
+  }
+  .moment .quote{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:400;font-style:italic;
+    font-size:32px;line-height:1.15;letter-spacing:-0.02em;
+    margin:18px 0 12px;
+  }
+  .moment .quote em{
+    background:linear-gradient(180deg,transparent 60%,rgba(255,255,255,0.4) 60%);
+    font-style:italic;font-weight:700;
+  }
+  .moment .when{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:0.18em;opacity:0.7;
+    margin-bottom:24px;
+  }
+  .moment .day-detail{
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(6px);
+    border-radius:14px;
+    padding:18px;
+    text-align:left;
+    font-size:13.5px;line-height:1.6;
+  }
+  .moment .day-detail .head{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700;font-size:17px;
+    margin-bottom:8px;
+  }
+
+  /* PERSONALITY */
+  .pers{
+    background:linear-gradient(145deg,#fbbf24 0%,#a829ff 100%);
+  }
+  .pers .nm{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-style:italic;
+    font-size:64px;line-height:0.95;letter-spacing:-0.04em;
+    margin:8px 0;
+  }
+  .pers .nm .stroked{
+    -webkit-text-stroke:2px #fff;color:transparent;
+    font-style:normal;font-weight:400;
+  }
+  .pers .desc{
+    font-size:15.5px;line-height:1.5;
+    margin:16px 0 18px;font-weight:500;
+    max-width:34ch;
+  }
+  .pers .traits{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .pers .traits .pill{
+    background:rgba(0,0,0,0.25);
+    backdrop-filter:blur(6px);
+    padding:10px 12px;border-radius:10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:0.08em;
+    text-align:center;font-weight:600;
+  }
+  .pers .traits .pill b{display:block;font-size:18px;font-weight:800;letter-spacing:-0.02em;font-family:'Bricolage Grotesque',sans-serif;margin-bottom:2px}
+
+  /* OUTRO */
+  .outro{
+    background:linear-gradient(145deg,#ec4899 0%,#1f1bff 100%);
+    text-align:center;
+    min-height:auto;padding:48px 28px;
+  }
+  .outro .big{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-style:italic;
+    font-size:54px;line-height:0.95;letter-spacing:-0.03em;
+    margin:14px 0;
+  }
+  .outro .share{
+    margin-top:18px;
+    background:#fff;color:#000;
+    padding:11px 22px;border-radius:99px;
+    font-weight:700;font-size:14px;letter-spacing:0.02em;
+    display:inline-block;border:none;cursor:pointer;
+    text-decoration:none;
+  }
+  .outro .small{
+    margin-top:18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.18em;opacity:0.6;
+  }
+
+  /* PROGRESS */
+  .progress{
+    position:sticky;top:0;
+    height:3px;
+    background:rgba(255,255,255,0.1);
+    margin-bottom:14px;
+    border-radius:2px;
+    overflow:hidden;
+    z-index:10;
+  }
+  .progress .fill{
+    height:100%;
+    background:linear-gradient(90deg,#ff2e93,#a829ff,#06b6d4);
+    width:0%;
+    transition:width 0.1s;
+  }
+
+  @media (max-width:540px){
+    .wrap{padding:8px 0 48px}
+    .card{padding:26px 22px;min-height:340px;border-radius:20px}
+    .hero .year{font-size:88px}
+    .hero h1{font-size:32px}
+    .minutes .big{font-size:84px}
+    .top-song .nm{font-size:30px}
+    .top-five h2{font-size:30px}
+    .genres .pri{font-size:50px}
+    .moment .quote{font-size:24px}
+    .pers .nm{font-size:48px}
+    .outro .big{font-size:42px}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="progress"><div class="fill" id="prog"></div></div>
+
+  <!-- HERO -->
+  <div class="card hero">
+    <span class="num">01 / 08</span>
+    <span class="label">— wrapped 2025 —</span>
+    <div class="year">25</div>
+    <h1>Your <span class="stroked">year</span><br>in <span class="stroked">sound</span>.</h1>
+    <p class="sub">Eight cards. One year. Tap, scroll, swipe.<br>Made just for you in 2.4 seconds.</p>
+    <span class="signature">@kim · #wrapped2025</span>
+  </div>
+
+  <!-- MINUTES -->
+  <div class="card minutes">
+    <span class="num">02 / 08</span>
+    <span class="label">— minutes listened —</span>
+    <span class="big">42,108</span>
+    <span class="un">minutes of music in 2025.</span>
+    <div class="compare">
+      <b>That's a lot.</b>
+      29 days, 5 hours, 48 minutes — or, more cheerfully, <b>more than 96% of listeners in Korea this year</b>. You took music seriously this year.
+    </div>
+    <div class="footer-line"><b>02 — minutes</b> · 42,108 of them, mostly in headphones, mostly not in silence</div>
+  </div>
+
+  <!-- TOP SONG -->
+  <div class="card top-song">
+    <span class="num">03 / 08</span>
+    <span class="label">— top song · #1 —</span>
+    <div class="album"></div>
+    <div class="nm">Last Summer<br>Whisper</div>
+    <div class="ar">Anri · 1982</div>
+    <div class="plays">▸ 218 plays · first heard 2024.07 · most-played in october 2025</div>
+    <div class="footer-line"><b>03 — top song</b> · the one you kept coming back to</div>
+  </div>
+
+  <!-- TOP 5 -->
+  <div class="card top-five">
+    <span class="num">04 / 08</span>
+    <span class="label">— top artists · top 5 —</span>
+    <h2>Your <em>top</em> five.</h2>
+    <ol>
+      <li>
+        <span class="pos">1</span>
+        <span class="info">
+          <span class="nm">Anri</span>
+          <span class="ar">city pop · since aug</span>
+        </span>
+        <span class="ct">3,842 min</span>
+      </li>
+      <li>
+        <span class="pos">2</span>
+        <span class="info">
+          <span class="nm">Tatsuro Yamashita</span>
+          <span class="ar">city pop</span>
+        </span>
+        <span class="ct">2,418 min</span>
+      </li>
+      <li>
+        <span class="pos">3</span>
+        <span class="info">
+          <span class="nm">Hilary Hahn</span>
+          <span class="ar">classical violin</span>
+        </span>
+        <span class="ct">1,902 min</span>
+      </li>
+      <li>
+        <span class="pos">4</span>
+        <span class="info">
+          <span class="nm">Bon Iver</span>
+          <span class="ar">indie folk · since '08</span>
+        </span>
+        <span class="ct">1,612 min</span>
+      </li>
+      <li>
+        <span class="pos">5</span>
+        <span class="info">
+          <span class="nm">Sungazer</span>
+          <span class="ar">progressive jazz fusion</span>
+        </span>
+        <span class="ct">1,408 min</span>
+      </li>
+    </ol>
+    <div class="footer-line" style="color:#1a0e00;opacity:0.55"><b>04 — top artists</b> · five names, 11,182 minutes, one common thread</div>
+  </div>
+
+  <!-- GENRES -->
+  <div class="card genres">
+    <span class="num">05 / 08</span>
+    <span class="label">— top genres —</span>
+    <div class="genre-line">
+      <div class="pri">city pop.</div>
+      <div class="pct">38% of the year &nbsp;·&nbsp; up 14% from 2024</div>
+    </div>
+    <div class="bars">
+      <div class="bar"><span class="nm">city pop</span><span class="rail"><span class="fill" style="--w:88%"></span></span><span class="pc">38%</span></div>
+      <div class="bar"><span class="nm">classical</span><span class="rail"><span class="fill" style="--w:48%"></span></span><span class="pc">21%</span></div>
+      <div class="bar"><span class="nm">indie folk</span><span class="rail"><span class="fill" style="--w:34%"></span></span><span class="pc">15%</span></div>
+      <div class="bar"><span class="nm">jazz</span><span class="rail"><span class="fill" style="--w:24%"></span></span><span class="pc">11%</span></div>
+      <div class="bar"><span class="nm">korean ballad</span><span class="rail"><span class="fill" style="--w:18%"></span></span><span class="pc">8%</span></div>
+      <div class="bar"><span class="nm">other</span><span class="rail"><span class="fill" style="--w:14%"></span></span><span class="pc">7%</span></div>
+    </div>
+    <div class="footer-line"><b>05 — genres</b> · the year you finally gave in to city pop</div>
+  </div>
+
+  <!-- MOMENT -->
+  <div class="card moment">
+    <span class="num">06 / 08</span>
+    <span class="label">— a moment —</span>
+    <div class="quote">August 14<br><em>17 hours, 22 minutes</em><br>of listening.</div>
+    <div class="when">your most-played day · 2025</div>
+    <div class="day-detail">
+      <div class="head">What we know:</div>
+      It was a Thursday. You played Last Summer Whisper 14 times in a row between 2pm and 5pm. Around 7pm you switched to Bon Iver. By midnight you were on Hilary Hahn's Bach. We don't know what happened that day, but the music does.
+    </div>
+    <div class="footer-line"><b>06 — your day</b> · the soundtrack to whatever it was</div>
+  </div>
+
+  <!-- PERSONALITY -->
+  <div class="card pers">
+    <span class="num">07 / 08</span>
+    <span class="label" style="color:rgba(0,0,0,0.7)">— your listening type —</span>
+    <div style="color:rgba(0,0,0,0.7);font-size:13px;font-weight:600;letter-spacing:0.04em;margin-bottom:6px">YOU ARE A</div>
+    <div class="nm" style="color:#1a0e00">The <span class="stroked" style="-webkit-text-stroke:2px #1a0e00">Repeater</span></div>
+    <p class="desc" style="color:#1a0e00">You don't shuffle. You find one song and you stay until you're sure. The average listener plays a song 4 times. You played one song 218 times this year. We respect it.</p>
+    <div class="traits">
+      <span class="pill" style="color:#1a0e00"><b>92<span style="font-size:13px">%</span></b>repeat rate</span>
+      <span class="pill" style="color:#1a0e00"><b>4%</b>shuffle</span>
+      <span class="pill" style="color:#1a0e00"><b>17m</b>longest play</span>
+      <span class="pill" style="color:#1a0e00"><b>0</b>skips today</span>
+    </div>
+    <div class="footer-line" style="color:#1a0e00;opacity:0.5"><b>07 — type</b> · 4% of users land here</div>
+  </div>
+
+  <!-- OUTRO -->
+  <div class="card outro">
+    <span class="num">08 / 08</span>
+    <span class="label">— your year —</span>
+    <div class="big">Thanks for<br>a good year of<br><em>listening.</em></div>
+    <a class="share" href="#">→ &nbsp;Share your wrapped &nbsp;←</a>
+    <div class="small">made for @kim · 2025-12-31</div>
+  </div>
+
+</div>
+
+<script>
+  const prog = document.getElementById('prog');
+  function update(){
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? (window.scrollY / max) * 100 : 0;
+    prog.style.width = p + '%';
+  }
+  document.addEventListener('scroll', update, {passive:true});
+  update();
+</script>
+
+</body>
+</html>

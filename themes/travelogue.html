@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cities I've Slept In — A developer's travel log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,700&family=Caveat:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f8f3ea;
+    --bg-2:#fffcf5;
+    --bg-3:#efe7d6;
+    --ink:#1f1d1a;
+    --ink-2:#3d3934;
+    --muted:#7d7568;
+    --muted-2:#a39a89;
+    --rule:#dcd3c0;
+    --accent:#0ea5e9;
+
+    --asia:#0ea5e9;
+    --eu:#a855f7;
+    --na:#f59e0b;
+    --sea:#10b981;
+    --oc:#ec4899;
+    --me:#ef4444;
+  }
+  html,body{background:var(--bg);color:var(--ink)}
+  body{
+    font-family:'Inter','Pretendard Variable',system-ui,sans-serif;
+    font-size:14.5px;
+    line-height:1.55;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 1000px 500px at 80% 0,rgba(14,165,233,0.06) 0%,transparent 60%),
+      radial-gradient(ellipse 800px 400px at 0 60%,rgba(245,158,11,0.05) 0%,transparent 60%),
+      var(--bg);
+    background-attachment:fixed;
+  }
+  .serif{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto}
+  .hand{font-family:'Caveat',cursive}
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:48px 32px 96px}
+
+  /* HEADER */
+  header{margin-bottom:48px}
+  .top{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:36px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .top .pub{font-weight:600;color:var(--ink-2)}
+  .top .pub::before{content:'☉ ';color:var(--accent)}
+
+  h1.title{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:clamp(48px,7vw,92px);
+    line-height:0.96;
+    letter-spacing:-0.025em;
+    margin-bottom:18px;
+    max-width:14ch;
+  }
+  h1.title em{font-style:italic;font-weight:400;color:var(--accent)}
+  h1.title .scribble{
+    font-family:'Caveat',cursive;
+    font-style:normal;
+    font-weight:500;
+    font-size:0.7em;
+    color:var(--accent);
+    transform:rotate(-3deg);
+    display:inline-block;
+    margin-left:8px;
+  }
+  .deck{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:22px;
+    line-height:1.4;
+    color:var(--ink-2);
+    max-width:54ch;
+    margin-bottom:32px;
+  }
+
+  .stats{
+    display:flex;flex-wrap:wrap;gap:8px 28px;
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    padding:16px 0;
+    align-items:baseline;
+  }
+  .stats .stat{display:flex;flex-direction:column;gap:2px}
+  .stats .num{font-family:'Fraunces',serif;font-weight:300;font-size:34px;line-height:0.95;letter-spacing:-0.02em}
+  .stats .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+  .stats .note{
+    margin-left:auto;
+    font-family:'Caveat',cursive;
+    font-size:18px;color:var(--accent);
+    transform:rotate(-1deg);
+    max-width:24ch;line-height:1.2;text-align:right;
+  }
+
+  /* MAP — abstract dotted grid */
+  .map{
+    margin:48px 0;
+    position:relative;
+    aspect-ratio:5/2;
+    background:
+      radial-gradient(ellipse 600px 300px at 50% 50%,rgba(14,165,233,0.04) 0%,transparent 60%),
+      var(--bg-2);
+    border:1px solid var(--rule);
+    border-radius:12px;
+    overflow:hidden;
+    background-image:
+      radial-gradient(circle at 1px 1px,rgba(31,29,26,0.16) 0.5px,transparent 1px),
+      var(--bg-2);
+    background-size:14px 14px;
+  }
+  .map .label{
+    position:absolute;top:14px;left:18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);
+  }
+  .map .legend{
+    position:absolute;bottom:12px;right:18px;
+    display:flex;gap:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.08em;color:var(--muted);
+  }
+  .map .legend span{display:flex;align-items:center;gap:5px}
+  .map .legend .d{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 20%,transparent)}
+  .pin{
+    position:absolute;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--c);
+    box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 22%,transparent);
+    transform:translate(-50%,-50%);
+    cursor:pointer;
+    transition:transform .2s;
+  }
+  .pin:hover{transform:translate(-50%,-50%) scale(1.3)}
+  .pin::after{
+    content:attr(data-name);
+    position:absolute;
+    bottom:calc(100% + 8px);
+    left:50%;transform:translateX(-50%);
+    background:var(--ink);
+    color:var(--bg-2);
+    padding:3px 8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.05em;
+    border-radius:4px;
+    white-space:nowrap;
+    opacity:0;pointer-events:none;
+    transition:opacity .15s;
+  }
+  .pin:hover::after{opacity:1}
+  .pin.big{width:14px;height:14px;box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 22%,transparent)}
+
+  /* SECTION HEADERS */
+  .sec-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin:48px 0 20px;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:8px;
+    gap:18px;
+  }
+  .sec-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-size:32px;
+    line-height:1;
+    letter-spacing:-0.02em;
+  }
+  .sec-head h2 em{font-style:italic;color:var(--muted)}
+  .sec-head .meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.2em;
+    text-transform:uppercase;color:var(--muted);
+    flex-shrink:0;
+  }
+
+  /* FILTER */
+  .filters{
+    display:flex;gap:8px;flex-wrap:wrap;
+    margin-bottom:24px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+  }
+  .filter{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px;
+    border:1px solid var(--rule);
+    border-radius:99px;
+    color:var(--muted);
+    cursor:pointer;
+    transition:all .15s;
+    background:var(--bg-2);
+  }
+  .filter::before{
+    content:'';width:6px;height:6px;border-radius:50%;
+    background:var(--c,var(--muted-2));
+  }
+  .filter.on{
+    color:var(--ink);
+    border-color:var(--ink-2);
+    background:var(--bg);
+  }
+  .filter:hover{color:var(--ink-2);border-color:var(--muted-2)}
+
+  /* CITY GRID */
+  .cities{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:16px;
+  }
+  .city{
+    background:var(--bg-2);
+    border:1px solid var(--rule);
+    border-radius:12px;
+    overflow:hidden;
+    transition:transform .25s,box-shadow .25s,border-color .25s;
+    cursor:pointer;
+    position:relative;
+    display:flex;flex-direction:column;
+  }
+  .city:hover{
+    transform:translateY(-2px);
+    border-color:var(--c);
+    box-shadow:0 12px 28px -16px rgba(0,0,0,0.18);
+  }
+  .city .photo{
+    aspect-ratio:5/3;
+    position:relative;
+    background:linear-gradient(135deg,var(--c) 0%,color-mix(in srgb,var(--c) 50%,var(--ink)) 100%);
+    overflow:hidden;
+  }
+  .city .photo::before{
+    content:'';
+    position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 100%,rgba(0,0,0,0.4) 0%,transparent 60%),
+      radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18) 0%,transparent 30%);
+  }
+  .city .photo .skyline{
+    position:absolute;bottom:0;left:0;right:0;
+    height:60%;
+    background:
+      linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.2) 100%);
+    -webkit-mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" preserveAspectRatio="none"><path d="M0,100 L0,60 L10,60 L10,40 L20,40 L20,55 L30,55 L30,30 L42,30 L42,50 L52,50 L52,20 L60,20 L60,45 L72,45 L72,35 L82,35 L82,55 L94,55 L94,28 L102,28 L102,42 L114,42 L114,52 L124,52 L124,38 L134,38 L134,48 L144,48 L144,30 L156,30 L156,50 L168,50 L168,42 L180,42 L180,55 L192,55 L192,40 L200,40 L200,100 Z"/></svg>');
+    mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" preserveAspectRatio="none"><path d="M0,100 L0,60 L10,60 L10,40 L20,40 L20,55 L30,55 L30,30 L42,30 L42,50 L52,50 L52,20 L60,20 L60,45 L72,45 L72,35 L82,35 L82,55 L94,55 L94,28 L102,28 L102,42 L114,42 L114,52 L124,52 L124,38 L134,38 L134,48 L144,48 L144,30 L156,30 L156,50 L168,50 L168,42 L180,42 L180,55 L192,55 L192,40 L200,40 L200,100 Z"/></svg>');
+    -webkit-mask-size:200% 100%;mask-size:200% 100%;
+    -webkit-mask-position:center bottom;mask-position:center bottom;
+    background-color:rgba(0,0,0,0.3);
+  }
+  .city .badge{
+    position:absolute;top:12px;left:12px;
+    background:rgba(255,255,255,0.94);
+    color:var(--ink);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    padding:3px 8px;
+    border-radius:99px;
+    font-weight:500;
+    text-transform:uppercase;
+  }
+  .city .heart{
+    position:absolute;top:10px;right:12px;
+    color:#fff;font-size:13px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.3);
+    opacity:0;transition:opacity .2s;
+  }
+  .city.fav .heart{opacity:1}
+  .city .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .city .name{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-size:24px;
+    line-height:1;
+    letter-spacing:-0.018em;
+    color:var(--ink);
+  }
+  .city .name em{font-style:italic;font-weight:300}
+  .city .country{
+    font-size:12px;color:var(--muted);
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px dashed var(--rule);
+    padding-bottom:6px;
+  }
+  .city .country .flag{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:0.12em;
+  }
+  .city .memo{
+    font-size:13.5px;
+    color:var(--ink-2);
+    line-height:1.55;
+    flex:1;
+    margin:4px 0 8px;
+  }
+  .city .memo .scribble{
+    font-family:'Caveat',cursive;
+    font-size:17px;
+    color:var(--c);
+    transform:rotate(-0.5deg);
+    display:inline-block;
+    margin-left:2px;
+  }
+  .city .meta{
+    display:flex;gap:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    border-top:1px solid var(--rule);
+    padding-top:8px;
+  }
+  .city .meta span{display:flex;flex-direction:column;line-height:1.2}
+  .city .meta b{color:var(--ink-2);font-weight:600;font-size:11px;letter-spacing:0;font-family:'Inter',sans-serif}
+
+  /* RECENT LOG */
+  .log{
+    background:var(--bg-2);
+    border:1px solid var(--rule);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .log .e{
+    display:grid;
+    grid-template-columns:80px 60px 1fr auto;
+    gap:14px;
+    padding:12px 18px;
+    border-bottom:1px solid var(--rule);
+    font-size:13px;
+    align-items:center;
+  }
+  .log .e:last-child{border-bottom:none}
+  .log .d{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.04em}
+  .log .pin-mini{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--c);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent);
+    margin-left:8px;
+  }
+  .log .what{color:var(--ink-2);line-height:1.4}
+  .log .what b{color:var(--ink);font-weight:600}
+  .log .city-name{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--c);
+    letter-spacing:0.12em;text-transform:uppercase;font-weight:500;
+    text-align:right;
+  }
+
+  /* FOOTER */
+  footer{
+    margin-top:96px;
+    padding-top:28px;
+    border-top:1px solid var(--rule);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    letter-spacing:0.08em;
+    flex-wrap:wrap;gap:14px;
+  }
+  footer .scribble{
+    font-family:'Caveat',cursive;
+    font-size:18px;color:var(--accent);letter-spacing:0;
+    transform:rotate(-1deg);
+  }
+
+  @media (max-width:640px){
+    .wrap{padding:32px 20px 64px}
+    h1.title{font-size:44px}
+    .deck{font-size:18px}
+    .stats{gap:14px}
+    .stats .num{font-size:26px}
+    .stats .note{margin-left:0;text-align:left}
+    .map{aspect-ratio:5/3}
+    .cities{grid-template-columns:1fr}
+    .log .e{grid-template-columns:1fr;gap:4px}
+    .log .city-name{text-align:left}
+    .log .pin-mini{margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="top">
+      <span class="pub">jin · field notes</span>
+      <span>2017 → 2026 · vol. ix</span>
+    </div>
+    <h1 class="title">Cities <em>I've</em><br>slept in <span class="scribble">(so far)</span></h1>
+    <p class="deck">코드보다 비행기를 더 많이 탔던 한 해도 있었다. 한 도시에서 하루를 자면, 그 도시는 어떤 식으로든 마음에 자리를 만든다.</p>
+
+    <div class="stats">
+      <div class="stat"><span class="num">47</span><span class="lbl">cities</span></div>
+      <div class="stat"><span class="num">19</span><span class="lbl">countries</span></div>
+      <div class="stat"><span class="num">9</span><span class="lbl">years</span></div>
+      <div class="stat"><span class="num">312</span><span class="lbl">nights</span></div>
+      <div class="note">— 가장 오래 머문 도시는 <br/>아직도 우리 동네</div>
+    </div>
+  </header>
+
+  <!-- MAP -->
+  <div class="map">
+    <span class="label">A loose, vibes-based map</span>
+    <span class="pin big" data-name="Seoul · home base" style="--c:var(--asia);left:79%;top:32%"></span>
+    <span class="pin" data-name="Tokyo" style="--c:var(--asia);left:84%;top:34%"></span>
+    <span class="pin" data-name="Taipei" style="--c:var(--asia);left:80%;top:50%"></span>
+    <span class="pin" data-name="Hong Kong" style="--c:var(--asia);left:78%;top:48%"></span>
+    <span class="pin" data-name="Bangkok" style="--c:var(--sea);left:73%;top:60%"></span>
+    <span class="pin" data-name="Singapore" style="--c:var(--sea);left:74%;top:72%"></span>
+    <span class="pin" data-name="Hanoi" style="--c:var(--sea);left:74%;top:55%"></span>
+    <span class="pin" data-name="Hong Kong" style="--c:var(--asia);left:78%;top:48%"></span>
+    <span class="pin" data-name="London" style="--c:var(--eu);left:46%;top:24%"></span>
+    <span class="pin" data-name="Paris" style="--c:var(--eu);left:48%;top:26%"></span>
+    <span class="pin" data-name="Berlin" style="--c:var(--eu);left:51%;top:24%"></span>
+    <span class="pin" data-name="Lisbon" style="--c:var(--eu);left:43%;top:32%"></span>
+    <span class="pin" data-name="Reykjavik" style="--c:var(--eu);left:42%;top:14%"></span>
+    <span class="pin" data-name="Istanbul" style="--c:var(--me);left:56%;top:34%"></span>
+    <span class="pin" data-name="Tel Aviv" style="--c:var(--me);left:56%;top:42%"></span>
+    <span class="pin" data-name="New York" style="--c:var(--na);left:24%;top:32%"></span>
+    <span class="pin big" data-name="San Francisco · long stay" style="--c:var(--na);left:14%;top:36%"></span>
+    <span class="pin" data-name="Vancouver" style="--c:var(--na);left:13%;top:24%"></span>
+    <span class="pin" data-name="Mexico City" style="--c:var(--na);left:18%;top:54%"></span>
+    <span class="pin" data-name="Sydney" style="--c:var(--oc);left:88%;top:80%"></span>
+    <span class="pin" data-name="Melbourne" style="--c:var(--oc);left:86%;top:84%"></span>
+    <div class="legend">
+      <span><span class="d" style="--c:var(--asia)"></span>Asia</span>
+      <span><span class="d" style="--c:var(--sea)"></span>SEA</span>
+      <span><span class="d" style="--c:var(--eu)"></span>Europe</span>
+      <span><span class="d" style="--c:var(--na)"></span>N.America</span>
+      <span><span class="d" style="--c:var(--me)"></span>M.East</span>
+      <span><span class="d" style="--c:var(--oc)"></span>Oceania</span>
+    </div>
+  </div>
+
+  <!-- CITIES -->
+  <div class="sec-head">
+    <h2>The <em>list</em></h2>
+    <span class="meta">14 of 47 — by recency</span>
+  </div>
+  <div class="filters">
+    <span class="filter on" style="--c:var(--ink-2)">all (47)</span>
+    <span class="filter" style="--c:var(--asia)">asia (12)</span>
+    <span class="filter" style="--c:var(--sea)">se asia (8)</span>
+    <span class="filter" style="--c:var(--eu)">europe (14)</span>
+    <span class="filter" style="--c:var(--na)">n.america (7)</span>
+    <span class="filter" style="--c:var(--me)">m.east (3)</span>
+    <span class="filter" style="--c:var(--oc)">oceania (3)</span>
+    <span class="filter" style="--c:#fbbf24">★ favorites (9)</span>
+  </div>
+
+  <div class="cities">
+
+    <div class="city fav" style="--c:var(--asia)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2026 · spring</span><span class="heart">♥</span></div>
+      <div class="body">
+        <div class="name">Tokyo<em>, again</em></div>
+        <div class="country"><span>Japan · 日本</span><span class="flag">JP</span></div>
+        <div class="memo">한 도시에서 다섯 번째 봄. 단 한 번도 같지 않았다. <span class="scribble">— shimokita</span></div>
+        <div class="meta"><span><b>4 nights</b>days</span><span><b>BIC</b>coffee</span><span><b>5×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--eu)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2026 · feb</span></div>
+      <div class="body">
+        <div class="name">Lisbon</div>
+        <div class="country"><span>Portugal · Lisboa</span><span class="flag">PT</span></div>
+        <div class="memo">언덕에서 글을 썼고, 트램이 옆을 지나갔고, 글 한 줄을 더 썼다.</div>
+        <div class="meta"><span><b>11 nights</b>days</span><span><b>A Brasileira</b>coffee</span><span><b>1×</b>visit</span></div>
+      </div>
+    </div>
+
+    <div class="city fav" style="--c:var(--sea)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2025 · winter</span><span class="heart">♥</span></div>
+      <div class="body">
+        <div class="name">Chiang <em>Mai</em></div>
+        <div class="country"><span>Thailand · เชียงใหม่</span><span class="flag">TH</span></div>
+        <div class="memo">한 달짜리 노마드 모드. 도서관 지붕 아래에서 한국어 키보드 수리.</div>
+        <div class="meta"><span><b>30 nights</b>days</span><span><b>Ristr8to</b>coffee</span><span><b>2×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--na)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2025 · oct</span></div>
+      <div class="body">
+        <div class="name">San Francisco</div>
+        <div class="country"><span>California · USA</span><span class="flag">US</span></div>
+        <div class="memo">3주를 자고 6주를 일했다. 안개가 코드 같았다. <span class="scribble">— sutro tower</span></div>
+        <div class="meta"><span><b>21 nights</b>days</span><span><b>Sightglass</b>coffee</span><span><b>3×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--eu)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2025 · jul</span></div>
+      <div class="body">
+        <div class="name">Reykjavík</div>
+        <div class="country"><span>Iceland · Ísland</span><span class="flag">IS</span></div>
+        <div class="memo">해가 안 졌다. 그래서 잠도 자주 안 잤다.</div>
+        <div class="meta"><span><b>5 nights</b>days</span><span><b>Reykjavik R.</b>coffee</span><span><b>1×</b>visit</span></div>
+      </div>
+    </div>
+
+    <div class="city fav" style="--c:var(--asia)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2025 · spring</span><span class="heart">♥</span></div>
+      <div class="body">
+        <div class="name">Taipei</div>
+        <div class="country"><span>Taiwan · 臺北</span><span class="flag">TW</span></div>
+        <div class="memo">매일 아침 같은 식당. 매일 다른 사람이 옆에 앉았다.</div>
+        <div class="meta"><span><b>9 nights</b>days</span><span><b>Fika Fika</b>coffee</span><span><b>4×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--na)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2024 · nov</span></div>
+      <div class="body">
+        <div class="name">New York</div>
+        <div class="country"><span>NY · USA</span><span class="flag">US</span></div>
+        <div class="memo">5번가에서 길을 잃었고, 그게 이 도시의 사용법이라고 적었다.</div>
+        <div class="meta"><span><b>6 nights</b>days</span><span><b>Devoción</b>coffee</span><span><b>2×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--sea)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2024 · sep</span></div>
+      <div class="body">
+        <div class="name">Singapore</div>
+        <div class="country"><span>Singapore · SG</span><span class="flag">SG</span></div>
+        <div class="memo">덥고 깨끗하고 빠르다. 셋 다 처음으로 한 도시에서 만났다.</div>
+        <div class="meta"><span><b>3 nights</b>days</span><span><b>Common Man</b>coffee</span><span><b>2×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city fav" style="--c:var(--eu)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2024 · jun</span><span class="heart">♥</span></div>
+      <div class="body">
+        <div class="name">Berlin</div>
+        <div class="country"><span>Germany · DE</span><span class="flag">DE</span></div>
+        <div class="memo">사우나 → 호수 → 사우나 → 호수. 그게 일주일 일정의 전부.</div>
+        <div class="meta"><span><b>14 nights</b>days</span><span><b>Bonanza</b>coffee</span><span><b>3×</b>visits</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--me)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2024 · apr</span></div>
+      <div class="body">
+        <div class="name">Istanbul</div>
+        <div class="country"><span>Türkiye · İstanbul</span><span class="flag">TR</span></div>
+        <div class="memo">동과 서가 같은 시간에 끝나지 않는 도시.</div>
+        <div class="meta"><span><b>7 nights</b>days</span><span><b>Kronotrop</b>coffee</span><span><b>1×</b>visit</span></div>
+      </div>
+    </div>
+
+    <div class="city" style="--c:var(--oc)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2023 · dec</span></div>
+      <div class="body">
+        <div class="name">Sydney</div>
+        <div class="country"><span>NSW · Australia</span><span class="flag">AU</span></div>
+        <div class="memo">크리스마스에 바다에서 수영했다. 처음 있는 일이었다.</div>
+        <div class="meta"><span><b>8 nights</b>days</span><span><b>Single O</b>coffee</span><span><b>1×</b>visit</span></div>
+      </div>
+    </div>
+
+    <div class="city fav" style="--c:var(--asia)">
+      <div class="photo"><div class="skyline"></div><span class="badge">2023 · oct</span><span class="heart">♥</span></div>
+      <div class="body">
+        <div class="name">Kyoto</div>
+        <div class="country"><span>Japan · 京都</span><span class="flag">JP</span></div>
+        <div class="memo">절 한 곳에서 두 시간 앉아 있었다. 누구도 비키라고 하지 않았다.</div>
+        <div class="meta"><span><b>4 nights</b>days</span><span><b>% Arabica</b>coffee</span><span><b>2×</b>visits</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="sec-head">
+    <h2>Recent <em>log</em></h2>
+    <span class="meta">last 8 entries</span>
+  </div>
+  <div class="log">
+    <div class="e" style="--c:var(--asia)">
+      <span class="d">2026.04.30</span><span class="pin-mini"></span>
+      <span class="what">한 식당에서 같은 자리. <b>5번째 봄</b>. 떡국이 똑같은 맛이라는 게 이상하게 위안.</span>
+      <span class="city-name">Tokyo</span>
+    </div>
+    <div class="e" style="--c:var(--asia)">
+      <span class="d">2026.04.27</span><span class="pin-mini"></span>
+      <span class="what">시모키타자와 책방에서 <b>「夏の本」</b> 한 권. 표지 디자인 때문에 샀고, 결국 다 읽었다.</span>
+      <span class="city-name">Tokyo</span>
+    </div>
+    <div class="e" style="--c:var(--eu)">
+      <span class="d">2026.02.18</span><span class="pin-mini"></span>
+      <span class="what">언덕길에서 노트북을 떨어뜨릴 뻔. 다행히 그날따라 가방 끈을 짧게 맸음.</span>
+      <span class="city-name">Lisbon</span>
+    </div>
+    <div class="e" style="--c:var(--eu)">
+      <span class="d">2026.02.12</span><span class="pin-mini"></span>
+      <span class="what">아줄레주 타일 공방. <b>유약</b>이 진짜로 색을 만든다는 걸 처음 알았다.</span>
+      <span class="city-name">Lisbon</span>
+    </div>
+    <div class="e" style="--c:var(--sea)">
+      <span class="d">2025.12.22</span><span class="pin-mini"></span>
+      <span class="what">한 달치 빨래를 한 번에. 도서관에서 호스팅 비용 청구서 씀.</span>
+      <span class="city-name">Chiang Mai</span>
+    </div>
+    <div class="e" style="--c:var(--na)">
+      <span class="d">2025.10.31</span><span class="pin-mini"></span>
+      <span class="what">미션 디스트릭트 카페. <b>Halloween</b>에 처음으로 어른들이 분장한 걸 봤다.</span>
+      <span class="city-name">San Francisco</span>
+    </div>
+    <div class="e" style="--c:var(--eu)">
+      <span class="d">2025.07.04</span><span class="pin-mini"></span>
+      <span class="what">새벽 2시. 해가 지지 않아 모자를 푹 눌러쓰고 잠.</span>
+      <span class="city-name">Reykjavík</span>
+    </div>
+    <div class="e" style="--c:var(--asia)">
+      <span class="d">2025.04.18</span><span class="pin-mini"></span>
+      <span class="what">매일 아침 같은 빵집. 일주일째 되니까 점원이 안 묻고 같은 걸 줬다.</span>
+      <span class="city-name">Taipei</span>
+    </div>
+  </div>
+
+  <footer>
+    <span>jin · cities@somewhere</span>
+    <span class="scribble">— see you on the road</span>
+    <span>updated 2026.05.02 · KST</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

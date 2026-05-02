@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Observability — service health · production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0c1019;
+    --bg-2:#131825;
+    --bg-3:#1a2030;
+    --bg-4:#252e44;
+    --line:#1e2538;
+    --line-2:#303a55;
+    --fg:#e3e8f4;
+    --fg-2:#9aa6c0;
+    --fg-3:#6171a0;
+    --fg-4:#3e4865;
+    --cyan:#06b6d4;
+    --cyan-2:#0891b2;
+    --green:#22c55e;
+    --amber:#f59e0b;
+    --red:#ef4444;
+    --purple:#a855f7;
+    --pink:#ec4899;
+    --blue:#3b82f6;
+  }
+  html,body{background:var(--bg);color:var(--fg)}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:13.5px;
+    line-height:1.5;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace}
+
+  /* TOP BAR */
+  .top{
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+    padding:10px 22px;
+    display:grid;
+    grid-template-columns:auto auto 1fr auto;
+    gap:18px;align-items:center;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+  .brand .mark{
+    width:24px;height:24px;border-radius:7px;
+    background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 100%);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.1);
+  }
+  .breadcrumbs{
+    display:flex;gap:8px;align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;color:var(--fg-3);
+    letter-spacing:0.04em;
+  }
+  .breadcrumbs span:not(.s){
+    color:var(--fg-2);cursor:pointer;
+    padding:3px 8px;border-radius:4px;
+    transition:background .15s;
+  }
+  .breadcrumbs span:not(.s):hover{background:var(--bg-3);color:var(--fg)}
+  .breadcrumbs .s{color:var(--fg-4)}
+  .breadcrumbs .now{color:var(--fg);background:var(--bg-3)}
+  .top .picker{
+    justify-self:end;display:flex;align-items:center;gap:8px;
+  }
+  .picker .pill{
+    background:var(--bg-3);
+    border:1px solid var(--line-2);
+    color:var(--fg-2);
+    padding:5px 11px;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    border-radius:6px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+    letter-spacing:0.02em;
+  }
+  .picker .pill .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--green);
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+  .picker .pill:hover{border-color:var(--cyan)}
+  .picker .pill .ch{color:var(--fg-3);margin-left:2px}
+
+  /* STATUS BAR */
+  .status-bar{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1px;
+    background:var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .stat{
+    background:var(--bg);
+    padding:14px 18px 12px;
+    position:relative;
+  }
+  .stat .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--fg-3);margin-bottom:6px;font-weight:600;
+  }
+  .stat .val{
+    font-size:24px;font-weight:600;letter-spacing:-0.02em;line-height:1;
+    color:var(--fg);font-variant-numeric:tabular-nums;
+    display:flex;align-items:baseline;gap:6px;
+  }
+  .stat .val .un{font-size:13px;font-weight:500;color:var(--fg-2);letter-spacing:0}
+  .stat .delta{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    margin-top:6px;color:var(--fg-3);letter-spacing:0.04em;
+  }
+  .stat.ok .val{color:var(--green)}
+  .stat.warn .val{color:var(--amber)}
+  .stat.crit .val{color:var(--red)}
+  .stat .val .led{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 6px rgba(34,197,94,0.5);
+    align-self:center;margin-right:2px;
+  }
+  .stat.warn .val .led{background:var(--amber);box-shadow:0 0 6px rgba(245,158,11,0.5)}
+  .stat.crit .val .led{background:var(--red);box-shadow:0 0 6px rgba(239,68,68,0.5);animation:pulse 0.8s infinite}
+
+  /* MAIN */
+  main{padding:18px 22px 64px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+  @media (max-width:1100px){main{grid-template-columns:1fr}}
+
+  .panel{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .ph{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:11px 18px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg-2);
+  }
+  .ph h2{font-size:13.5px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);display:flex;gap:8px;align-items:center}
+  .ph h2 .badge{
+    background:var(--bg-4);color:var(--fg-2);
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    padding:1px 6px;border-radius:4px;letter-spacing:0.04em;font-weight:500;
+  }
+  .ph .right{
+    display:flex;gap:8px;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-3);
+  }
+
+  /* CHARTS */
+  .charts{
+    padding:14px 18px 18px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .chart{
+    background:var(--bg-3);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:12px 14px;
+    display:flex;flex-direction:column;
+  }
+  .chart .ch-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-bottom:8px;
+  }
+  .chart .ch-head .ti{
+    font-size:11.5px;font-weight:600;color:var(--fg);
+  }
+  .chart .ch-head .vu{
+    font-family:'JetBrains Mono',monospace;font-size:18px;
+    color:var(--cyan);font-weight:600;letter-spacing:-0.01em;line-height:1;
+  }
+  .chart .ch-head .vu .un{font-size:11px;color:var(--fg-3);margin-left:2px}
+  .chart svg{width:100%;height:80px}
+  .chart .leg{
+    display:flex;gap:14px;
+    margin-top:6px;
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;
+    color:var(--fg-3);letter-spacing:0.06em;
+  }
+  .chart .leg span{display:flex;align-items:center;gap:5px}
+  .chart .leg .d{width:8px;height:2px;background:var(--c)}
+
+  /* SERVICE GRID */
+  .services{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:1px;
+    background:var(--line);
+  }
+  .svc{
+    background:var(--bg-2);
+    padding:14px;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .svc:hover{background:var(--bg-3)}
+  .svc .hd{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:13px;font-weight:600;
+    margin-bottom:8px;
+  }
+  .svc .hd .nm{color:var(--fg)}
+  .svc .hd .led{
+    width:7px;height:7px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 5px rgba(34,197,94,0.5);
+  }
+  .svc.warn .hd .led{background:var(--amber);box-shadow:0 0 5px rgba(245,158,11,0.5)}
+  .svc.crit .hd .led{background:var(--red);box-shadow:0 0 5px rgba(239,68,68,0.5);animation:pulse 0.8s infinite}
+  .svc .meta{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--fg-3);letter-spacing:0.04em;
+  }
+  .svc .lat{
+    margin-top:8px;
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--fg-2);
+  }
+  .svc .lat b{color:var(--fg);font-weight:600;font-size:13px}
+  .svc.warn .lat b{color:var(--amber)}
+  .svc.crit .lat b{color:var(--red)}
+  .svc .spark{
+    margin-top:6px;height:24px;
+  }
+  .svc .spark svg{width:100%;height:100%}
+
+  /* LOG STREAM */
+  .logs{
+    max-height:520px;overflow-y:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;line-height:1.6;
+  }
+  .logs::-webkit-scrollbar{width:6px}
+  .logs::-webkit-scrollbar-thumb{background:var(--bg-4);border-radius:3px}
+  .log-row{
+    display:grid;
+    grid-template-columns:74px 56px 1fr;
+    gap:10px;
+    padding:5px 14px;
+    border-bottom:1px solid var(--line);
+    align-items:start;
+  }
+  .log-row:hover{background:var(--bg-3)}
+  .log-row .t{color:var(--fg-3);letter-spacing:0.04em}
+  .log-row .lvl{
+    font-size:10px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;
+    padding:1px 6px;border-radius:3px;
+    height:fit-content;text-align:center;
+  }
+  .log-row .lvl.info{color:var(--cyan);background:rgba(6,182,212,0.12)}
+  .log-row .lvl.warn{color:var(--amber);background:rgba(245,158,11,0.12)}
+  .log-row .lvl.error{color:var(--red);background:rgba(239,68,68,0.15);font-weight:700}
+  .log-row .lvl.debug{color:var(--fg-3);background:rgba(97,113,160,0.12)}
+  .log-row .msg{color:var(--fg-2);word-break:break-word;line-height:1.5}
+  .log-row .msg b{color:var(--fg);font-weight:500}
+  .log-row .msg em{color:var(--cyan);font-style:normal}
+  .log-row .msg .err{color:var(--red)}
+  .log-row .msg .tag{
+    color:var(--purple);background:rgba(168,85,247,0.12);
+    padding:0 5px;border-radius:3px;font-size:10.5px;letter-spacing:0.04em;
+    margin:0 2px;
+  }
+
+  /* ALERTS PANEL */
+  .alerts .alert-row{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:10px;
+  }
+  .alerts .alert-row:last-child{border-bottom:none}
+  .alerts .alert-row .ic{
+    width:24px;height:24px;border-radius:6px;
+    display:grid;place-items:center;
+    font-weight:700;font-size:13px;color:#fff;
+  }
+  .alerts .alert-row.crit .ic{background:var(--red)}
+  .alerts .alert-row.warn .ic{background:var(--amber);color:#000}
+  .alerts .alert-row.info .ic{background:var(--cyan)}
+  .alerts .alert-row .body{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .alerts .alert-row .body .ti{font-size:12.5px;font-weight:600;color:var(--fg);letter-spacing:-0.005em}
+  .alerts .alert-row .body .ti b{color:var(--red)}
+  .alerts .alert-row .body .ds{font-size:11.5px;color:var(--fg-2);line-height:1.5}
+  .alerts .alert-row .body .meta-line{
+    display:flex;gap:10px;
+    margin-top:3px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;color:var(--fg-3);letter-spacing:0.04em;
+  }
+  .alerts .alert-row .body .meta-line span{display:flex;align-items:center;gap:4px}
+
+  /* DEPLOYMENTS */
+  .deploys .row{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:10px;
+    padding:10px 14px;
+    border-bottom:1px solid var(--line);align-items:center;
+  }
+  .deploys .row:last-child{border-bottom:none}
+  .deploys .row .ic{
+    width:8px;height:8px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 5px rgba(34,197,94,0.5);
+  }
+  .deploys .row.fail .ic{background:var(--red);box-shadow:0 0 5px rgba(239,68,68,0.5)}
+  .deploys .row.run .ic{background:var(--cyan);box-shadow:0 0 5px rgba(6,182,212,0.5);animation:pulse 1s infinite}
+  .deploys .row .body{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .deploys .row .body .ti{font-size:12.5px;color:var(--fg);font-weight:500;font-family:'JetBrains Mono',monospace;letter-spacing:0.02em}
+  .deploys .row .body .ds{font-size:11px;color:var(--fg-3)}
+  .deploys .row .when{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--fg-3);
+    text-align:right;letter-spacing:0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <span class="mark">○</span>
+    <span>Observe</span>
+  </div>
+  <div class="breadcrumbs">
+    <span>org</span><span class="s">/</span>
+    <span>byline-prod</span><span class="s">/</span>
+    <span>services</span><span class="s">/</span>
+    <span class="now">api-gateway</span>
+  </div>
+  <div></div>
+  <div class="picker">
+    <span class="pill"><span class="dot"></span>live · 5s</span>
+    <span class="pill">last <b>15m</b><span class="ch">▾</span></span>
+    <span class="pill">env: <b>prod</b><span class="ch">▾</span></span>
+    <span class="pill" style="background:var(--cyan);color:#000;border-color:var(--cyan);font-weight:700">+ alert</span>
+  </div>
+</div>
+
+<!-- STATUS STRIP -->
+<div class="status-bar">
+  <div class="stat ok">
+    <div class="lbl">overall · slo</div>
+    <div class="val"><span class="led"></span>99.94<span class="un">%</span></div>
+    <div class="delta">SLO 99.9% · 30d burn 0.21x</div>
+  </div>
+  <div class="stat ok">
+    <div class="lbl">requests</div>
+    <div class="val">42.1<span class="un">K/s</span></div>
+    <div class="delta">+8.2% vs 1h ago</div>
+  </div>
+  <div class="stat warn">
+    <div class="lbl">p95 latency</div>
+    <div class="val"><span class="led"></span>142<span class="un">ms</span></div>
+    <div class="delta">↑ 18ms vs avg · trending up</div>
+  </div>
+  <div class="stat ok">
+    <div class="lbl">error rate</div>
+    <div class="val">0.42<span class="un">%</span></div>
+    <div class="delta">42 / 10,000 req</div>
+  </div>
+  <div class="stat crit">
+    <div class="lbl">open alerts</div>
+    <div class="val"><span class="led"></span>3</div>
+    <div class="delta">2 high · 1 medium</div>
+  </div>
+</div>
+
+<main>
+
+  <div>
+
+    <!-- METRICS -->
+    <div class="panel">
+      <div class="ph">
+        <h2>System metrics <span class="badge">api-gateway</span></h2>
+        <div class="right">
+          <span>last 15m</span>
+          <span style="color:var(--fg-2)">·</span>
+          <span style="color:var(--cyan)">↻ auto</span>
+        </div>
+      </div>
+      <div class="charts">
+
+        <div class="chart">
+          <div class="ch-head">
+            <span class="ti">Request rate · req/s</span>
+            <span class="vu">42,108<span class="un">/s</span></span>
+          </div>
+          <svg viewBox="0 0 320 80" preserveAspectRatio="none">
+            <defs><linearGradient id="grA" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#06b6d4" stop-opacity="0.4"/><stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,55 L12,52 L24,48 L36,50 L48,42 L60,45 L72,38 L84,40 L96,32 L108,36 L120,28 L132,32 L144,24 L156,26 L168,20 L180,28 L192,18 L204,22 L216,14 L228,18 L240,10 L252,16 L264,8 L276,12 L288,4 L300,8 L312,2 L320,5 L320,80 L0,80 Z" fill="url(#grA)"/>
+            <polyline points="0,55 12,52 24,48 36,50 48,42 60,45 72,38 84,40 96,32 108,36 120,28 132,32 144,24 156,26 168,20 180,28 192,18 204,22 216,14 228,18 240,10 252,16 264,8 276,12 288,4 300,8 312,2 320,5" fill="none" stroke="#06b6d4" stroke-width="1.5"/>
+          </svg>
+          <div class="leg"><span style="--c:var(--cyan)"><span class="d"></span>p50</span></div>
+        </div>
+
+        <div class="chart">
+          <div class="ch-head">
+            <span class="ti">Latency · p50 / p95 / p99 (ms)</span>
+            <span class="vu" style="color:var(--amber)">142<span class="un">ms</span></span>
+          </div>
+          <svg viewBox="0 0 320 80" preserveAspectRatio="none">
+            <polyline points="0,68 16,66 32,68 48,64 64,66 80,62 96,58 112,60 128,56 144,58 160,52 176,54 192,50 208,52 224,46 240,48 256,42 272,44 288,38 304,42 320,40" fill="none" stroke="#22c55e" stroke-width="1.4"/>
+            <polyline points="0,52 16,48 32,52 48,46 64,48 80,40 96,38 112,42 128,34 144,38 160,28 176,32 192,22 208,28 224,16 240,22 256,12 272,18 288,8 304,14 320,10" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+            <polyline points="0,40 16,38 32,42 48,32 64,38 80,28 96,22 112,30 128,18 144,24 160,14 176,18 192,8 208,14 224,4 240,10 256,2 272,6 288,1 304,4 320,2" fill="none" stroke="#ef4444" stroke-width="1.4" stroke-dasharray="3 2"/>
+          </svg>
+          <div class="leg">
+            <span style="--c:var(--green)"><span class="d"></span>p50 · 38</span>
+            <span style="--c:var(--amber)"><span class="d"></span>p95 · 142</span>
+            <span style="--c:var(--red)"><span class="d"></span>p99 · 384</span>
+          </div>
+        </div>
+
+        <div class="chart">
+          <div class="ch-head">
+            <span class="ti">Error rate · 5xx / req</span>
+            <span class="vu" style="color:var(--green)">0.42<span class="un">%</span></span>
+          </div>
+          <svg viewBox="0 0 320 80" preserveAspectRatio="none">
+            <defs><linearGradient id="grE" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,72 L20,70 L40,68 L60,72 L80,68 L100,64 L120,68 L140,62 L160,58 L180,52 L200,42 L220,38 L240,28 L260,32 L280,42 L300,52 L320,58 L320,80 L0,80 Z" fill="url(#grE)"/>
+            <polyline points="0,72 20,70 40,68 60,72 80,68 100,64 120,68 140,62 160,58 180,52 200,42 220,38 240,28 260,32 280,42 300,52 320,58" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+          </svg>
+          <div class="leg"><span style="--c:var(--red)"><span class="d"></span>5xx · 42</span></div>
+        </div>
+
+        <div class="chart">
+          <div class="ch-head">
+            <span class="ti">CPU · all instances · %</span>
+            <span class="vu" style="color:var(--purple)">68<span class="un">%</span></span>
+          </div>
+          <svg viewBox="0 0 320 80" preserveAspectRatio="none">
+            <defs><linearGradient id="grC" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#a855f7" stop-opacity="0.3"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,42 L16,38 L32,40 L48,32 L64,38 L80,28 L96,32 L112,22 L128,28 L144,18 L160,24 L176,14 L192,22 L208,12 L224,18 L240,8 L256,14 L272,4 L288,12 L304,2 L320,8 L320,80 L0,80 Z" fill="url(#grC)"/>
+            <polyline points="0,42 16,38 32,40 48,32 64,38 80,28 96,32 112,22 128,28 144,18 160,24 176,14 192,22 208,12 224,18 240,8 256,14 272,4 288,12 304,2 320,8" fill="none" stroke="#a855f7" stroke-width="1.5"/>
+          </svg>
+          <div class="leg"><span style="--c:var(--purple)"><span class="d"></span>cpu</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="panel">
+      <div class="ph">
+        <h2>Services <span class="badge">12 healthy · 1 degraded · 1 down</span></h2>
+        <div class="right"><span>health · 1m</span></div>
+      </div>
+      <div class="services">
+        <div class="svc">
+          <div class="hd"><span class="nm">api-gateway</span><span class="led"></span></div>
+          <div class="meta">edge · v2.42.1</div>
+          <div class="lat"><span>p95</span><b>82ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,18 10,16 20,17 30,14 40,15 50,12 60,13 70,10 80,11 90,8 100,7" fill="none" stroke="#22c55e" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc">
+          <div class="hd"><span class="nm">auth-service</span><span class="led"></span></div>
+          <div class="meta">core · v1.18.3</div>
+          <div class="lat"><span>p95</span><b>22ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,16 10,17 20,15 30,16 40,14 50,16 60,15 70,13 80,15 90,14 100,13" fill="none" stroke="#22c55e" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc warn">
+          <div class="hd"><span class="nm">order-service</span><span class="led"></span></div>
+          <div class="meta">domain · v3.9.0 · degraded</div>
+          <div class="lat"><span>p95</span><b>312ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,18 10,16 20,14 30,12 40,10 50,8 60,6 70,8 80,4 90,2 100,4" fill="none" stroke="#f59e0b" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc">
+          <div class="hd"><span class="nm">user-service</span><span class="led"></span></div>
+          <div class="meta">domain · v2.4.7</div>
+          <div class="lat"><span>p95</span><b>48ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,16 10,15 20,17 30,14 40,16 50,13 60,15 70,12 80,14 90,11 100,12" fill="none" stroke="#22c55e" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc crit">
+          <div class="hd"><span class="nm">notify-worker</span><span class="led"></span></div>
+          <div class="meta">worker · v0.8.4 · oom</div>
+          <div class="lat"><span>queue</span><b>4,218</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,18 10,16 20,14 30,12 40,8 50,6 60,2 70,2 80,2 90,2 100,2" fill="none" stroke="#ef4444" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc">
+          <div class="hd"><span class="nm">payment-svc</span><span class="led"></span></div>
+          <div class="meta">domain · v1.12.0</div>
+          <div class="lat"><span>p95</span><b>98ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,16 10,14 20,15 30,13 40,15 50,12 60,14 70,11 80,13 90,10 100,12" fill="none" stroke="#22c55e" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc">
+          <div class="hd"><span class="nm">search-svc</span><span class="led"></span></div>
+          <div class="meta">domain · v0.6.1</div>
+          <div class="lat"><span>p95</span><b>62ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,18 10,17 20,15 30,16 40,14 50,15 60,13 70,14 80,11 90,12 100,10" fill="none" stroke="#22c55e" stroke-width="1.4"/></svg></div>
+        </div>
+        <div class="svc">
+          <div class="hd"><span class="nm">media-svc</span><span class="led"></span></div>
+          <div class="meta">storage · v2.0.0</div>
+          <div class="lat"><span>p95</span><b>184ms</b></div>
+          <div class="spark"><svg viewBox="0 0 100 24"><polyline points="0,16 10,17 20,15 30,16 40,14 50,16 60,13 70,14 80,12 90,13 100,11" fill="none" stroke="#22c55e" stroke-width="1.4"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOG STREAM -->
+    <div class="panel">
+      <div class="ph">
+        <h2>Log stream <span class="badge">tail · 8.4K/s</span></h2>
+        <div class="right">
+          <span style="color:var(--cyan)">● live</span>
+          <span style="color:var(--fg-2)">·</span>
+          <span>filters: 5xx · prod · api-gateway</span>
+        </div>
+      </div>
+      <div class="logs">
+        <div class="log-row"><span class="t">13:48:22.142</span><span class="lvl error">ERR</span><span class="msg"><b>order-service</b> · <span class="tag">checkout</span> connection pool exhausted: <em>postgres://prod-db-1</em>, active=200/200, waiting=87 → <span class="err">ServiceUnavailable</span></span></div>
+        <div class="log-row"><span class="t">13:48:22.108</span><span class="lvl warn">WRN</span><span class="msg"><b>api-gateway</b> · slow response <em>POST /v1/orders</em> 1,840ms (p99 budget: 800ms) — request <span class="tag">req_8af2c</span></span></div>
+        <div class="log-row"><span class="t">13:48:22.092</span><span class="lvl info">INF</span><span class="msg"><b>auth-service</b> · token refreshed for user <em>u_18229</em> · scope <span class="tag">read:orders</span></span></div>
+        <div class="log-row"><span class="t">13:48:22.084</span><span class="lvl info">INF</span><span class="msg"><b>payment-svc</b> · charge <span class="tag">ch_028af</span> succeeded · ₩42,000 · stripe_ms=128</span></div>
+        <div class="log-row"><span class="t">13:48:22.061</span><span class="lvl error">ERR</span><span class="msg"><b>notify-worker</b> · <span class="err">OutOfMemoryError</span> in queue handler · last_msg_id=<em>msg_18a429</em>, heap=2,148 MB / 2,048 MB</span></div>
+        <div class="log-row"><span class="t">13:48:22.044</span><span class="lvl debug">DBG</span><span class="msg"><b>search-svc</b> · cache hit ratio 94.2% · keyspace <em>products:v2</em></span></div>
+        <div class="log-row"><span class="t">13:48:22.031</span><span class="lvl info">INF</span><span class="msg"><b>api-gateway</b> · <em>GET /v1/products?page=4</em> 200 OK · 22ms · <span class="tag">edge=icn</span></span></div>
+        <div class="log-row"><span class="t">13:48:22.018</span><span class="lvl warn">WRN</span><span class="msg"><b>order-service</b> · retry <em>POST /payment-svc/charge</em> attempt=2/3 · backoff=400ms</span></div>
+        <div class="log-row"><span class="t">13:48:21.992</span><span class="lvl info">INF</span><span class="msg"><b>user-service</b> · login successful for <em>u_42018</em> · 2fa=true · ip=<span class="tag">211.42.x.x</span></span></div>
+        <div class="log-row"><span class="t">13:48:21.974</span><span class="lvl error">ERR</span><span class="msg"><b>order-service</b> · <span class="err">DeadlockDetected</span> on table <em>orders</em>, advisory lock <span class="tag">L_order_create</span> · auto-retried</span></div>
+        <div class="log-row"><span class="t">13:48:21.960</span><span class="lvl info">INF</span><span class="msg"><b>media-svc</b> · uploaded <em>img/avatar_20418.webp</em> 124 KB → s3://prod-media · <span class="tag">cdn=cf</span></span></div>
+        <div class="log-row"><span class="t">13:48:21.945</span><span class="lvl info">INF</span><span class="msg"><b>api-gateway</b> · <em>POST /v1/auth/login</em> 200 OK · 18ms</span></div>
+        <div class="log-row"><span class="t">13:48:21.928</span><span class="lvl debug">DBG</span><span class="msg"><b>auth-service</b> · jwt verified · alg=ES256 · kid=<span class="tag">k_2026q2</span></span></div>
+        <div class="log-row"><span class="t">13:48:21.910</span><span class="lvl warn">WRN</span><span class="msg"><b>notify-worker</b> · backpressure detected: queue depth 4,218 / 1,000 (warn threshold)</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <aside>
+
+    <div class="panel alerts">
+      <div class="ph">
+        <h2>Active alerts <span class="badge" style="background:var(--red);color:#fff">3</span></h2>
+        <div class="right"><span style="color:var(--fg-2)">silence</span></div>
+      </div>
+      <div class="alert-row crit">
+        <div class="ic">!</div>
+        <div class="body">
+          <div class="ti"><b>P1</b> · order-service · DB pool exhausted</div>
+          <div class="ds">Pool active 200/200, waiting=87 for 4m. Likely traffic spike from /v1/checkout — consider hot-pool resize or shed.</div>
+          <div class="meta-line">
+            <span>fired 4m 18s</span>
+            <span style="color:var(--cyan)">runbook</span>
+            <span>oncall: jin</span>
+          </div>
+        </div>
+      </div>
+      <div class="alert-row crit">
+        <div class="ic">!</div>
+        <div class="body">
+          <div class="ti"><b>P1</b> · notify-worker · OOM crash loop</div>
+          <div class="ds">Worker has crashed 3 times in 12m due to OutOfMemoryError. Consumer queue depth growing — manual restart needed or memory limit bump.</div>
+          <div class="meta-line">
+            <span>fired 11m 02s</span>
+            <span style="color:var(--cyan)">runbook</span>
+            <span>oncall: jin</span>
+          </div>
+        </div>
+      </div>
+      <div class="alert-row warn">
+        <div class="ic">⚠</div>
+        <div class="body">
+          <div class="ti">P3 · api-gateway · p99 latency budget</div>
+          <div class="ds">p99 trending toward 500ms over last 30m. Likely correlated with order-service degradation.</div>
+          <div class="meta-line">
+            <span>fired 28m 14s</span>
+            <span style="color:var(--cyan)">runbook</span>
+            <span>oncall: -</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel deploys">
+      <div class="ph">
+        <h2>Recent deploys <span class="badge">last 24h</span></h2>
+        <div class="right"><span>10 / day avg</span></div>
+      </div>
+      <div class="row run">
+        <span class="ic"></span>
+        <div class="body">
+          <div class="ti">api-gateway @v2.42.1</div>
+          <div class="ds">canary · 5% · jin · "rate-limit tweak"</div>
+        </div>
+        <div class="when">running<br><span style="color:var(--fg-4)">2m ago</span></div>
+      </div>
+      <div class="row">
+        <span class="ic"></span>
+        <div class="body">
+          <div class="ti">user-service @v2.4.7</div>
+          <div class="ds">prod · hyewon · "fix profile pagination"</div>
+        </div>
+        <div class="when">38m ago</div>
+      </div>
+      <div class="row fail">
+        <span class="ic"></span>
+        <div class="body">
+          <div class="ti">order-service @v3.10.0-rc1</div>
+          <div class="ds">canary · failed · jin · "new tx engine"</div>
+        </div>
+        <div class="when">1h 14m ago</div>
+      </div>
+      <div class="row">
+        <span class="ic"></span>
+        <div class="body">
+          <div class="ti">payment-svc @v1.12.0</div>
+          <div class="ds">prod · soomin · "refund webhooks"</div>
+        </div>
+        <div class="when">3h ago</div>
+      </div>
+      <div class="row">
+        <span class="ic"></span>
+        <div class="body">
+          <div class="ti">search-svc @v0.6.1</div>
+          <div class="ds">prod · jaewon · "korean tokenizer"</div>
+        </div>
+        <div class="when">5h ago</div>
+      </div>
+      <div class="row">
+        <span class="ic"></span>
+        <div class="body">
+          <div class="ti">media-svc @v2.0.0</div>
+          <div class="ds">prod · soomin · "rust rewrite ☄"</div>
+        </div>
+        <div class="when">11h ago</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>Top endpoints by latency</h2></div>
+      <div style="padding:14px 18px 16px">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2.1">
+          <span style="color:var(--fg-2)">POST /v1/orders</span><b style="color:var(--red)">1,842 ms</b>
+          <span style="color:var(--fg-2)">POST /v1/checkout</span><b style="color:var(--amber)">684 ms</b>
+          <span style="color:var(--fg-2)">GET /v1/feed</span><b style="color:var(--amber)">312 ms</b>
+          <span style="color:var(--fg-2)">POST /v1/upload</span><b style="color:var(--fg)">214 ms</b>
+          <span style="color:var(--fg-2)">GET /v1/products</span><b style="color:var(--fg)">98 ms</b>
+          <span style="color:var(--fg-2)">GET /v1/me</span><b style="color:var(--green)">22 ms</b>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+</main>
+
+</body>
+</html>
